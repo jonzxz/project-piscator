@@ -9,7 +9,7 @@ from app.models.EmailAddress import EmailAddress
 def index():
     title = 'Home'
     project = {'project_name' : "Piscator"}
-    user = "Jon" # comment user=user for ifelse demo
+    user = None
     team_members = ["Jon", "HH", "Yannis", "Joy", "CT", "Zuhree"]
     return render_template('index.html', title=title, project=project, user=user, team_members=team_members)
 

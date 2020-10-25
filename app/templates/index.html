@@ -1,18 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1> Welcome to Project {{ project['project_name'] }} from index!</h1>
-
+  <div class="card">
+    <div class="card-body">
+      <p class="text-center h2"> Welcome to Project {{ project['project_name'] }}</p>
+    </div>
+  </div>
   {% if user %}
-    <h2> Hi {{ user }} ! </h2>
+    <h2> Hi {{ user }} ! </h2> <!-- routes:12-->
   {% else %}
-    <h2> Hi anonymous </h2>
+    <p class="text-center h2"> Hi visitor, this is currenly a WIP for FYP-20S4-06P </p>
   {% endif %}
 
-  {% for member in team_members %}
-    <h6>{{ member }}</h6>
-  {% endfor %}
+  <ul class="list-group list-grou-flush">
+    {% for member in team_members %}
+      <li class="list-group-item text-center">{{ member }}</li>
+    {% endfor %}
+  </ul>
 
-  <a href="{{ url_for('register') }}">Click to register</a>
-  <a href="{{ url_for('dummy_add_user')}}"> Click to add a dummy user </a>
+  <a class="btn btn-warning" href="{{ url_for('register') }}">Click to register</a><br/>
+  <a style="pointer-events:none" href="{{ url_for('dummy_add_user')}}"> Click to add a dummy user (Disabled)</a> <!-- dummy_add_user -->
 {% endblock %}
