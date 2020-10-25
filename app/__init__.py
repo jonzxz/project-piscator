@@ -16,6 +16,7 @@ db = SQLAlchemy(app)
 # to generate a script that will execute the changes
 # do a flask db upgrade
 # to update the database
+# if you messed up, do a flask db downgrade
 migrate = Migrate(app, db)
 
 from app import routes, models
