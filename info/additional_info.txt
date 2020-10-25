@@ -1,0 +1,9 @@
+# Truncate User table
+TRUNCATE public."user" CASCADE;
+
+# Reset User PK
+ALTER SEQUENCE user_user_id_seq RESTART;
+
+# Query
+SELECT * FROM public."user";
+SELECT * FROM email_address;

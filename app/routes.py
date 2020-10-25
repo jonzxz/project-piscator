@@ -1,6 +1,8 @@
-from app import app
+from app import app, db
 from flask import render_template, request, flash, redirect, url_for
 from app.forms.RegistrationForm import RegistrationForm
+from app.models.User import User
+from app.models.EmailAddress import EmailAddress
 
 @app.route('/')
 @app.route('/index')
@@ -23,3 +25,12 @@ def register():
     # if form.validate_on_submit():
     #     new_user = User(username=form.username.data, password=)
     #db.session.add(User(username="user1", password="password1"))
+
+@app.route('/makeuser')
+def dummy_add_user():
+    usrname = "User1"
+    password = "password1"
+    new_user = User(username=usrname, password=password)
+    db.session.add(new_user)
+    db.session.commit()
+    return render_template('success.html', usrname = usrname)
