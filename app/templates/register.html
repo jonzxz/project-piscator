@@ -7,14 +7,26 @@
         <p>
             {{ form.username.label }}<br>
             {{ form.username(size=32) }}
+            {% for error in form.username.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
         </p>
         <p>
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}
+            {% for error in form.password.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
         </p>
         <p>
             {{ form.confirm_password.label }}
             {{ form.confirm_password(size=32) }}
+            {% for error in form.confirm_password.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
         <p>{{ form.submit() }}</p>
+
+        <a href="{{ url_for('index')}}">Go back to index</a>
+
     </form>
 {% endblock %}

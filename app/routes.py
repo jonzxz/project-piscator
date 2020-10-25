@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request
+from flask import render_template, request, flash, redirect, url_for
 from app.forms.RegistrationForm import RegistrationForm
 
 @app.route('/')
@@ -11,9 +11,13 @@ def index():
     team_members = ["Jon", "HH", "Yannis", "Joy", "CT", "Zuhree"]
     return render_template('index.html', title=title, project=project, user=user, team_members=team_members)
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
+
+    if form.validate_on_submit():
+        return redirect(url_for('index'))
+
     return render_template('register.html', form=form)
     # form = RegistrationForm()
     # if form.validate_on_submit():

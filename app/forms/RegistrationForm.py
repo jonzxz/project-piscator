@@ -12,10 +12,10 @@ class RegistrationForm(FlaskForm):
 					EqualTo('password', message='Password must match!')])
 	submit = SubmitField('Register')
 
-	def validate_username(self, username):
-		user = User.query.filter_by(username=username.data).first()
-		if user is not None:
-			raise ValidationError('Username already taken')
+	# def validate_username(self, username):
+	# 	user = User.query.filter_by(username=username.data).first()
+	# 	if user is not None:
+	# 		raise ValidationError('Username already taken')
 
 	# def validate_email(self, email):
 	# 	user = User.query.filter_by(email=email.data).first()
