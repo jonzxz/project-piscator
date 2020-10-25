@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1> Welcome to Project {{ project['project_name'] }} from index!</h1>
+
+  {% if user %}
+    <h2> Hi {{ user }} ! </h2>
+  {% else %}
+    <h2> Hi anonymous </h2>
+  {% endif %}
+
+  {% for member in team_members %}
+    <h6>{{ member }}</h6>
+  {% endfor %}
+
+  <a href="/register">Click to register</a>
+{% endblock %}
