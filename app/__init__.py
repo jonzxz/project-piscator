@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app.config import Config
 from flask_migrate import Migrate
-from flask_heroku import Heroku
+#from flask_heroku import Heroku
 
 # Application instance and application config instance
 app = Flask(__name__)
@@ -10,7 +10,7 @@ app.config.from_object(Config)
 
 # Database instance
 db = SQLAlchemy(app)
-heroku = Heroku(app)
+#heroku = Heroku(app)
 
 # Migration engine instance
 # Whenever database has updates on schema
