@@ -19,4 +19,6 @@ db = SQLAlchemy(app)
 # if you messed up, do a flask db downgrade
 migrate = Migrate(app, db)
 
-from app import routes, models
+from app import routes
+# Add all new models here
+from app.models import User, EmailAddress
