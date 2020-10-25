@@ -12,6 +12,10 @@ db = SQLAlchemy(app)
 
 # Migration engine instance
 # Whenever database has updates on schema
+# do a flask db migrate -m "COMMIT_MSG"
+# to generate a script that will execute the changes
+# do a flask db upgrade
+# to update the database
 migrate = Migrate(app, db)
 
 from app import routes, models
