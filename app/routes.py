@@ -18,13 +18,13 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        return redirect(url_for('index'))
+        new_user = User(username=form.username.data, password=form.password.data)
+        db.session.add(new_user)
+        db.session.commit()
+        return render_template('success.html', usrname = form.username.data)
 
     return render_template('register.html', form=form)
-    # form = RegistrationForm()
-    # if form.validate_on_submit():
-    #     new_user = User(username=form.username.data, password=)
-    #db.session.add(User(username="user1", password="password1"))
+
 
 @app.route('/makeuser')
 def dummy_add_user():
