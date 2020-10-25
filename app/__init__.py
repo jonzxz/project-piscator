@@ -9,6 +9,7 @@ app.config.from_object(Config)
 
 # Database instance
 db = SQLAlchemy(app)
+heroku = Heroku(app)
 
 # Migration engine instance
 # Whenever database has updates on schema
