@@ -27,13 +27,13 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-
-    if form.validate_on_submit():
-        new_user = User(username=form.username.data)
-        new_user.set_password(form.password.data)
-        db.session.add(new_user)
-        db.session.commit()
-        return render_template('success.html', usrname = form.username.data)
+    if request.method =='POST':
+        if form.validate_on_submit():
+            new_user = User(username=form.username.data)
+            new_user.set_password(form.password.data)
+            db.session.add(new_user)
+            db.session.commit()
+            return render_template('success.html', usrname = form.username.data)
 
     return render_template('register.html', form=form)
 
