@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app.config import Config
 from flask_migrate import Migrate
+from flask_login import LoginManager
 #from flask_heroku import Heroku
 
 # Application instance and application config instance
@@ -20,6 +21,9 @@ db = SQLAlchemy(app)
 # to update the database
 # if you messed up, do a flask db downgrade
 migrate = Migrate(app, db)
+
+# Flask Login
+login = LoginManager(app)
 
 from app import routes
 # Add all new models here
