@@ -11,7 +11,11 @@ def index():
     project = {'project_name' : "Piscator"}
     user = None
     team_members = ["Jon", "HH", "Yannis", "Joy", "CT", "Zuhree"]
-    return render_template('index.html', title=title, project=project, user=user, team_members=team_members)
+
+    # dummy to list all users
+    all_users = User.query.all()
+    print(all_users)
+    return render_template('index.html', title=title, project=project, user=user, team_members=team_members, all_users = all_users)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -26,11 +30,11 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/makeuser')
-def dummy_add_user():
-    usrname = "User1"
-    password = "password1"
-    new_user = User(username=usrname, password=password)
-    db.session.add(new_user)
-    db.session.commit()
-    return render_template('success.html', usrname = usrname)
+# @app.route('login')
+# def dummy_add_user():
+#     usrname = "User1"
+#     password = "password1"
+#     new_user = User(username=usrname, password=password)
+#     db.session.add(new_user)
+#     db.session.commit()
+#     return render_template('success.html', usrname = usrname)
