@@ -22,3 +22,14 @@ psql -h localhost -p 5432 -U postgres -d fyp-20s4-06p -f <dump.out>
 
 # Drop db FORCE
 psql -h localhost -d template1 -U postgres -p 5432 -a -f <file.sql>
+
+# To connect to Heroku DB using PgAdmin
+Create Server -> Connection
+Host Name: ec2 instance of HerokuPostgres
+Port: 5432
+Maintenance DB: instance on Heroku DB page
+Username: from Heroku DB page
+Password: from Heroku DB page
+
+Advanced -> Restriction
+DB restriction: maintenance db // supposed to put quotes but it doesn't really work
