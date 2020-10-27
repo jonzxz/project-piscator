@@ -56,11 +56,3 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-# @app.route('login')
-# def dummy_add_user():
-#     usrname = "User1"
-#     password = "password1"
-#     new_user = User(username=usrname, password=password)
-#     db.session.add(new_user)
-#     db.session.commit()
-#     return render_template('success.html', usrname = usrname)
