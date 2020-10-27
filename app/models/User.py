@@ -13,7 +13,7 @@ class User(db.Model):
     emails = db.relationship('EmailAddress', backref='owner', lazy='dynamic')
 
     def __repr__(self):
-        return "User ID: {} -- Username: {}".format(self.user_id, self_username)
+        return "User ID: {} -- Username: {}".format(self.user_id, self.username)
 
     def get_id(self):
         return self.user_id
