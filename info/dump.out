@@ -39,7 +39,12 @@ CREATE TABLE public.email_address (
     email_id integer NOT NULL,
     email_address character varying(30) NOT NULL,
     created_at timestamp without time zone,
-    user_id integer
+    user_id integer,
+    active boolean NOT NULL,
+    email_password character varying(255) NOT NULL,
+    last_mailbox_size integer,
+    last_updated timestamp without time zone,
+    phishing_mail_detected integer
 );
 
 
@@ -68,6 +73,43 @@ ALTER SEQUENCE public.email_address_email_id_seq OWNED BY public.email_address.e
 
 
 --
+-- Name: phishing_email; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.phishing_email (
+    mail_id integer NOT NULL,
+    sender_address character varying(30) NOT NULL,
+    content text NOT NULL,
+    created_at timestamp without time zone,
+    receiver_address integer NOT NULL
+);
+
+
+ALTER TABLE public.phishing_email OWNER TO postgres;
+
+--
+-- Name: phishing_email_mail_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.phishing_email_mail_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.phishing_email_mail_id_seq OWNER TO postgres;
+
+--
+-- Name: phishing_email_mail_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.phishing_email_mail_id_seq OWNED BY public.phishing_email.mail_id;
+
+
+--
 -- Name: user; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -75,7 +117,10 @@ CREATE TABLE public."user" (
     user_id integer NOT NULL,
     username character varying(30) NOT NULL,
     password character varying(255) NOT NULL,
-    created_at timestamp without time zone
+    created_at timestamp without time zone,
+    is_active boolean NOT NULL,
+    is_admin boolean,
+    last_logged_in timestamp without time zone
 );
 
 
@@ -111,6 +156,13 @@ ALTER TABLE ONLY public.email_address ALTER COLUMN email_id SET DEFAULT nextval(
 
 
 --
+-- Name: phishing_email mail_id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.phishing_email ALTER COLUMN mail_id SET DEFAULT nextval('public.phishing_email_mail_id_seq'::regclass);
+
+
+--
 -- Name: user user_id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -122,7 +174,7 @@ ALTER TABLE ONLY public."user" ALTER COLUMN user_id SET DEFAULT nextval('public.
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-410c63b113e4
+85dcee72b6c4
 \.
 
 
@@ -130,7 +182,15 @@ COPY public.alembic_version (version_num) FROM stdin;
 -- Data for Name: email_address; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.email_address (email_id, email_address, created_at, user_id) FROM stdin;
+COPY public.email_address (email_id, email_address, created_at, user_id, active, email_password, last_mailbox_size, last_updated, phishing_mail_detected) FROM stdin;
+\.
+
+
+--
+-- Data for Name: phishing_email; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.phishing_email (mail_id, sender_address, content, created_at, receiver_address) FROM stdin;
 \.
 
 
@@ -138,10 +198,8 @@ COPY public.email_address (email_id, email_address, created_at, user_id) FROM st
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."user" (user_id, username, password, created_at) FROM stdin;
-1	User1	password1	2020-10-25 21:18:17.142406
-2	testuser123	password	2020-10-25 21:32:33.03015
-3	testuser3	password3	2020-10-25 23:24:07.760096
+COPY public."user" (user_id, username, password, created_at, is_active, is_admin, last_logged_in) FROM stdin;
+7	admin	pbkdf2:sha256:150000$UpdGR6Re$016515c0a9c6cd0af3e694b7180603ef3479e29c15238b63bc0bf91ed88e6630	2020-11-11 22:46:03.325646	t	f	\N
 \.
 
 
@@ -153,10 +211,17 @@ SELECT pg_catalog.setval('public.email_address_email_id_seq', 1, false);
 
 
 --
+-- Name: phishing_email_mail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.phishing_email_mail_id_seq', 1, false);
+
+
+--
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_user_id_seq', 3, true);
+SELECT pg_catalog.setval('public.user_user_id_seq', 7, true);
 
 
 --
@@ -173,6 +238,14 @@ ALTER TABLE ONLY public.alembic_version
 
 ALTER TABLE ONLY public.email_address
     ADD CONSTRAINT email_address_pkey PRIMARY KEY (email_id);
+
+
+--
+-- Name: phishing_email phishing_email_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.phishing_email
+    ADD CONSTRAINT phishing_email_pkey PRIMARY KEY (mail_id);
 
 
 --
@@ -198,6 +271,27 @@ CREATE UNIQUE INDEX ix_email_address_email_address ON public.email_address USING
 
 
 --
+-- Name: ix_phishing_email_created_at; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX ix_phishing_email_created_at ON public.phishing_email USING btree (created_at);
+
+
+--
+-- Name: ix_phishing_email_receiver_address; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX ix_phishing_email_receiver_address ON public.phishing_email USING btree (receiver_address);
+
+
+--
+-- Name: ix_phishing_email_sender_address; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX ix_phishing_email_sender_address ON public.phishing_email USING btree (sender_address);
+
+
+--
 -- Name: ix_user_created_at; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -217,6 +311,14 @@ CREATE UNIQUE INDEX ix_user_username ON public."user" USING btree (username);
 
 ALTER TABLE ONLY public.email_address
     ADD CONSTRAINT email_address_user_id_fkey FOREIGN KEY (user_id) REFERENCES public."user"(user_id);
+
+
+--
+-- Name: phishing_email phishing_email_receiver_address_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.phishing_email
+    ADD CONSTRAINT phishing_email_receiver_address_fkey FOREIGN KEY (receiver_address) REFERENCES public.email_address(email_id);
 
 
 --
