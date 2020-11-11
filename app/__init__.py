@@ -14,6 +14,7 @@ db = SQLAlchemy(app)
 
 # Encryption
 from app.utils.Encryption import Encryption
+
 encryption_engine = Encryption()
 
 # Migration engine instance

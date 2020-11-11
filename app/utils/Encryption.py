@@ -1,25 +1,35 @@
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, InvalidToken
+import os, sys
 
-class Encryption():
+# Fernet -> AES128 in CBC with PKCS7 padding
+class Encryption:
     def __init__(self):
         self.__key = self.read_secret()
         self.__encrypter = Fernet(self.__key)
 
-    def read_secret(self):
+    def read_secret(self) -> str:
         try:
             with open('SECRET.key', 'r') as secret:
                 key = secret.read()
                 secret.close()
             return key
-        except FileNotFoundError:
+        except FileNotFoundError as fnfe:
             print("Secret key file not found!")
+            sys.exit(1)
+
+    def encrypt(self, plain_text: str) -> str:
+        try:
+            return self.get_encrypter().encrypt(bytes(plain_text, 'utf-8')).decode('utf-8')
+        except TypeError as te:
+            print("Plain text not a string argument!")
             return None
 
-    def encrypt(self, plain_text):
-        return self.get_encrypter().encrypt(bytes(plain_text, 'utf-8')).decode('utf-8')
+    def decrypt(self, cipher_text: str) -> str:
+        try:
+            return self.get_encrypter().decrypt(bytes(cipher_text, 'utf-8')).decode('utf-8')
+        except InvalidToken as it:
+            print("Cipher text not valid!")
+            return None
 
-    def decrypt(self, cipher_text):
-        return self.get_encrypter().decrypt(bytes(cipher_text, 'utf-8')).decode('utf-8')
-
-    def get_encrypter(self):
+    def get_encrypter(self) -> Fernet:
         return self.__encrypter
