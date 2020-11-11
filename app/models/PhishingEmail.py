@@ -10,7 +10,7 @@ class PhishingEmail(db.Model):
     created_at = db.Column(db.DateTime, index=True,default=datetime.now)
 
     # FK
-    receiver_address = db.Column(db.String(30), db.ForeignKey('email_address.email_address'), index=True, unique=False, nullable=False)
+    receiver_address = db.Column(db.Integer, db.ForeignKey('email_address.email_id'), index=True, unique=False, nullable=False)
 
     def __repr__(self):
         return "Phishing Mail from: {} -- Received by: {}".format(self.sender_address, self.receiver_address)

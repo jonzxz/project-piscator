@@ -31,4 +31,4 @@ login = LoginManager(app)
 
 from app import routes
 # Add all new models here
-from app.models import User, EmailAddress
+from app.models import User, EmailAddress, PhishingEmail
