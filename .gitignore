@@ -1,5 +1,5 @@
 piscator-venv/
-__pycache__/
-app/__pycache__/
+__pycache__
+app/__pycache__
 SECRET.KEY
 *.log
