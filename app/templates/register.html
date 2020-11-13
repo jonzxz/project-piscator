@@ -36,12 +36,12 @@
         {
             right: 33%;
         }
-        
+
         p.margin
         {
         		margin-left:800px
         }
-        
+
     		.g-recaptcha
     		{
         	display: inline-block;
@@ -51,7 +51,7 @@
 			{
   			position: relative;
 			}
-			
+
 			.balloon:before, .balloon:after
 			{
   				bottom: 10%;
@@ -62,7 +62,7 @@
   				transition: all 0.18s ease-out 0.18s;
   				opacity: 0;
   		}
-  		
+
 			.balloon:after
 			{
   			background-color: white;
@@ -80,7 +80,7 @@
   			margin-bottom: 4px;
   			color: grey;
   	}
-  	
+
 	.balloon:hover:before, .balloon:hover:after
 	{
 			opacity: 1;
@@ -115,14 +115,14 @@
         </p>
         <p class="margin">
             {{ form.password.label }}
-						<button class="button balloon" 
+						<button class="button balloon"
 						balloon-data="Note: Please ensure password combination of a least 8 numbers and letters">!</button></br>
             {{ form.password(size=40) }}
             {% for error in form.password.errors %}
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         </p>
-     
+
         <p class="margin">
             {{ form.confirm_password.label }}</br>
             {{ form.confirm_password(size=40) }}
@@ -130,7 +130,9 @@
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
         <div style="text-align:center;">
-        <div class="g-recaptcha" data-sitekey="6LcePAATAAAAAGPRWgx90814DTjgt5sXnNbV5WaW"></div>
+        <div class="recaptcha">
+					{{ form.recaptcha }}
+				</div>
         <p>
         </br>
         {{ form.submit(class='btn btn-outline-secondary')}}
@@ -140,4 +142,3 @@
     <!--js-->
     <script src='https://www.google.com/recaptcha/api.js'></script>
 {% endblock %}
-

@@ -39,6 +39,8 @@ def register():
             db.session.commit()
             logger.debug("Successfully created user %s", new_user)
             return render_template('success.html', usrname = form.username.data)
+        else:
+            logger.warn("Registration failed, user not registered")
 
     return render_template('register.html', form=form)
 

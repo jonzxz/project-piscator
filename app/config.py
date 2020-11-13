@@ -1,4 +1,5 @@
 import os
+from app.utils.RecaptchaUtils import get_recaptcha_secret
 
 class Config(object):
     POSTGRES_USER = "postgres"
@@ -12,3 +13,9 @@ class Config(object):
 
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    #Recaptcha
+    RECAPTCHA_USE_SSL = False
+    RECAPTCHA_PUBLIC_KEY = '6Lezk-IZAAAAABW4o03l4BBW8OpmmZ8p7GhUZQC0'
+    RECAPTCHA_PRIVATE_KEY = get_recaptcha_secret()
+    RECAPTCHA_OPTIONS = {'theme' : 'black'}
