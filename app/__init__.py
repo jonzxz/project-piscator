@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from app.config import Config
 from flask_migrate import Migrate
 from flask_login import LoginManager
-
+import logging
 
 # Application instance and application config instance
 app = Flask(__name__)
@@ -28,6 +28,25 @@ migrate = Migrate(app, db)
 
 # Flask Login
 login = LoginManager(app)
+
+# Logger
+app_logger = logging.getLogger(__name__)
+# Root debug level
+app_logger.setLevel(level=logging.DEBUG)
+# CLI Debug Handler config - set to DEBUG and above.
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.DEBUG)
+stream_formatter = logging.Formatter('[LOG] [%(levelname)s] [%(asctime)s] [Line %(lineno)s] : %(message)s')
+stream_handler.setFormatter(stream_formatter)
+app_logger.addHandler(stream_handler)
+
+# File Debug Handler Config - set to WARNING and above only.
+file_handler = logging.FileHandler('app_logs.log')
+file_handler.setLevel(logging.WARNING)
+formatter = logging.Formatter('[LOG] [%(levelname)s] [%(asctime)s] [Line %(lineno)s] : %(message)s')
+file_handler.setFormatter(formatter)
+app_logger.addHandler(file_handler)
+
 
 from app import routes
 # Add all new models here
