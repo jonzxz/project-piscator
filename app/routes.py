@@ -26,14 +26,16 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    logger.debug("Entering register function..")
+    logger.debug("Entering register function")
     form = RegistrationForm()
     if request.method =='POST':
+        logger.debug("Register form submitted")
         if form.validate_on_submit():
             new_user = User(username=form.username.data)
             new_user.set_password(form.password.data)
             db.session.add(new_user)
             db.session.commit()
+            logger.debug("Successfully created user %s", new_user)
             return render_template('success.html', usrname = form.username.data)
 
     return render_template('register.html', form=form)
@@ -42,6 +44,7 @@ def register():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+    logger.debug("Entering login function")
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -49,6 +52,7 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
+        logger.debug("Successfully logged in user %s", user)
         flash("successfully logged in")
         return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
@@ -56,4 +60,5 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
+    logger.debug("Successfully logged out")
     return redirect(url_for('index'))
