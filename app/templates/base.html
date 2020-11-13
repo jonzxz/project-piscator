@@ -18,10 +18,42 @@
 		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 		crossorigin="anonymous">
 		</script>
+		<link rel="stylesheet" href="/static/style.css" type="text/css">
 	</head>
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+	  <a class="navbar-brand d-inline-block align-top" href="#">
+			<img src="/static/icons/fish_2.svg" width="70" height="70">
+			<span> Project Piscator </span>
+		</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+
+	  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+	    <ul class="navbar-nav mr-auto pl-5">
+	      <li class="nav-item active">
+	        <a class="nav-link" href="#">Home</a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="#">About</a>
+	      </li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Features</a>
+				</li>
+				<li class="nav-item">
+					<a class="btn btn-primary" href="{{ url_for('register') }}">Register</a>
+				</li>
+				<li class="nav-item">
+					<a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+				</li>
+	    </ul>
+	  </div>
+	</nav>
 	<title> {{ title }} </title>
 	<!-- main content display -->
-	<div id='mainbody'>
+
+	<div class='main-container'>
 	{% block content %}{% endblock %}
 	</div>
 	</body>
