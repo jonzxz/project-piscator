@@ -1,4 +1,4 @@
-from app import app, db
+from app import app, db, encryption_engine
 
 ## Plugins
 from flask_login import current_user, login_user, logout_user
@@ -11,6 +11,7 @@ from app.forms.LoginForm import LoginForm
 ## Models
 from app.models.User import User
 from app.models.EmailAddress import EmailAddress
+from app.models.PhishingEmail import PhishingEmail
 
 
 @app.route('/')
@@ -22,6 +23,7 @@ def index():
     # dummy to list all users
     all_users = User.query.all()
     print(all_users)
+
     return render_template('index.html', title=title, project=project, team_members=team_members, all_users = all_users)
 
 @app.route('/register', methods=['GET', 'POST'])
