@@ -17,5 +17,5 @@ class Config(object):
     #Recaptcha
     RECAPTCHA_USE_SSL = False
     RECAPTCHA_PUBLIC_KEY = '6Lezk-IZAAAAABW4o03l4BBW8OpmmZ8p7GhUZQC0'
-    RECAPTCHA_PRIVATE_KEY = get_recaptcha_secret()
+    RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_SECRET') or get_recaptcha_secret()
     RECAPTCHA_OPTIONS = {'theme' : 'black'}

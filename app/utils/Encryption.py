@@ -4,7 +4,7 @@ import os, sys
 # Fernet -> AES128 in CBC with PKCS7 padding
 class Encryption:
     def __init__(self):
-        self.__key = self.read_secret()
+        self.__key = os.getenv('SECRET') or self.read_secret()
         self.__encrypter = Fernet(self.__key)
 
     def read_secret(self) -> str:
