@@ -41,17 +41,21 @@
 				<li class="nav-item">
 					<a class="nav-link disabled" href="#">Features</a>
 				</li>
-				<li class="nav-item">
-					<a class="btn btn-primary" href="{{ url_for('register') }}">Register</a>
-				</li>
-				<li class="nav-item">
-					<a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
-				</li>
 				{% if current_user.is_authenticated %}
 					<li class="nav-item">
 						<a class="btn btn-primary" href="#">My Account</a>
 					</li>
+					<li class="nav-item">
+						<a class="btn btn-primary" href="{{ url_for('logout' )}}">Logout</a>
+					</li>
 					Currently Logged in as {{ current_user.username }}
+				{% else %}
+					<li class="nav-item">
+						<a class="btn btn-primary" href="{{ url_for('register') }}">Register</a>
+					</li>
+					<li class="nav-item">
+						<a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
+					</li>
 				{% endif %}
 	    </ul>
 	  </div>
