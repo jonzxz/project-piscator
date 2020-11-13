@@ -1,4 +1,4 @@
-from app import app, db, encryption_engine, app_logger
+from app import app, db, encryption_engine, logger
 
 ## Plugins
 from flask_login import current_user, login_user, logout_user
@@ -22,11 +22,11 @@ def index():
     team_members = ["Jon", "HH", "Yannis", "Joy", "CT", "Zuhree"]
     # dummy to list all users
     all_users = User.query.all()
-    app_logger.debug(all_users)
     return render_template('index.html', title=title, project=project, team_members=team_members, all_users = all_users)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    logger.debug("Entering register function..")
     form = RegistrationForm()
     if request.method =='POST':
         if form.validate_on_submit():

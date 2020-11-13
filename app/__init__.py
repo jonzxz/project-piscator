@@ -30,22 +30,22 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 
 # Logger
-app_logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 # Root debug level
-app_logger.setLevel(level=logging.DEBUG)
+logger.setLevel(level=logging.DEBUG)
 # CLI Debug Handler config - set to DEBUG and above.
 stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.DEBUG)
-stream_formatter = logging.Formatter('[LOG] [%(levelname)s] [%(asctime)s] [Line %(lineno)s] : %(message)s')
+stream_formatter = logging.Formatter('[LOG] [%(levelname)s] [Line %(lineno)s] : %(message)s')
 stream_handler.setFormatter(stream_formatter)
-app_logger.addHandler(stream_handler)
+logger.addHandler(stream_handler)
 
 # File Debug Handler Config - set to WARNING and above only.
 file_handler = logging.FileHandler('app_logs.log')
 file_handler.setLevel(logging.WARNING)
 formatter = logging.Formatter('[LOG] [%(levelname)s] [%(asctime)s] [Line %(lineno)s] : %(message)s')
 file_handler.setFormatter(formatter)
-app_logger.addHandler(file_handler)
+logger.addHandler(file_handler)
 
 
 from app import routes
