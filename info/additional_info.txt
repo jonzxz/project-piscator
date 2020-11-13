@@ -33,3 +33,6 @@ Password: from Heroku DB page
 
 Advanced -> Restriction
 DB restriction: maintenance db // supposed to put quotes but it doesn't really work
+
+# To update Database Schema on Heroku if `flask db upgrade fails`
+psql -h <heroku-host> -U <postgres-user> <db-name> < <dump.file>
