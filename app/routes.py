@@ -27,6 +27,8 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     logger.debug("Entering register function")
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = RegistrationForm()
     if request.method =='POST':
         logger.debug("Register form submitted")
