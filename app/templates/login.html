@@ -1,29 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Login</h1>
-
+		</br>
+		</br>
+		</br>
+		</br>
+		<hr width="50%" color= blue size=2>
+		<head>
+		<style>
+				p.margin
+        {
+        		margin-left:1100px
+        }
+		</style>
+		</head>
+		<h4 style="margin-left:1100px">Login</h4>
+    <hr style="margin-left:57%" width="18%" color=blue>
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
-        <p>
+        <p class="margin">
             {{ form.username.label }}<br>
             {{ form.username(size=32) }}
             {% for error in form.username.errors %}
                 <span>{{ error }}</span>
             {% endfor %}
         </p>
-        <p>
+       	<p class="margin">
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}
             {% for error in form.password.errors %}
                 <span>{{ error }}</span>
             {% endfor %}
         </p>
-        <p>
+        <p class="margin">
             {{ form.remember_me() }} {{ form.remember_me.label }}
         </p>
-        <p>{{ form.submit() }}</p>
-
+        <p class="margin">{{ form.submit(class='btn btn-outline-secondary') }}</p>
+				<p class="margin">
+        <a class="btn btn-outline-secondary" href="{{ url_for('register') }}">Forget your password?</a><br/>
+        </p>
+        <hr style="margin-left:57%" width="18%" color=blue>
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}
@@ -31,8 +47,10 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        </br>
-        <a href="{{ url_for('index')}}">Go back to index</a>
-
+        <h4 style="margin-left:1100px">New User?</h4></br>
+        <p class="margin">
+        <a class="btn btn-outline-secondary" href="{{ url_for('register') }}">Sign up with us</a><br/>
+        </p>
+        <hr style="margin-left:57%" width="18%" color=blue>
     </form>
 {% endblock %}
