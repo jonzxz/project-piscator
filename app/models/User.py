@@ -40,7 +40,7 @@ class User(UserMixin, db.Model):
         return self.is_active
 
     def get_admin_status(self) -> bool:
-        return self.is_admin
+        return self.is_admin == True
 
     def get_username(self) -> str:
         return self.username
