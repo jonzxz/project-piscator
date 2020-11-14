@@ -3,11 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from app.config import Config
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_admin import Admin
 import logging
+
 
 # Application instance and application config instance
 app = Flask(__name__)
 app.config.from_object(Config)
+
 
 # Database instance
 db = SQLAlchemy(app)
@@ -51,3 +54,9 @@ logger.addHandler(file_handler)
 from app import routes
 # Add all new models here
 from app.models import User, EmailAddress, PhishingEmail
+
+
+from app.views import views
+
+# Admin instance
+admin = Admin(app, name='piscator', template_mode='bootstrap4', index_view=views.GlobalIndexView())
