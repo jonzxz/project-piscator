@@ -66,3 +66,8 @@ def logout():
     logout_user()
     logger.debug("Successfully logged out")
     return redirect(url_for('index'))
+
+
+@app.route('/admin')
+def admin():
+    return render_template('admin/index.html')
