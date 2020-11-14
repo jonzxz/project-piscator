@@ -24,11 +24,21 @@
     {% endfor %}
   </ul>
 
-  <a class="btn btn-warning" href="{{ url_for('register') }}">Click to register</a><br/>
-  {% if current_user.is_anonymous %}
-    <a class="btn btn-warning" href="{{ url_for('login') }}">Click to login</a><br/>
-  {% endif %}
-  {% if current_user.is_authenticated %}
-    <a class="btn btn-warning" href="{{ url_for('logout') }}">Click to logout</a><br/>
-  {% endif %}
+  <div class="card w-25">
+    <p>Buttons for testings</p>
+    <div class="row">
+      {% if current_user.is_anonymous %}
+        <div class="col-md-6 align-middle">
+          <a class="btn btn-warning" href="{{ url_for('register') }}">Click to register</a><br/>
+          <a class="btn btn-warning" href="{{ url_for('login') }}">Click to login</a><br/>
+        </div>
+      {% endif %}
+
+      {% if current_user.is_authenticated %}
+        <div class="col-md-6">
+          <a class="btn btn-warning" href="{{ url_for('logout') }}">Click to logout</a><br/>
+        </div>
+      {% endif %}
+      </div>
+    </div>
 {% endblock %}
