@@ -1,4 +1,4 @@
-[!logo_word_black](./app/static/icons/logo_word_black.svg)
+[!logo](./pictures/piscator_logo.png)
 # Project Piscator
 
 ## Introduction
