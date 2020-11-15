@@ -92,8 +92,6 @@ def dashboard():
     if form.validate_on_submit():
         email_addr = form.email_address.data
         password = form.password.data
-        # email_addr = 'piscator.fisherman@gmail.com'
-        # password = 'rfdagjrrjrxfezcp'
 
         logger.info("Checking mailbox connectivity..")
         # Attempts a mailbox login via imap_tools based on submit
