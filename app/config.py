@@ -19,3 +19,6 @@ class Config(object):
     RECAPTCHA_PUBLIC_KEY = '6Lezk-IZAAAAABW4o03l4BBW8OpmmZ8p7GhUZQC0'
     RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET') or get_recaptcha_secret()
     RECAPTCHA_OPTIONS = {'theme' : 'black'}
+
+    # Configures ReCAPTCHA to be disabled or enabled, SET IT TO DISABLE ON PRODUCTION
+    TESTING=True
