@@ -1,6 +1,5 @@
+[!logo_word_black](./app/static/icons/logo_word_black.svg)
 # Project Piscator
-
-[!logo_word_black](https://raw.githubusercontent.com/jonzxz/project-piscator/f675a35839c6325b08dc3d6000b33905ffc2463e/app/static/icons/logo_word_black.svg)
 
 ## Introduction
 Project Piscator is a final-year project by a group of 6 University of
