@@ -1,4 +1,4 @@
-[!logo](./pictures/piscator_logo.png)
+![logo](./pictures/piscator_logo.png)
 # Project Piscator
 
 ## Introduction
