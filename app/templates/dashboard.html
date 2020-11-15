@@ -5,6 +5,7 @@
 <span class="h1"> User Dashboard </span><br/>
 <span class="h2"> Currently logged in: <b>{{ current_user }}</b></span><br/>
 
+<a href="{{ url_for('index') }}">Home</a>
 <a href="{{ url_for('logout') }}">Logout</a>
 
 <form action="" method="post" novalidate>
