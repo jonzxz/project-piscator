@@ -57,7 +57,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('dashboard'))
     logger.debug("Entering login function")
     form = LoginForm()
     if form.validate_on_submit():
@@ -113,10 +113,21 @@ def dashboard():
                 db.session.rollback()
                 flash("Email address already exist in our database!")
                 logger.error("Email already exist")
-                return render_template('dashboard.html', form=form)
+                return redirect(url_for('form_reset'))
         # If connection to mailbox fails
         else:
             flash("Unable to connect to mailbox.")
-    # -- Add Email Form submission END --
-    
-    return render_template('dashboard.html', current_user = current_user.username, form = form)
+    ## -- Add Email Form submission END --
+    ## -- Default Dashboard Loading START --
+    else:
+        existing_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == current_user.user_id).all()
+        logger.debug(existing_emails)
+    return render_template('dashboard.html',
+    current_user = current_user.username, form = form,
+    user_emails = existing_emails)
+    ## -- Default Dashboard Loading END --
+
+@app.route('/form_reset', methods=['GET'])
+def form_reset():
+    logger.info("Entering function to reset form submission")
+    return redirect(url_for('dashboard'))

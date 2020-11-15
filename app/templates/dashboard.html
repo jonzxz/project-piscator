@@ -31,4 +31,28 @@
   {% endif %}
 {% endwith %}
 
+<div class="card mt-5">
+  <div class="card-body">
+    <table class="table table-dark">
+      <thead>
+        <tr>
+          <th scope="col">Email</th>
+          <th scope="col">Phishing Emails Detected</th>
+          <th scope="col">Last Updated</th>
+          <th scope="col">Active Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for email in user_emails %}
+        <tr>
+          <td>{{ email.email_address }}</td>
+          <td>{{ email.phishing_mail_detected }}</td>
+          <td>{{ email.last_updated }}</td>
+          <td> {{ email.active }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+</div>
+
 {% endblock %}
