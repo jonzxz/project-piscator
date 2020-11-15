@@ -39,14 +39,14 @@ logger.setLevel(level=logging.DEBUG)
 # CLI Debug Handler config - set to DEBUG and above.
 stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.DEBUG)
-stream_formatter = logging.Formatter('[LOG] [%(levelname)s] [Line %(lineno)s] : %(message)s')
+stream_formatter = logging.Formatter('[LOG] [%(levelname)s] [%(funcName)s:%(lineno)s] : %(message)s')
 stream_handler.setFormatter(stream_formatter)
 logger.addHandler(stream_handler)
 
 # File Debug Handler Config - set to WARNING and above only.
 file_handler = logging.FileHandler('app_logs.log')
 file_handler.setLevel(logging.WARNING)
-formatter = logging.Formatter('[LOG] [%(levelname)s] [%(asctime)s] [Line %(lineno)s] : %(message)s')
+formatter = logging.Formatter('[LOG] [%(levelname)s] [%(asctime)s] [%(funcName)s:%(lineno)s] : %(message)s')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
