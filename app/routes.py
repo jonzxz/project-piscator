@@ -7,11 +7,21 @@ from flask import render_template, request, flash, redirect, url_for
 ## Forms
 from app.forms.RegistrationForm import RegistrationForm
 from app.forms.LoginForm import LoginForm
+from app.forms.AddEmailForm import AddEmailForm
 
 ## Models
 from app.models.User import User
 from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
+
+## Datetime
+from datetime import datetime
+
+## Utils
+from app.utils.EmailUtils import test_mailbox_conn
+
+## Exceptions
+from sqlalchemy.exc import IntegrityError
 
 
 @app.route('/')
@@ -57,8 +67,10 @@ def login():
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         logger.debug("Successfully logged in user %s", user)
-        flash("successfully logged in")
-        return redirect(url_for('index'))
+        if user.is_admin:
+            return redirect(url_for('admin'))
+        if not user.is_admin:
+            return redirect(url_for('dashboard'))
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/logout')
@@ -71,3 +83,40 @@ def logout():
 @app.route('/admin')
 def admin():
     return render_template('admin/index.html')
+
+@app.route('/dashboard', methods=['GET', 'POST'])
+def dashboard():
+    form = AddEmailForm()
+
+    ## --- Add Email Form submission START ---
+    if form.validate_on_submit():
+        email_addr = form.email_address.data
+        password = form.password.data
+        # email_addr = 'piscator.fisherman@gmail.com'
+        # password = 'rfdagjrrjrxfezcp'
+
+        logger.info("Checking mailbox connectivity..")
+        # Attempts a mailbox login via imap_tools based on submit
+        # Adds the email address to the database
+        if test_mailbox_conn(email_addr, password):
+            new_email = EmailAddress()
+            new_email.set_email_address(form.email_address.data)
+            new_email.set_email_password(encryption_engine.encrypt(form.password.data))
+            new_email.set_user_id(current_user.user_id)
+            new_email.set_created_at(datetime.now())
+            new_email.set_active_status(True)
+            try:
+                db.session.add(new_email)
+                db.session.commit()
+            # IntegrityError to catch existing email
+            except IntegrityError:
+                db.session.rollback()
+                flash("Email address already exist in our database!")
+                logger.error("Email already exist")
+                return render_template('dashboard.html', form=form)
+        # If connection to mailbox fails
+        else:
+            flash("Unable to connect to mailbox.")
+    # -- Add Email Form submission END --
+    
+    return render_template('dashboard.html', current_user = current_user.username, form = form)

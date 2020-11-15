@@ -20,11 +20,23 @@ class EmailAddress(db.Model):
     def __repr__(self):
         return "Email Address: {} -- Owned by User ID: {}".format(self.email_address, self.user_id)
 
+    def set_email_address(self, email_addr: str):
+        self.email_address = email_addr
+
+    def get_email_address(self) -> str:
+        return self.email_address
+
     def set_email_password(self, encrypted_pw: str):
         self.email_password = encrypted_pw
 
     def get_email_password(self) -> str:
         return self.email_password
+
+    def set_user_id(self, user_id: int):
+        self.user_id = user_id
+
+    def get_user_id(self) -> int:
+        return self.user_id
 
     def set_mailbox_size(self, last_mb_size: int):
         self.last_mailbox_size = last_mb_size
@@ -46,6 +58,12 @@ class EmailAddress(db.Model):
 
     def get_active_status(self) -> bool:
         return self.active
+
+    def set_created_at(self, created_at: datetime):
+        self.created_at = created_at
+
+    def get_created_at(self) -> datetime:
+        return self.created_at
 
     def set_last_updated(self, last_updated: datetime):
         self.last_updated = last_updated
