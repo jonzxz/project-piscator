@@ -66,7 +66,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="header-hero-image text-center wow fadeIn" data-wow-duration="1.3s" data-wow-delay="1.4s">
-                            <img src="{{ url_for('static', filename='icons/logo.svg') }}">
+                            <img src="{{ url_for('static', filename='images/phish_logo.svg') }}">
                         </div> <!-- header hero image -->
                     </div>
                 </div> <!-- row -->
@@ -181,7 +181,7 @@
                             <h3 class="title">About us <span>- Introduction</span></h3>
                         </div> <!-- section title -->
                         <p class="text">
-                            Project Piscator is the brainchild of 6 final-year students from the University of Wollongong.
+                            Project Piscator is the product of 6 final-year students from the University of Wollongong.
                             Project Piscator aims to deliver a product that can automatically detect phishing emails that have escaped your mail providers' filters and alert you of the danger.
                         </p>
                         <a href="https://mymailsimedu.sharepoint.com/:f:/s/FYP-20-S4-06P/EueIEszo9jVFsQCJBrUXk2oBKSeifYhnxL9vf_6nGL4iKQ" target="_blank" class="main-btn">Access our documentation</a>
@@ -190,7 +190,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="about-image text-center mt-50 wow fadeInRightBig" data-wow-duration="1s" data-wow-delay="0.5s">
-                        <img src="{{ url_for('static', filename='images/about1.svg') }}" alt="about">
+                        <img src="{{ url_for('static', filename='images/about_us.svg') }}" alt="about">
                     </div> <!-- about image -->
                 </div>
             </div> <!-- row -->
@@ -225,7 +225,7 @@
                 </div>
                 <div class="col-lg-6 order-lg-first">
                     <div class="about-image text-center mt-50 wow fadeInRightBig" data-wow-duration="1s" data-wow-delay="0.5s">
-                        <img src="{{ url_for('static', filename='images/about2.svg') }}" alt="about">
+                        <img src="{{ url_for('static', filename='images/about_us2.svg') }}" alt="about">
                     </div> <!-- about image -->
                 </div>
             </div> <!-- row -->
@@ -235,7 +235,7 @@
 
     <!--====== ABOUT PART START ======-->
 
-    <section class="about-area pt-70">
+    <section class="video-counter pt-70">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
@@ -249,9 +249,18 @@
                     </div> <!-- about content -->
                 </div>
                 <div class="col-lg-6">
-                    <div class="about-image text-center mt-50 wow fadeInRightBig" data-wow-duration="1s" data-wow-delay="0.5s">
-                        <img src="{{ url_for('static', filename='images/about3.svg') }}" alt="about">
-                    </div> <!-- about image -->
+                    <div class="video-content mt-50 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s">
+                        <img class="dots" src="{{ url_for('static', filename='images/dots.svg') }}" alt="dots">
+                        <div class="video-wrapper">
+                            <div class="video-image">
+                                <img src="{{ url_for('static', filename='images/video.jpg') }}" alt="video">
+                            </div>
+                            <div class="video-icon">
+                                <a href="https://www.youtube.com/watch?v=ZHNn9l2_yVg" target="_blank" class="video-popup"><i class="lni lni-play"></i></a>
+                            </div>
+                        </div> <!-- video wrapper -->
+                    </div> <!-- video content -->
+
                 </div>
             </div> <!-- row -->
         </div> <!-- container -->
@@ -267,21 +276,13 @@
 
     <!--====== VIDEO COUNTER PART START ======-->
 
-    <section id="facts" class="video-counter pt-70">
+    <section id="facts" class="about-area pt-70">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
-                    <div class="video-content mt-50 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s">
-                        <img class="dots" src="{{ url_for('static', filename='images/dots.svg') }}" alt="dots">
-                        <div class="video-wrapper">
-                            <div class="video-image">
-                                <img src="{{ url_for('static', filename='images/video.png') }}" alt="video">
-                            </div>
-                            <div class="video-icon">
-                                <a href="https://www.youtube.com/watch?v=ZHNn9l2_yVg" class="video-popup"><i class="lni lni-play"></i></a>
-                            </div>
-                        </div> <!-- video wrapper -->
-                    </div> <!-- video content -->
+                    <div class="about-image text-center mt-50 wow fadeInRightBig" data-wow-duration="1s" data-wow-delay="0.5s">
+                        <img src="{{ url_for('static', filename='images/about_us4.svg') }}" alt="about">
+                    </div> <!-- about image -->
                 </div>
                 <div class="col-lg-6">
                     <div class="counter-wrapper mt-50 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.8s">
