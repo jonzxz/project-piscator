@@ -21,4 +21,4 @@ class Config(object):
     RECAPTCHA_OPTIONS = {'theme' : 'black'}
 
     # Configures ReCAPTCHA to be disabled or enabled, SET IT TO DISABLE ON PRODUCTION
-    TESTING=True
+    TESTING=os.environ.get('TESTING') or True
