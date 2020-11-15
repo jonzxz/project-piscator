@@ -1,27 +1,65 @@
 <!doctype html>
 
-<html>
+<html class="no-js" lang="en">
 	<head>
-		<link rel="stylesheet"
-		href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-		crossorigin="anonymous">
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-		crossorigin="anonymous">
-		</script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-		crossorigin="anonymous">
-		</script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-		crossorigin="anonymous">
-		</script>
-		<link rel="stylesheet" href="/static/style.css" type="text/css">
+	    <meta charset="utf-8">
+
+	    <!--====== Title ======-->
+	    <title>Project Piscator</title>
+
+	    <meta name="description" content="">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	    <!--====== Favicon Icon ======-->
+	    <link rel="shortcut icon" href="{{ url_for('static', filename='icons/logo.svg') }}">
+
+	    <!--====== Animate CSS ======-->
+	    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
+
+	    <!--====== Line Icons CSS ======-->
+	    <link rel="stylesheet" href="{{ url_for('static', filename='css/LineIcons.2.0.css') }}">
+
+	    <!--====== Bootstrap CSS ======-->
+	    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-4.5.0.min.css') }}">
+
+	    <!--====== Default CSS ======-->
+	    <link rel="stylesheet" href="{{ url_for('static', filename='css/default.css') }}">
+
+	    <!--====== Style CSS ======-->
+	    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+	    <!--====== Jquery js ======-->
+	    <script src="{{ url_for('static', filename='js/vendor/jquery-3.5.1-min.js') }}"></script>
+	    <script src="{{ url_for('static', filename='js/vendor/modernizr-3.7.1.min.js') }}"></script>
+
+	    <!--====== Bootstrap js ======-->
+	    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+	    <script src="{{ url_for('static', filename='js/bootstrap-4.5.0.min.js') }}"></script>
+
+	    <!--====== Plugins js ======-->
+	    <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
+
+	    <!--====== Counter Up js ======-->
+	    <script src="{{ url_for('static', filename='js/waypoints.min.js') }}"></script>
+	    <script src="{{ url_for('static', filename='js/jquery.counterup.min.js') }}"></script>
+
+
+
+	    <!--====== Scrolling Nav js ======-->
+	    <script src="{{ url_for('static', filename='js/jquery.easing.min.js') }}"></script>
+	    <script src="{{ url_for('static', filename='js/scrolling-nav.js') }}"></script>
+
+	    <!--====== wow js ======-->
+	    <script src="{{ url_for('static', filename='js/wow.min.js') }}"></script>
+
+	    <!--====== Particles js ======-->
+	    <script src="{{ url_for('static', filename='js/particles.min.js') }}"></script>
+
+	    <!--====== Main js ======-->
+	    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 	</head>
 
-	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+	<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 	  <a class="navbar-brand d-inline-block align-top" href="#">
 			<img src="/static/icons/fish_2.svg" width="70" height="70">
 			<span> Project Piscator </span>
@@ -60,11 +98,36 @@
 	    </ul>
 	  </div>
 	</nav>
-	<title> {{ title }} </title>
+	<title> {{ title }} </title> -->
 	<!-- main content display -->
 
-	<div class='main-container'>
-	{% block content %}{% endblock %}
+	<body>
+		<!-- somehow appears in all pages -->
+		<!-- [if IE]>
+		<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+	<![endif] -->
+
+	<!--====== PRELOADER PART START ======-->
+	<!-- circle loading thing -->
+	<div class="preloader">
+			<div class="loader">
+					<div class="ytp-spinner">
+							<div class="ytp-spinner-container">
+									<div class="ytp-spinner-rotator">
+											<div class="ytp-spinner-left">
+													<div class="ytp-spinner-circle"></div>
+											</div>
+											<div class="ytp-spinner-right">
+													<div class="ytp-spinner-circle"></div>
+											</div>
+									</div>
+							</div>
+					</div>
+			</div>
 	</div>
+	<!--====== PRELOADER PART ENDS ======-->
+
+	{% block content %}{% endblock %}
+
 	</body>
 </html>
