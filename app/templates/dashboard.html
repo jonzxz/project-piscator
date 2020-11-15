@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<span class="h1"> User Dashboard </span><br/>
+<span class="h2"> Currently logged in: <b>{{ current_user }}</b></span><br/>
+
+<a href="{{ url_for('logout') }}">Logout</a>
+
+<form action="" method="post" novalidate>
+  {{ form.hidden_tag() }}
+  {{ form.email_address.label}}
+  {{ form.email_address(size=32) }}
+
+  {% for error in form.email_address.errors %}
+    <span> {{ error }} </span>
+  {% endfor %}
+
+  </br>
+  {{ form.password.label }}
+  {{ form.password }}
+  </br>
+  {{ form.submit }}
+</form>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <h2> {{ message }} </h2>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% endblock %}
