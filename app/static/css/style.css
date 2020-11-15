@@ -5,13 +5,13 @@
     Author URI: https://uideck.com/
     Support: https://uideck.com/support/
     Version: 1.1
-    
+
 -----------------------------------------------------------------------------------
 
     CSS INDEX
     ===================
 
-    01.COMMON 
+    01.COMMON
     02.HEADER
     03.BRAND
     04.SERVICES
@@ -25,7 +25,7 @@
 
 -----------------------------------------------------------------------------------*/
 /*===========================
-     01.COMMON css 
+     01.COMMON css
 ===========================*/
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,700|Lato:300,400,700&display=swap");
 body {
@@ -487,7 +487,7 @@ p {
     transform: rotate(-130deg); } }
 
 /*===========================
-      02.HEADER css 
+      02.HEADER css
 ===========================*/
 /*===== NAVBAR =====*/
 .navbar-area {
@@ -811,7 +811,7 @@ p {
       padding-top: 30px; } }
 
 /*===========================
-      03.BRAND css 
+      03.BRAND css
 ===========================*/
 @media (max-width: 767px) {
   .brand-logo {
@@ -844,7 +844,7 @@ p {
     opacity: 1; }
 
 /*===========================
-      04.SERVICES css 
+      04.SERVICES css
 ===========================*/
 .single-services {
   background-color: #fff;
@@ -937,7 +937,7 @@ p {
       transform: rotate(25deg); }
 
 /*===========================
-      05.ABOUT css 
+      05.ABOUT css
 ===========================*/
 .about-area {
   position: relative;
@@ -986,7 +986,7 @@ p {
       background-position: right center; }
 
 /*===========================
-    06.VIDEO COUNTER css 
+    06.VIDEO COUNTER css
 ===========================*/
 .video-content {
   position: relative;
@@ -1119,7 +1119,7 @@ p {
 
 
 /*===========================
-       10.SUBSCRIBE  css 
+       10.SUBSCRIBE  css
 ===========================*/
 .subscribe-area {
   padding: 40px 50px 90px;
@@ -1167,6 +1167,30 @@ p {
       color: #B9B9B9; }
     .subscribe-form input:focus {
       border-color: #361CC1; }
+
+    .subscribe-form textarea {
+      border: 2px solid #E1E1E1;
+      resize: none;
+    }
+    .subscribe-form textarea::placeholder {
+      opacity: 1;
+      color: #B9B9B9; }
+    .subscribe-form textarea::-moz-placeholder {
+      opacity: 1;
+      color: #B9B9B9; }
+    .subscribe-form textarea::-moz-placeholder {
+      opacity: 1;
+      color: #B9B9B9; }
+    .subscribe-form textarea::-webkit-input-placeholder {
+      opacity: 1;
+      color: #B9B9B9; }
+
+    .subscribe-form .form-control:focus {
+        border: 2px solid #361CC1;
+        border-radius: 5px;
+        /* box-shadow: 0 0 0 0.2rem rgba(186, 104, 200, .25); */
+    }
+
   .subscribe-form button {
     position: absolute;
     top: 0;
@@ -1199,7 +1223,7 @@ p {
       background-position: right center; }
 
 /*===========================
-       11.FOOTER  css 
+       11.FOOTER  css
 ===========================*/
 .footer-area {
   background-position: top center;
