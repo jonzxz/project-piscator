@@ -13,10 +13,10 @@ $(function () {
         var scroll = $(window).scrollTop();
         if (scroll < 20) {
             $(".navbar-area").removeClass("sticky");
-            $(".navbar .navbar-brand img").attr("src", "/static/icons/fish.svg");
+            $(".navbar .navbar-brand img").attr("src", "/static/icons/logo_word.svg");
         } else {
             $(".navbar-area").addClass("sticky");
-            $(".navbar .navbar-brand img").attr("src", "/static/icons/fish.svg");
+            $(".navbar .navbar-brand img").attr("src", "/static/icons/logo_word_black.svg");
         }
     });
 
