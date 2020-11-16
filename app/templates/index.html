@@ -30,14 +30,12 @@
                                     <li class="nav-item">
                                         <a class="page-scroll" href="#about">About</a>
                                     </li>
+
                                     <li class="nav-item">
-                                        <a class="page-scroll" href="#facts">Why</a>
+                                        <a class="page-scroll" href="#facts">Facts</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="page-scroll" href="#team">Team</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="page-scroll" href="#blog">Blog</a>
+                                        <a class="page-scroll" href="#footer">Contact</a>
                                     </li>
                                 </ul>
                             </div> <!-- navbar collapse -->
@@ -386,9 +384,9 @@
                                     <h4 class="title">Quick Link</h4>
                                 </div>
                                 <ul class="link">
-                                    <li><a href="#">Register</a></li>
-                                    <li><a href="#">Documentation</a></li>
-                                    <li><a href="#">Source Code</a></li>
+                                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                                    <li><a href="https://mymailsimedu.sharepoint.com/:f:/s/FYP-20-S4-06P/EueIEszo9jVFsQCJBrUXk2oBKSeifYhnxL9vf_6nGL4iKQ" target="_blank">Documentation</a></li>
+                                    <li><a href="https://github.com/jonzxz/project-piscator" target="_blank">Source Code</a></li>
                                 </ul>
                             </div> <!-- footer wrapper -->
                             <div class="link-wrapper wow fadeIn" data-wow-duration="1s" data-wow-delay="0.6s">
@@ -396,8 +394,8 @@
                                     <h4 class="title">Resources</h4>
                                 </div>
                                 <ul class="link">
-                                    <li><a href="#">Privacy Policy</a></li>
-                                    <li><a href="#">Terms of Service</a></li>
+                                    <li><a href="#">Privacy Policy</a></li> <!-- To be done, url_for(privacy)-->
+                                    <li><a href="#">Terms of Service</a></li> <!-- To be done, url_for(terms_service) -->
                                 </ul>
                             </div> <!-- footer wrapper -->
                         </div> <!-- footer link -->
