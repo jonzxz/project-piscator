@@ -2,6 +2,7 @@
 from app import logger
 from imap_tools import MailBox
 import imaplib
+from app.utils.Constants import *
 
 def test_mailbox_conn(email_addr, password):
     try:
@@ -20,7 +21,7 @@ def test_mailbox_conn(email_addr, password):
 def get_imap_svr(email_addr):
     mail_provider = email_addr.split(sep='@')[1]
     if 'gmail' in mail_provider:
-        return 'imap.gmail.com'
+        return IMAP_GMAIL
     if 'hotmail' in mail_provider or 'live' in mail_provider or 'outlook' in mail_provider:
-        return 'outlook.office365.com'
-    # if hotmail / live in mail provider return outlook imap svr
+        return IMAP_OUTLOOK
+    # more imap servers to be added - test mailbox conn first before adding in here
