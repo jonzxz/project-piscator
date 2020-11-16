@@ -45,10 +45,18 @@ def register():
         if form.validate_on_submit():
             new_user = User(username=form.username.data)
             new_user.set_password(form.password.data)
-            db.session.add(new_user)
-            db.session.commit()
+            try:
+                db.session.add(new_user)
+                db.session.commit()
+                login_user(new_user)
+                return redirect(url_for('dashboard'))
+            except IntegrityError:
+                db.session.rollback()
+                flash("Username already taken!")
+                logger.error("Username already taken")
+                return redirect(url_for("reg_form_reset"))
             logger.debug("Successfully created user %s", new_user)
-            return render_template('success.html', usrname = form.username.data)
+            # return render_template('success.html', usrname = form.username.data)
         else:
             logger.warn("Registration failed, user not registered")
 
@@ -86,6 +94,10 @@ def admin():
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+    # Redirects non-logged in users to index if they access dashboard from URL
+    if current_user.is_anonymous:
+        logger.warn("User is anonymous, redirecting to index")
+        return redirect(url_for('index'))
     form = AddEmailForm()
 
     ## --- Add Email Form submission START ---
@@ -96,7 +108,10 @@ def dashboard():
         logger.info("Checking mailbox connectivity..")
         # Attempts a mailbox login via imap_tools based on submit
         # Adds the email address to the database
-        if test_mailbox_conn(email_addr, password):
+        # -- If you want to test adding emails to a user account without checking connection
+        # -- change the if statement to if True:
+        # if test_mailbox_conn(email_addr, password):
+        if True:
             new_email = EmailAddress()
             new_email.set_email_address(form.email_address.data)
             new_email.set_email_password(encryption_engine.encrypt(form.password.data))
@@ -111,21 +126,28 @@ def dashboard():
                 db.session.rollback()
                 flash("Email address already exist in our database!")
                 logger.error("Email already exist")
-                return redirect(url_for('form_reset'))
+                return redirect(url_for('mail_form_reset'))
         # If connection to mailbox fails
         else:
             flash("Unable to connect to mailbox.")
     ## -- Add Email Form submission END --
     ## -- Default Dashboard Loading START --
-    else:
-        existing_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == current_user.user_id).all()
-        logger.debug(existing_emails)
+
+    existing_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == current_user.user_id).all()
+    logger.debug(existing_emails)
     return render_template('dashboard.html',
     current_user = current_user.username, form = form,
     user_emails = existing_emails)
     ## -- Default Dashboard Loading END --
 
-@app.route('/form_reset', methods=['GET'])
-def form_reset():
+
+# Reroute functions to prevent form resubmission on refresh
+@app.route('/mail_form_reset', methods=['GET'])
+def mail_form_reset():
     logger.info("Entering function to reset form submission")
     return redirect(url_for('dashboard'))
+
+@app.route('/reg_form_reset', methods=['GET'])
+def reg_form_reset():
+    logger.info("Entering function to reset form submission")
+    return redirect(url_for('register'))

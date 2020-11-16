@@ -134,11 +134,18 @@
 					{{ form.recaptcha }}
 				</div>
         <p>
-        </br>
-        {{ form.submit(class='btn btn-outline-secondary')}}
+        <br/>
+        {{ form.submit(class='btn btn-outline-secondary') }}
         </p>
         </div>
     </form>
-    <!--js-->
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+		{% with messages = get_flashed_messages() %}
+		  {% if messages %}
+		    {% for message in messages %}
+		      <h2> {{ message }} </h2>
+		    {% endfor %}
+		  {% endif %}
+		{% endwith %}
+
+
 {% endblock %}
