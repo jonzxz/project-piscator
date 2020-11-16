@@ -38,7 +38,8 @@ def index():
 def register():
     logger.debug("Entering register function")
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        logger.info("User is logged in, redirecting to dashboard")
+        return redirect(url_for('dashboard'))
     form = RegistrationForm()
     if request.method =='POST':
         logger.debug("Register form submitted")
