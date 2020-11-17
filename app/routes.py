@@ -27,12 +27,7 @@ from sqlalchemy.exc import IntegrityError
 @app.route('/')
 @app.route('/index')
 def index():
-    title = 'Home'
-    project = {'project_name' : "Piscator"}
-    team_members = ["Jon", "HH", "Yannis", "Joy", "CT", "Zuhree"]
-    # dummy to list all users
-    all_users = User.query.all()
-    return render_template('index.html', title=title, project=project, team_members=team_members, all_users = all_users)
+    return render_template('index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -95,7 +90,10 @@ def admin():
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
     logger.info("Entering dashboard home..")
-    return render_template('dashboard_home.html')
+    if current_user.is_anonymous:
+        logger.warn("Anonymous user in dashboard home, going to index..")
+        return redirect(url_for('index'))
+    return render_template('dashboard/dashboard_home.html')
 
 @app.route('/dashboard/emails', methods=['GET', 'POST'])
 def dash_email():
@@ -141,7 +139,7 @@ def dash_email():
 
     existing_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == current_user.user_id).all()
     logger.debug(existing_emails)
-    return render_template('dashboard_emails.html',
+    return render_template('dashboard/dashboard_emails.html',
     current_user = current_user.username, form = form,
     user_emails = existing_emails)
     ## -- Default Dashboard Loading END --
@@ -149,7 +147,10 @@ def dash_email():
 @app.route('/dashboard/account', methods=['GET'])
 def dash_account():
     logger.info("Entering dashboard account..")
-    return render_template('dashboard_account.html')
+    if current_user.is_anonymous:
+        logger.warn("Anonymous user in dashboard account, going to index..")
+        return redirect(url_for('index'))
+    return render_template('dashboard/dashboard_account.html')
 
 # Reroute functions to prevent form resubmission on refresh
 @app.route('/mail_form_reset', methods=['GET'])
