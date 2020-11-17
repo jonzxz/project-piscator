@@ -1,44 +1,44 @@
-/* Page Fade Animations */
-.main-container {
-  -webkit-animation: fadein 2s; /* Safari, Chrome and Opera > 12.1 */
- -moz-animation: fadein 2s; /* Firefox < 16 */
-  -ms-animation: fadein 2s; /* Internet Explorer */
-   -o-animation: fadein 2s; /* Opera < 12.1 */
-      animation: fadein 2s;
+#wrapper {
+   overflow-x: hidden;
 }
 
-@keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+#sidebar-wrapper {
+ min-height: 100vh;
+ margin-left: -15rem;
+ -webkit-transition: margin .25s ease-out;
+ -moz-transition: margin .25s ease-out;
+ -o-transition: margin .25s ease-out;
+ transition: margin .25s ease-out;
 }
 
-/* Firefox < 16 */
-@-moz-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+#sidebar-wrapper .sidebar-heading {
+ padding: 0.875rem 1.25rem;
+ font-size: 1.2rem;
 }
 
-/* Safari, Chrome and Opera > 12.1 */
-@-webkit-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+#sidebar-wrapper .list-group {
+ width: 15rem;
 }
 
-/* Internet Explorer */
-@-ms-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+#page-content-wrapper {
+ min-width: 100vw;
 }
 
-/* Opera < 12.1 */
-@-o-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+#wrapper.toggled #sidebar-wrapper {
+ margin-left: 0;
 }
 
-.topnav {
-    overflow:hidden;
-}
-.topnav-right {
-    float: right;
+@media (min-width: 768px) {
+ #sidebar-wrapper {
+   margin-left: 0;
+ }
+
+ #page-content-wrapper {
+   min-width: 0;
+   width: 100%;
+ }
+
+ #wrapper.toggled #sidebar-wrapper {
+   margin-left: -15rem;
+ }
 }

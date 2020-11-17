@@ -43,7 +43,9 @@
 	    <script src="{{ url_for('static', filename='js/waypoints.min.js') }}"></script>
 	    <script src="{{ url_for('static', filename='js/jquery.counterup.min.js') }}"></script>
 
-
+			<!--===== Popper Js ===== -->
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
 	    <!--====== Scrolling Nav js ======-->
 	    <script src="{{ url_for('static', filename='js/jquery.easing.min.js') }}"></script>
@@ -58,48 +60,6 @@
 	    <!--====== Main js ======-->
 	    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 	</head>
-
-	<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-	  <a class="navbar-brand d-inline-block align-top" href="#">
-			<img src="/static/icons/fish_2.svg" width="70" height="70">
-			<span> Project Piscator </span>
-		</a>
-	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-	    <span class="navbar-toggler-icon"></span>
-	  </button>
-
-	  <div class="collapse navbar-collapse">
-	    <ul class="navbar-nav mr-auto pl-5">
-	      <li class="nav-item active">
-	        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-	      </li>
-	      <li class="nav-item">
-	        <a class="nav-link disabled" href="#">About</a>
-	      </li>
-				<li class="nav-item">
-					<a class="nav-link disabled" href="#">Features</a>
-				</li>
-				{% if current_user.is_authenticated %}
-					<li class="nav-item">
-						<a class="btn btn-primary" href="#">My Account</a>
-					</li>
-					<li class="nav-item">
-						<a class="btn btn-primary" href="{{ url_for('logout' )}}">Logout</a>
-					</li>
-					Currently Logged in as {{ current_user.username }}
-				{% else %}
-					<li class="nav-item">
-						<a class="btn btn-primary" href="{{ url_for('register') }}">Register</a>
-					</li>
-					<li class="nav-item">
-						<a class="btn btn-primary" href="{{ url_for('login') }}">Login</a>
-					</li>
-				{% endif %}
-	    </ul>
-	  </div>
-	</nav>
-	<title> {{ title }} </title> -->
-	<!-- main content display -->
 
 	<body>
 		<!-- somehow appears in all pages -->

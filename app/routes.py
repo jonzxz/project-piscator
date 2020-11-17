@@ -88,13 +88,18 @@ def logout():
     logger.debug("Successfully logged out")
     return redirect(url_for('index'))
 
-
 @app.route('/admin')
 def admin():
     return render_template('admin/index.html')
 
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/dashboard', methods=['GET'])
 def dashboard():
+    logger.info("Entering dashboard home..")
+    return render_template('dashboard_home.html')
+
+@app.route('/dashboard/emails', methods=['GET', 'POST'])
+def dash_email():
+    logger.info("Entering dashboard emails..")
     # Redirects non-logged in users to index if they access dashboard from URL
     if current_user.is_anonymous:
         logger.warn("User is anonymous, redirecting to index")
@@ -136,11 +141,15 @@ def dashboard():
 
     existing_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == current_user.user_id).all()
     logger.debug(existing_emails)
-    return render_template('dashboard.html',
+    return render_template('dashboard_emails.html',
     current_user = current_user.username, form = form,
     user_emails = existing_emails)
     ## -- Default Dashboard Loading END --
 
+@app.route('/dashboard/account', methods=['GET'])
+def dash_account():
+    logger.info("Entering dashboard account..")
+    return render_template('dashboard_account.html')
 
 # Reroute functions to prevent form resubmission on refresh
 @app.route('/mail_form_reset', methods=['GET'])
