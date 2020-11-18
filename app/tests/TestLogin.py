@@ -3,8 +3,8 @@ from app import app
 import unittest
 
 # Test with
-# nose2 -v app.tests.TestRegister
-class TestRegister(unittest.TestCase):
+# nose2 -v app.tests.TestLogin
+class TestLogin(unittest.TestCase):
     @classmethod
     def setupClass(cls):
         pass
@@ -27,26 +27,24 @@ class TestRegister(unittest.TestCase):
         result = self.app.get('/')
         self.assertEqual(result.status_code, 200)
 
-    def register(self, username, password, confirm_password):
+    def login(self, username, password):
         return self.app.post(
-        '/register', data={
+        '/login', data={
         'username' : username,
-        'password' : password,
-        'confirm_password' : confirm_password
+        'password' : password
         },
         follow_redirects=True
         )
 
-    ## Make sure user does not exist in database!!
-    def test_valid_register(self):
-        response = self.register('user10', 'password10', 'password10')
+    def test_valid_login(self):
+        response = self.login('user1', 'password')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'dashboard', response.data)
 
-    def test_invalid_register(self):
-        response = self.register('user6', 'password6', 'PASSWORD6')
+    def test_invalid_login(self):
+        response = self.login('qweqwe', '123456')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Successfully created user', response.data)
+        self.assertIn(b'dashboard', response.data)
 
 if __name__ == "__main__":
     unittest.main()
