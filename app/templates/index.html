@@ -345,12 +345,15 @@
                     <div class="col-lg-6">
                         <div class="subscribe-form mt-50">
                             <!-- implement Flask-Mail here -->
-                            <form action="#">
-                                <input type="text" placeholder="Your email">
+                            <form action="" method="post" novalidate>
+                                {{ contact_form.email_address(placeholder='Your email') }}
+                                <!-- <input type="text" placeholder="Your email"> -->
                                 <div class="purple-border mt-2">
-                                    <textarea class="form-control" rows="3" placeholder="Enter your question"></textarea>
+                                    {{ contact_form.message(class='form-control', placeholder='Enter your question', rows='3') }}
+                                    <!-- <textarea class="form-control" rows="3" placeholder="Enter your question"></textarea> -->
                                 </div>
-                                <button class="main-btn">Talk to us</button>
+                                {{ contact_form.submit(class='main-btn mt-2') }}
+                                <!-- <button class="main-btn">Talk to us</button> -->
                             </form>
                         </div>
                     </div>

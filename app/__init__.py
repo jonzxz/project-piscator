@@ -43,6 +43,7 @@ stream_formatter = logging.Formatter('[LOG] [%(levelname)s] [%(funcName)s:%(line
 stream_handler.setFormatter(stream_formatter)
 logger.addHandler(stream_handler)
 
+
 # File Debug Handler Config - set to WARNING and above only.
 file_handler = logging.FileHandler('app_logs.log')
 file_handler.setLevel(logging.WARNING)
@@ -50,6 +51,9 @@ formatter = logging.Formatter('[LOG] [%(levelname)s] [%(asctime)s] [%(funcName)s
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+# Flask Mail
+from flask_mail import Mail
+mailer = Mail(app)
 
 from app import routes
 # Add all new models here

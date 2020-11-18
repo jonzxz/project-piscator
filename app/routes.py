@@ -8,6 +8,7 @@ from flask import render_template, request, flash, redirect, url_for
 from app.forms.RegistrationForm import RegistrationForm
 from app.forms.LoginForm import LoginForm
 from app.forms.AddEmailForm import AddEmailForm
+from app.forms.ContactForm import ContactForm
 
 ## Models
 from app.models.User import User
@@ -19,15 +20,21 @@ from datetime import datetime
 
 ## Utils
 from app.utils.EmailUtils import test_mailbox_conn
+from app.utils.EmailUtils import send_contact_us_email
 
 ## Exceptions
 from sqlalchemy.exc import IntegrityError
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    contact_form = ContactForm()
+    if request.method == 'POST':
+        logger.debug("Email received")
+        send_contact_us_email(contact_form.email_address.data, contact_form.message.data)
+        return redirect(url_for('contact_form_reset'))
+    return render_template('index.html', contact_form = contact_form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -162,3 +169,7 @@ def mail_form_reset():
 def reg_form_reset():
     logger.info("Entering function to reset form submission")
     return redirect(url_for('register'))
+
+@app.route('/contact_form_reset', methods=['GET'])
+def contact_form_reset():
+    return redirect(url_for('index'))

@@ -1,5 +1,6 @@
 import os
-from app.utils.RecaptchaUtils import get_recaptcha_secret
+from app.utils.FileUtils import get_recaptcha_secret
+from app.utils.FileUtils import get_server_mail_cred
 
 class Config(object):
     POSTGRES_USER = "postgres"
@@ -20,5 +21,18 @@ class Config(object):
     RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET') or get_recaptcha_secret()
     RECAPTCHA_OPTIONS = {'theme' : 'black'}
 
-    # Configures ReCAPTCHA to be disabled or enabled, SET IT TO DISABLE ON PRODUCTION
+    # Configures ReCAPTCHA and Contact Us
+    # If TESTING = True, ReCAPTCHA will be active and Flask-Mail Contact us will work
+    # If TESTING = False, ReCAPTCHA will be inactive and Flask-Mail Contact us will NOT work
     TESTING=os.environ.get('TESTING') or True
+
+    # Flask-Mail Configs
+    MAIL_CREDS = get_server_mail_cred()
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USERNAME = os.environ.get('MAIL_ADDR') or MAIL_CREDS[0]
+    MAIL_PASSWORD = os.environ.get('MAIL_PASS') or MAIL_CREDS[1]
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_ADDR') or MAIL_CREDS[0]
+    MAIL_USE_TSL = False
+    MAIL_USE_SSL = True
+    MAIL_SUPRRESS_SEND = False
