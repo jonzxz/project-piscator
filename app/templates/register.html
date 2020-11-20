@@ -1,16 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>hello</h1>
 		<head>
-		</br>
-		</br>
-		</br>
-		</br>
-		<hr width="50%" color= blue size=2>
-		<div style="text-align:center;">
-    <a class="btn btn-outline-secondary" href="{{ url_for('login') }}">Login to existing Account</a><br/>
-    </div>
 		<style>
         .or
         {
@@ -55,13 +46,13 @@
 
 			.balloon:before, .balloon:after
 			{
+					visibility:hidden;
   				bottom: 10%;
   				left: 50%;
   				transform: translate(-140%, 100%);
   				position: absolute;
-  				z-index: 10;
+  				z-index: 1;
   				transition: all 0.18s ease-out 0.18s;
-  				opacity: 0;
   		}
 
 			.balloon:after
@@ -75,41 +66,48 @@
   			position: absolute;
   			width:250px;
 		}
-		.balloon:before
-		{
-  			content: "";
-  			margin-bottom: 4px;
-  			color: grey;
-  	}
+		
+			.balloon:hover:after
+			{
+					visibility:visible;
+			}
 
-	.balloon:hover:before, .balloon:hover:after
-	{
-			opacity: 1;
-	}
-
-	.button
-	{
-			text-align: center;
-			background: white;
-			color: grey;
-			border-radius: 100px;
-  		border: 2px solid #cccccc;
-	}
-
+			.button
+			{
+					text-align: center;
+					background: white;
+					color: grey;
+					border-radius: 100px;
+  				border: 2px solid #cccccc;
+			}
+				img
+        {
+  					width: 120px;
+  					margin-left:430%;
+        }
     </style>
     </head>
-
-	<body>
+		</br>
+		</br>
+		</br>
+		<a href="{{ url_for('index') }}">
+		<img src="{{ url_for('static', filename='icons/logo.svg') }}" alt='Logo' >
+		</a>
+		<hr style="margin-left:27%" width="45%" color=blue>
+		<div style="text-align:center;">
+    <a class="btn btn-outline-secondary" href="{{ url_for('login') }}">Login to existing Account</a>
+    </div>
+    
     <div class ="or">
-    <div class = "bold">Or</div>
-    </div></br>
-    <h4 style="text-align:center">Create a new Account</h4></br>
-	</body>
+    <div class ="bold">Or</div>
+    </div>
+    </br><h4 style="text-align:center">Create a new Account</h4>
+
     <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <p class="margin">
             {{ form.username.label}}</br>
-            {{ form.username(size=40) }}
+            {{ form.username(size=37) }}
             {% for error in form.username.errors %}
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
@@ -118,7 +116,7 @@
             {{ form.password.label }}
 						<button class="button balloon"
 						balloon-data="Note: Please ensure password combination of a least 8 numbers and letters">!</button></br>
-            {{ form.password(size=40) }}
+            {{ form.password(size=37) }}
             {% for error in form.password.errors %}
             <span style="color: red;">{{ error }}</span>
             {% endfor %}
@@ -126,27 +124,20 @@
 
         <p class="margin">
             {{ form.confirm_password.label }}</br>
-            {{ form.confirm_password(size=40) }}
+            {{ form.confirm_password(size=37) }}
             {% for error in form.confirm_password.errors %}
             <span style="color: red;">{{ error }}</span>
-            {% endfor %}
+            {% endfor %}  
         <div style="text-align:center;">
         <div class="recaptcha">
-					{{ form.recaptcha }}
+					</br>{{ form.recaptcha }}
 				</div>
         <p>
-        <br/>
-        {{ form.submit(class='btn btn-outline-secondary') }}
+        </br>
+        {{ form.submit(class='btn btn-outline-secondary')}}
         </p>
         </div>
     </form>
-		{% with messages = get_flashed_messages() %}
-		  {% if messages %}
-		    {% for message in messages %}
-		      <h2> {{ message }} </h2>
-		    {% endfor %}
-		  {% endif %}
-		{% endwith %}
-
-
+    <!--js-->
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 {% endblock %}
