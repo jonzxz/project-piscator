@@ -1,0 +1,19 @@
+.text-lg {
+  font-size: 150%;
+}
+
+body {
+  background: -webkit-linear-gradient(180deg, #1dd0e7, #1970c2);
+  background: -moz-linear-gradient(180deg, #1dd0e7, #1970c2);
+  background: -ms-linear-gradient(180deg, #1dd0e7, #1970c2);
+  background: -o-linear-gradient(180deg, #1dd0e7, #1970c2);
+  background: linear-gradient(180deg, #1dd0e7, #1970c2);
+}
+
+.container {
+  height:100%;
+}
+
+.round-radius {
+  border-radius: 25px;
+}

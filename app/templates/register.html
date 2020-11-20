@@ -1,143 +1,67 @@
 {% extends "base.html" %}
 
 {% block content %}
-		<head>
-		<style>
-        .or
-        {
-            position: absolute;
-            text-align: center;
-            font-weight: bold;
-            font-size:16px;
-            width: 100%;
-        }
-        .or div:after, .or div:before
-        {
-            position: absolute;
-            top: 50%;
-            background: blue;
-            content: "";
-            height: 1px;
-            width: 15%;
-        }
-        .or div:before
-        {
-            left: 33%;
-        }
-        .or div:after
-        {
-            right: 33%;
-        }
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login_reg_style.css') }}">
 
-        p.margin
-        {
-        		margin-left:800px
-        }
-
-    		.g-recaptcha
-    		{
-        	display: inline-block;
-    		}
-
-			.balloon
-			{
-  			position: relative;
-			}
-
-			.balloon:before, .balloon:after
-			{
-					visibility:hidden;
-  				bottom: 10%;
-  				left: 50%;
-  				transform: translate(-140%, 100%);
-  				position: absolute;
-  				z-index: 1;
-  				transition: all 0.18s ease-out 0.18s;
-  		}
-
-			.balloon:after
-			{
-  			background-color: white;
-  			border: 2px solid #cccccc;
-  			color: black;
-  			content: attr(balloon-data);
-  			margin-bottom: 12px;
-  			padding: 5px;
-  			position: absolute;
-  			width:250px;
-		}
-		
-			.balloon:hover:after
-			{
-					visibility:visible;
-			}
-
-			.button
-			{
-					text-align: center;
-					background: white;
-					color: grey;
-					border-radius: 100px;
-  				border: 2px solid #cccccc;
-			}
-				img
-        {
-  					width: 120px;
-  					margin-left:430%;
-        }
-    </style>
-    </head>
-		</br>
-		</br>
-		</br>
-		<a href="{{ url_for('index') }}">
-		<img src="{{ url_for('static', filename='icons/logo.svg') }}" alt='Logo' >
-		</a>
-		<hr style="margin-left:27%" width="45%" color=blue>
-		<div style="text-align:center;">
-    <a class="btn btn-outline-secondary" href="{{ url_for('login') }}">Login to existing Account</a>
-    </div>
-    
-    <div class ="or">
-    <div class ="bold">Or</div>
-    </div>
-    </br><h4 style="text-align:center">Create a new Account</h4>
-
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p class="margin">
-            {{ form.username.label}}</br>
-            {{ form.username(size=37) }}
-            {% for error in form.username.errors %}
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </p>
-        <p class="margin">
-            {{ form.password.label }}
-						<button class="button balloon"
-						balloon-data="Note: Please ensure password combination of a least 8 numbers and letters">!</button></br>
-            {{ form.password(size=37) }}
-            {% for error in form.password.errors %}
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
-        </p>
-
-        <p class="margin">
-            {{ form.confirm_password.label }}</br>
-            {{ form.confirm_password(size=37) }}
-            {% for error in form.confirm_password.errors %}
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}  
-        <div style="text-align:center;">
-        <div class="recaptcha">
-					</br>{{ form.recaptcha }}
-				</div>
-        <p>
-        </br>
-        {{ form.submit(class='btn btn-outline-secondary')}}
-        </p>
+  <div class="container-2">
+    <div class="row justify-content-center">
+      <div class="col-md-12 justify-content-center">
+        <div class="logo mt-3 w-100 animated fadeInDown d-flex justify-content-center" style="margin-left:-8%"> <!-- play cheat margin to make text centered-->
+          <a href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='icons/logo_word.svg') }}" alt='Logo' >
+          </a>
         </div>
-    </form>
-    <!--js-->
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+      </div>
+    </div>
+  </div>
+  <div class="container w-25 p-4 mb-5 round-radius" style="background-color: #f9f9f9">
+  <div class="row">
+    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+      <div class="login-existing">
+        <a class="main-btn" href="{{ url_for('login') }}">Login to existing Account</a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+      <div class="text-lg font-weight-bold">Or</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+      <div class="h1">Create a new Account</div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+      <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="row mt-2 mb-2 justify-content-center">
+          <div class="col-xs-6 purple-border">
+            {{ form.username(size=33, class='form-control text-center') }}
+          </div>
+        </div>
+        <div class="row mt-2 mb-2 justify-content-center">
+          <div class="col-xs-6 purple-border">
+            {{ form.password(size=33, class='form-control text-center')}}
+          </div>
+        </div>
+        <div class="row mt-2 mb-2 justify-content-center">
+          <div class="col-xs-6 purple-border">
+            {{ form.confirm_password(size=33, class='form-control text-center') }}
+          </div>
+          {% for error in form.confirm_password.errors %}
+              <span style="color: red;">{{ error }}</span>
+          {% endfor %}
+        </div>
+        <div class="row justify-content-center mt-2 mb-2">
+          {{ form.recaptcha }}
+        </div>
+        <div class="row justify-content-center mt-2 mb-2">
+          {{ form.submit(class='main-btn w-75') }}
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="particles-2" class="particles"></div>
+</div>
 {% endblock %}

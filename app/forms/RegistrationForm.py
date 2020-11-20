@@ -4,10 +4,10 @@ from wtforms import FormField, StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, ValidationError, EqualTo
 
 class RegistrationForm(FlaskForm):
-	username = StringField('Username', validators=[DataRequired()])
+	username = StringField('Username', render_kw={"placeholder": "Username"}, validators=[DataRequired()])
 	#email = StringField('Email', validators=[DataRequired(), Email()])
-	password = PasswordField('Password', validators=[DataRequired()])
-	confirm_password = PasswordField('Confirm Password',
+	password = PasswordField('Password', render_kw={"placeholder": "Password"}, validators=[DataRequired()])
+	confirm_password = PasswordField('Confirm Password', render_kw={"placeholder": "Confirm Password"},
 		validators=[DataRequired(),
 					EqualTo('password', message='Password must match!')])
 	recaptcha = RecaptchaField()
