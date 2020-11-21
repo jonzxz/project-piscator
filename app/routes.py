@@ -1,4 +1,4 @@
-from app import app, db, encryption_engine, logger
+from app import app, db, logger
 
 ## Plugins
 from flask_login import current_user, login_user, logout_user
@@ -125,7 +125,7 @@ def dash_email():
         if True:
             new_email = EmailAddress()
             new_email.set_email_address(form.email_address.data)
-            new_email.set_email_password(encryption_engine.encrypt(form.password.data))
+            new_email.set_email_password(form.password.data)
             new_email.set_user_id(current_user.user_id)
             new_email.set_created_at(datetime.now())
             new_email.set_active_status(True)
