@@ -10,6 +10,7 @@ def app():
 def client(app):
     # WTF_CSRF_ENABLED = False to allow form submission in tests
     app.config['WTF_CSRF_ENABLED'] = False
+    app.config['TESTING'] = True
     return app.test_client()
 
 def login(client, username, password):

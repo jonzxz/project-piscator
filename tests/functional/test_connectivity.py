@@ -8,8 +8,7 @@ def app():
 
 @pytest.fixture
 def client(app):
-    # app.config['TESTING'] = True
-    # app.config['WTF_CSRF_ENABLED'] = False
+    app.config['TESTING'] = True
     return app.test_client()
 
 def test_index(app, client):
