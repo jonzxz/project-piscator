@@ -1,4 +1,5 @@
 from app import app as flask_app
+from functional.test_login import login
 
 import pytest
 
@@ -12,15 +13,6 @@ def client(app):
     app.config['WTF_CSRF_ENABLED'] = False
     app.config['TESTING'] = True
     return app.test_client()
-
-def login(client, username, password):
-    return client.post(
-    '/login', data={
-    'username' : username,
-    'password' : password
-    },
-    follow_redirects=True
-    )
 
 def add_mail(client, email, password):
     return client.post(
