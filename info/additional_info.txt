@@ -36,3 +36,7 @@ DB restriction: maintenance db // supposed to put quotes but it doesn't really w
 
 # To update Database Schema on Heroku if `flask db upgrade fails`
 psql -h <heroku-host> -U <postgres-user> <db-name> < <dump.file>
+
+# PyTest
+Run all tests in root directory with py -m pytest
+It will look for all files in tests starting with test_*

@@ -1,4 +1,4 @@
-from app import app, db, encryption_engine, logger
+from app import app, db, logger
 
 ## Plugins
 from flask_login import current_user, login_user, logout_user
@@ -61,7 +61,7 @@ def register():
             logger.debug("Successfully created user %s", new_user)
             # return render_template('success.html', usrname = form.username.data)
         else:
-            logger.warn("Registration failed, user not registered")
+            logger.warning("Registration failed, user not registered")
 
     return render_template('register.html', form=form)
 
@@ -98,7 +98,7 @@ def admin():
 def dashboard():
     logger.info("Entering dashboard home..")
     if current_user.is_anonymous:
-        logger.warn("Anonymous user in dashboard home, going to index..")
+        logger.warning("Anonymous user in dashboard home, going to index..")
         return redirect(url_for('index'))
     return render_template('dashboard/dashboard_home.html')
 
@@ -107,7 +107,7 @@ def dash_email():
     logger.info("Entering dashboard emails..")
     # Redirects non-logged in users to index if they access dashboard from URL
     if current_user.is_anonymous:
-        logger.warn("User is anonymous, redirecting to index")
+        logger.warning("User is anonymous, redirecting to index")
         return redirect(url_for('index'))
     form = AddEmailForm()
 
@@ -125,7 +125,7 @@ def dash_email():
         if True:
             new_email = EmailAddress()
             new_email.set_email_address(form.email_address.data)
-            new_email.set_email_password(encryption_engine.encrypt(form.password.data))
+            new_email.set_email_password(form.password.data)
             new_email.set_user_id(current_user.user_id)
             new_email.set_created_at(datetime.now())
             new_email.set_active_status(True)
@@ -155,7 +155,7 @@ def dash_email():
 def dash_account():
     logger.info("Entering dashboard account..")
     if current_user.is_anonymous:
-        logger.warn("Anonymous user in dashboard account, going to index..")
+        logger.warning("Anonymous user in dashboard account, going to index..")
         return redirect(url_for('index'))
     return render_template('dashboard/dashboard_account.html')
 

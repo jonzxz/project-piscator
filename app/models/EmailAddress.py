@@ -1,4 +1,4 @@
-from app import db
+from app import db, encryption_engine
 from datetime import datetime
 
 # Defines model for EmailAddress class
@@ -26,11 +26,14 @@ class EmailAddress(db.Model):
     def get_email_address(self) -> str:
         return self.email_address
 
-    def set_email_password(self, encrypted_pw: str):
-        self.email_password = encrypted_pw
+    def set_email_password(self, pw: str):
+        self.email_password = encryption_engine.encrypt(pw)
 
     def get_email_password(self) -> str:
         return self.email_password
+
+    def get_decrypted_email_passwowrd(self) ->str:
+        return encryption_engine.decrypt(self.email_password)
 
     def set_user_id(self, user_id: int):
         self.user_id = user_id
