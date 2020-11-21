@@ -9,6 +9,7 @@ from app.forms.RegistrationForm import RegistrationForm
 from app.forms.LoginForm import LoginForm
 from app.forms.AddEmailForm import AddEmailForm
 from app.forms.ContactForm import ContactForm
+from app.forms.AccountSettingsForm import AccountSettingsForm
 
 ## Models
 from app.models.User import User
@@ -157,7 +158,16 @@ def dash_account():
     if current_user.is_anonymous:
         logger.warning("Anonymous user in dashboard account, going to index..")
         return redirect(url_for('index'))
-    return render_template('dashboard/dashboard_account.html')
+
+    form = AccountSettingsForm()
+
+    if form.validate_on_submit():
+        current_user.set_password(form.new_password.data)
+        logger.debug("Successfully created user %s", current_user)
+
+    return render_template('dashboard/dashboard_account.html',
+    current_user = current_user.username, form = form)
+
 
 # Reroute functions to prevent form resubmission on refresh
 @app.route('/mail_form_reset', methods=['GET'])

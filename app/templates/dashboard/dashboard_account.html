@@ -1,6 +1,38 @@
 {% extends "dashboard/dashboard_base.html" %}
-
 {% block content %}
-<h1> Dashboard Account Page </h1>
-<h2> This page is user account page. prob allow user to change pw or disable acc</h2>
+
+<! --This page is user account page. prob allow user to change pw or disable acc -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<div class="container">
+  <p class="h3">Account Settings</p>
+  <hr>
+    <form action="" method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="row">
+        <div class="col-6"><p class="text-right">{{ form.username.label }}</p></div>
+        <div class="col-3"><input class="form-control" type="text" id="subdomaintwo" value="  {{ current_user }}" disabled /></div>
+      </div>
+      <div class="row">
+        <div class="col-6"><p class="text-right">{{ form.current_password.label }}</p></div>
+        <div class="col-3">{{ form.current_password(class_='form-control') }}</div>
+      </div>
+      <div class="row">
+        <div class="col-6"><p class="text-right">{{ form.new_password.label }}</p></div>
+        <div class="col-3">{{ form.new_password(class_='form-control') }}</div>
+      </div>
+      <div class="row">
+        <div class="col-6"><p class="text-right">{{ form.confirm_new_password.label }}</p></div>
+        <div class="col-3">{{ form.confirm_new_password(class_='form-control') }}</div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-4"></div>
+          <div class="col-2"><p class="text-right">{{ form.submit(class_='btn btn-secondary btn-block') }}</p></div>
+          <div class="col-2"><button type="button" class = "btn btn-default btn-block">Cancel</button></div>
+      </div>
+    </form>
+</div>
 {% endblock %}
