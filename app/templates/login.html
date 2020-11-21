@@ -1,79 +1,93 @@
 {% extends "base.html" %}
 
 {% block content %}
-		
-		<head>
-		<style>
-        img.logo
-        {
-  					width: 140px;
-  					margin-left:400%;
-        }
-        img.aboutus2
-        {
-  					width: 500px;
-        }
-        .leftbox
-        {
-        	float: left;
-        	margin-left:28%;
-        }
-        
-        .rightbox
-        {
-        	width:400px;
-        	margin-left:55%;
-        }
-		</style>
-		</head>
-		
-		</br></br></br></br>
-		<a href="{{ url_for('index') }}">
-		<img src="{{ url_for('static', filename='icons/logo.svg') }}" class="logo" alt='Logo' >
-		</a>
-		
-		<hr style="margin-left:28%" width="40%" color=blue>
-		<div class="leftbox"></br></br>
-		<img src="{{ url_for('static', filename='images/about_us2.svg') }}" class="aboutus2" alt='About Us 2' >
-		</div>
-		
-		<div class="rightbox">
-		<h4>Login</h4>
-    <hr width="63%" color=blue>
-    <form action="" method="post" novalidate>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=21) }}
-            {% for error in form.username.errors %}
-                <span>{{ error }}</span>
-            {% endfor %}
-        </p>
-       	<p>
-            {{ form.password.label }}</br>
-            {{ form.password(size=21) }}
-            {% for error in form.password.errors %}
-                <span>{{ error }}</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.remember_me() }} {{ form.remember_me.label }}
-        </p>
-        <p>{{ form.submit(class='btn btn-outline-secondary') }}</p></br>
-				<p>
-        <a class="btn btn-outline-secondary" href="{{ url_for('register') }}">Forget your password?</a><br/>
-        </p>
-        <hr width="63%" color=blue>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <span class="alert alert-danger m2"> {{ message }} </span>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <h4>New User?</h4></br>
-        <a class="btn btn-outline-secondary" href="{{ url_for('register') }}">Sign up with us</a><br/>
-        <hr width="63%" color=blue></br>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login_reg_style.css') }}">
+<div class="main-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12 justify-content-center">
+                <div class="logo mt-3 w-100 animated fadeInDown d-flex justify-content-center" style="margin-left:10%">
+                    <!-- play cheat margin to make text centered-->
+                    <a href="{{ url_for('index') }}">
+                        <img src="{{ url_for('static', filename='icons/logo_word.svg') }}" alt='Logo' width=70%>
+                    </a>
+                </div>
+            </div>
         </div>
-        
+    </div>
+
+    <div class="container w-25 p-3 mb-2 round-radius" style="background-color: #f9f9f9">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+                <div class="h2">Login</div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="row mt-2 mb-2 justify-content-center">
+                    <div class="col-xs-6 purple-border">
+                        {{ form.username(size=33, class='form-control text-center') }}
+                    </div>
+                </div>
+
+                <div class="row mt-2 mb-2 justify-content-center">
+                    <div class="col-xs-6 purple-border">
+                        {{ form.password(size=33, class='form-control text-center')}}
+                    </div>
+                </div>
+
+                <div class="row mt-2 mb-2 justify-content-center">
+                    <div class="col-xs-6 purple-border">
+                        {{ form.remember_me() }} {{ form.remember_me.label }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                        <div class="login">
+                            {{ form.submit(class='main-btn w-90') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                        <div class="login-existing">
+                            <a class="main-btn w-90" href="{{ url_for('register') }}">Forget your password?</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">   
+                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        {% for message in messages %}
+                        <span class="alert alert-danger m2"> {{ message }} </span>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+
+                    <div class="row">
+                        <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+                            <div class="h2">New User?</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                            <div class="login-existing">
+                                <a class="main-btn w-90" href="{{ url_for('register') }}">Sign up with us</a>
+                            </div>
+                        </div>
+                    </div>
+</form>
+        </div>
+    </div>
+    <div id="particles-2" class="particles"></div>
+</div>
 {% endblock %}
