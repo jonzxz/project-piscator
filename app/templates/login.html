@@ -47,20 +47,20 @@
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="login">
-                            {{ form.submit(class='main-btn w-90') }}
+                            {{ form.submit(class='main-btn w-100') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2 mb-2">
+                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                        <div class="login-existing">
+                            <a class="main-btn">Forget your password?</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
-                        <div class="login-existing">
-                            <a class="main-btn w-90" href="{{ url_for('register') }}">Forget your password?</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">   
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         {% with messages = get_flashed_messages() %}
                         {% if messages %}
@@ -72,20 +72,20 @@
                     </div>
                 </div>
 
-                    <div class="row">
-                        <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
-                            <div class="h2">New User?</div>
-                        </div>
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+                        <div class="h2">New User?</div>
                     </div>
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-12 d-flex justify-content-center animated fadeIn">
-                            <div class="login-existing">
-                                <a class="main-btn w-90" href="{{ url_for('register') }}">Sign up with us</a>
-                            </div>
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                        <div class="login-existing">
+                            <a class="main-btn w-90" href="{{ url_for('register') }}">Sign up with us</a>
                         </div>
                     </div>
-</form>
+                </div>
+            </form>
         </div>
     </div>
     <div id="particles-2" class="particles"></div>

@@ -15,24 +15,24 @@
     </div>
   </div>
   <div class="container w-25 p-4 mb-5 round-radius" style="background-color: #f9f9f9">
-  <div class="row">
-    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
-      <div class="login-existing">
-        <a class="main-btn" href="{{ url_for('login') }}">Login to existing Account</a>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+        <div class="login-existing">
+          <a class="main-btn" href="{{ url_for('login') }}">Login to existing Account</a>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
-      <div class="text-lg font-weight-bold">Or</div>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+        <div class="text-lg font-weight-bold">Or</div>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
-      <div class="h1">Create a new Account</div>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+        <div class="h1">Create a new Account</div>
+      </div>
     </div>
-  </div>
-  <div class="row justify-content-center">
+    <div class="row justify-content-center">
       <form action="" method="post" novalidate>
         {{ form.hidden_tag() }}
         <div class="row mt-2 mb-2 justify-content-center">
@@ -50,7 +50,7 @@
             {{ form.confirm_password(size=33, class='form-control text-center') }}
           </div>
           {% for error in form.confirm_password.errors %}
-              <span style="color: red;">{{ error }}</span>
+          <span style="color: red;">{{ error }}</span>
           {% endfor %}
         </div>
         <div class="row justify-content-center mt-2 mb-2">
