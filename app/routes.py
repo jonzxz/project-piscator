@@ -197,7 +197,14 @@ def check_phish(mid):
     # return redirect(url_for('dashboard'))
     return render_template('success.html', mail_items = mail_items)
 
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
 
+@app.route('/terms')
+def tos():
+    return render_template('privacy.html')
+    
 # Reroute functions to prevent form resubmission on refresh
 @app.route('/mail_form_reset', methods=['GET'])
 def mail_form_reset():
