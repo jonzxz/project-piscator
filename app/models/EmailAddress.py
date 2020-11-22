@@ -32,7 +32,7 @@ class EmailAddress(db.Model):
     def get_email_password(self) -> str:
         return self.email_password
 
-    def get_decrypted_email_passwowrd(self) ->str:
+    def get_decrypted_email_password(self) ->str:
         return encryption_engine.decrypt(self.email_password)
 
     def set_user_id(self, user_id: int):
