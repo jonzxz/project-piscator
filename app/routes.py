@@ -171,6 +171,8 @@ def check_phish(mid):
 
     logger.info("Click-to-check entered..")
     mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
+    mailaddr.set_last_updated(datetime.now())
+    db.session.commit()
     logger.info("Mailbox selected is %s", mailaddr.get_email_address())
 
     imap_svr = get_imap_svr(mailaddr.get_email_address())
@@ -196,6 +198,17 @@ def check_phish(mid):
 
     # return redirect(url_for('dashboard'))
     return render_template('success.html', mail_items = mail_items)
+
+@app.route('/dashboard/emails/activation/<mid>')
+def mail_activation(mid):
+    logger.info("Entering function to enable/disable email..")
+    mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
+    if mailaddr.get_active_status() == True:
+        mailaddr.set_active_status(False)
+    else:
+        mailaddr.set_active_status(True)
+    db.session.commit()
+    return redirect(url_for('dash_email'))
 
 @app.route('/privacy')
 def privacy():
