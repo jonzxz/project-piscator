@@ -25,6 +25,10 @@ from app.utils.EmailUtils import send_contact_us_email
 ## Exceptions
 from sqlalchemy.exc import IntegrityError
 
+# Mailbox
+from imap_tools import MailBox
+from app.models.Mail import Mail
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -162,9 +166,33 @@ def dash_account():
 
 @app.route('/dashboard/emails/phish/<mid>')
 def check_phish(mid):
-    mailbox = EmailAddress.query.filter_by(email_id=mid).first()
-    logger.error(mailbox)
-    return render_template('success.html')
+    mail_items = []
+
+    logger.info("Click-to-check entered..")
+    mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
+    logger.info("Mailbox selected is %s", mailaddr.get_email_address())
+
+    mailbox = MailBox('imap.gmail.com')
+    mailbox.login(mailaddr.get_email_address(), mailaddr.get_decrypted_email_password())
+    mailbox.folder.set("INBOX")
+    logger.info("Connected to mailbox %s", mailaddr.get_email_address())
+    logger.info("Fetching mails..")
+
+    all_mails = mailbox.fetch(reverse=True, mark_seen=False, bulk=True)
+    logger.info("Mails fetched..")
+
+    for msg in all_mails:
+        if not msg.from_ == mailaddr.get_email_address():
+            logger.info("Date: {}".format(msg.date))
+            logger.info("Sender: {}".format(msg.from_))
+            logger.info("Subject: {}".format(msg.subject))
+            mail_items.append(Mail(msg.from_, msg.date, msg.subject))
+
+    logger.info("Finished displaying all mails.. logging out")
+    mailbox.logout()
+
+    # return redirect(url_for('dashboard'))
+    return render_template('success.html', mail_items = mail_items)
 
 
 # Reroute functions to prevent form resubmission on refresh

@@ -38,7 +38,7 @@
           <th scope="col">Phishing Emails Detected</th>
           <th scope="col">Last Updated</th>
           <th scope="col">Active Status</th>
-          <ht scope="col">Actions</th>
+          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -48,7 +48,7 @@
           <td>{{ email.phishing_mail_detected }}</td>
           <td>{{ email.last_updated }}</td>
           <td> {{ email.active }}</td>
-          <td> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.email_id }});" href=""></td>
+          <td> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.email_id }});"></td>
         </tr>
         {% endfor %}
     </table>

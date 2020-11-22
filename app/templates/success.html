@@ -3,4 +3,26 @@
 {% block content %}
 <span class="h1">Successfully checked mailbox...</span>
 <a href="{{ url_for('dashboard')}}">Click to go back to dashboard</a>
+
+<div class="card mt-5">
+  <div class="card-body">
+    <table class="table table-dark">
+      <thead>
+        <tr>
+          <th scope="col">Sender</th>
+          <th scope="col">Date</th>
+          <th scope="col">Subject</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mail in mail_items %}
+        <tr>
+          <td>{{ mail.get_sender() }}</td>
+          <td>{{ mail.get_date() }}</td>
+          <td>{{ mail.get_subject() }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+</div>
 {% endblock %}
