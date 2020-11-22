@@ -120,34 +120,35 @@ def dash_email():
         email_addr = form.email_address.data
         password = form.password.data
 
-        logger.info("Checking mailbox connectivity..")
-        # Attempts a mailbox login via imap_tools based on submit
-        # Adds the email address to the database
-        # -- If you want to test adding emails to a user account without checking connection
-        # -- change the if statement to if True:
-        # if test_mailbox_conn(email_addr, password):
-        if True:
-            new_email = EmailAddress()
-            new_email.set_email_address(form.email_address.data)
-            new_email.set_email_password(form.password.data)
-            new_email.set_user_id(current_user.user_id)
-            new_email.set_created_at(datetime.now())
-            new_email.set_active_status(True)
-            try:
+        # Checks if email already exist in database
+        email_exist = db.session.query(EmailAddress).filter(EmailAddress.email_address == email_addr).first()
+
+        if email_exist == None:
+            # Attempts a mailbox login via imap_tools based on submit
+            # Adds the email address to the database
+            logger.info("Checking mailbox connectivity..")
+            # -- If you want to test adding emails to a user account without checking connection
+            # -- change the if statement to if True:
+            # if test_mailbox_conn(email_addr, password):
+            if True:
+                new_email = EmailAddress()
+                new_email.set_email_address(form.email_address.data)
+                new_email.set_email_password(form.password.data)
+                new_email.set_user_id(current_user.user_id)
+                new_email.set_created_at(datetime.now())
+                new_email.set_active_status(True)
                 db.session.add(new_email)
                 db.session.commit()
-            # IntegrityError to catch existing email
-            except IntegrityError:
-                db.session.rollback()
-                flash("Email address already exist in our database!")
-                logger.error("Email already exist")
-                return redirect(url_for('mail_form_reset'))
-        # If connection to mailbox fails
+            # If connection to mailbox fails
+            else:
+                flash("Unable to connect to mailbox.")
         else:
-            flash("Unable to connect to mailbox.")
+            flash("Email address already exist in our database!")
+            logger.error("Email already exist")
+            return redirect(url_for('mail_form_reset'))
     ## -- Add Email Form submission END --
-    ## -- Default Dashboard Loading START --
 
+    ## -- Default Dashboard Loading START --
     existing_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == current_user.user_id).all()
     logger.debug(existing_emails)
     return render_template('dashboard/dashboard_emails.html',
@@ -208,7 +209,7 @@ def tos():
 @app.route('/mail_form_reset', methods=['GET'])
 def mail_form_reset():
     logger.info("Entering function to reset form submission")
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('dash_email'))
 
 @app.route('/reg_form_reset', methods=['GET'])
 def reg_form_reset():
