@@ -21,6 +21,7 @@ from datetime import datetime
 ## Utils
 from app.utils.EmailUtils import test_mailbox_conn
 from app.utils.EmailUtils import send_contact_us_email
+from app.utils.EmailUtils import get_imap_svr
 
 ## Exceptions
 from sqlalchemy.exc import IntegrityError
@@ -172,7 +173,9 @@ def check_phish(mid):
     mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
     logger.info("Mailbox selected is %s", mailaddr.get_email_address())
 
-    mailbox = MailBox('imap.gmail.com')
+    imap_svr = get_imap_svr(mailaddr.get_email_address())
+    logger.info("Retrieving IMAP server: %s", imap_svr)
+    mailbox = MailBox(imap_svr)
     mailbox.login(mailaddr.get_email_address(), mailaddr.get_decrypted_email_password())
     mailbox.folder.set("INBOX")
     logger.info("Connected to mailbox %s", mailaddr.get_email_address())
