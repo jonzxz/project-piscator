@@ -3,27 +3,29 @@
 
 <html class="no-js" lang="en">
 	<!-- not in use i think -->
-	<link rel="stylesheet/css" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="stylesheet/css" href="{{ url_for('static', filename='css/dash_style.css') }}">
 
-	<div class="d-flex" id="wrapper">
+	<div class="d-flex">
 		<!-- Sidebar -->
-		<div class="bg-light border-right" id="sidebar-wrapper">
-			<div class="sidebar-heading">Dashboard </div>
+		<div class="bg-light">
+			<div class="sidebar-heading h1 p-2">Dashboard</div>
 			<div class="list-group list-group-flush">
-				<a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-light">Dashboard</a>
-				<a href="{{ url_for('dash_account') }}" class="list-group-item list-group-item-action bg-light">Account</a>
-				<a href="{{ url_for('dash_email') }}" class="list-group-item list-group-item-action bg-light">Emails</a>
-				<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action bg-light">Homepage</a>
-				<a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-light">Logout</a>
+				<a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-light text-center">Dashboard</a>
+				<a href="{{ url_for('dash_account') }}" class="list-group-item list-group-item-action bg-light text-center">Account</a>
+				<a href="{{ url_for('dash_email') }}" class="list-group-item list-group-item-action bg-light text-center">Emails</a>
+				<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action bg-light text-center">Homepage</a>
+				<a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-light text-center">Logout</a>
 			</div>
 		</div>
 		<!-- /#sidebar-wrapper -->
 
 		<!-- Page Content -->
-		<div id="page-content-wrapper">
 			<div class="container-fluid">
+				<div class="navbar navbar-light bg-light">
+				  <span class="navbar-brand pl-2 h1"> User Dashboard </span>
+				  <span class="navbar-brand font-weight-bold h2">{{ current_user }}</span>
+				</div>
 				{% block content %}{% endblock %}
 			</div>
-		</div>
 	</body>
 	</html>

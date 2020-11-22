@@ -144,7 +144,7 @@ def dash_email():
             else:
                 flash("Unable to connect to mailbox.")
         else:
-            flash("Email address already exist in our database!")
+            flash("{} already exist in our database!".format(email_addr))
             logger.error("Email already exist")
             return redirect(url_for('mail_form_reset'))
     ## -- Add Email Form submission END --
