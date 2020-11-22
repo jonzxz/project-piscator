@@ -17,3 +17,7 @@ body {
 .round-radius {
   border-radius: 15px;
 }
+
+.red-text {
+  color: red;
+}

@@ -51,22 +51,21 @@ def register():
     if request.method =='POST':
         logger.debug("Register form submitted")
         if form.validate_on_submit():
-            new_user = User(username=form.username.data)
-            new_user.set_password(form.password.data)
-            try:
+            user_exist = db.session.query(User).filter(User.username == form.username.data).first()
+            if user_exist == None:
+                new_user = User(username=form.username.data)
+                new_user.set_password(form.password.data)
                 db.session.add(new_user)
                 db.session.commit()
                 login_user(new_user)
+                logger.debug("Successfully created user %s", new_user)
                 return redirect(url_for('dashboard'))
-            except IntegrityError:
-                db.session.rollback()
+            else:
                 flash("Username already taken!")
                 logger.error("Username already taken")
+                logger.warning("Registration failed, user not registered")
                 return redirect(url_for("reg_form_reset"))
-            logger.debug("Successfully created user %s", new_user)
-            # return render_template('success.html', usrname = form.username.data)
-        else:
-            logger.warning("Registration failed, user not registered")
+                # return render_template('success.html', usrname = form.username.data
 
     return render_template('register.html', form=form)
 
@@ -204,7 +203,7 @@ def privacy():
 @app.route('/terms')
 def tos():
     return render_template('privacy.html')
-    
+
 # Reroute functions to prevent form resubmission on refresh
 @app.route('/mail_form_reset', methods=['GET'])
 def mail_form_reset():
