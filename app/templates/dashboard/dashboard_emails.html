@@ -38,6 +38,7 @@
           <th scope="col">Phishing Emails Detected</th>
           <th scope="col">Last Updated</th>
           <th scope="col">Active Status</th>
+          <ht scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -47,10 +48,19 @@
           <td>{{ email.phishing_mail_detected }}</td>
           <td>{{ email.last_updated }}</td>
           <td> {{ email.active }}</td>
+          <td> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.email_id }});" href=""></td>
         </tr>
         {% endfor %}
     </table>
   </div>
 </div>
+
+<script>
+  function phish(mail_id) {
+    var names = document.getElementById(mail_id).name;
+    let url = "emails/phish/" + mail_id;
+    window.location.href = url;
+  }
+</script>
 
 {% endblock %}

@@ -159,6 +159,14 @@ def dash_account():
         return redirect(url_for('index'))
     return render_template('dashboard/dashboard_account.html')
 
+
+@app.route('/dashboard/emails/phish/<mid>')
+def check_phish(mid):
+    mailbox = EmailAddress.query.filter_by(email_id=mid).first()
+    logger.error(mailbox)
+    return render_template('success.html')
+
+
 # Reroute functions to prevent form resubmission on refresh
 @app.route('/mail_form_reset', methods=['GET'])
 def mail_form_reset():
