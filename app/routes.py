@@ -9,6 +9,7 @@ from app.forms.RegistrationForm import RegistrationForm
 from app.forms.LoginForm import LoginForm
 from app.forms.AddEmailForm import AddEmailForm
 from app.forms.ContactForm import ContactForm
+from app.forms.AccountSettingsForm import AccountSettingsForm
 
 ## Models
 from app.models.User import User
@@ -156,13 +157,29 @@ def dash_email():
     user_emails = existing_emails)
     ## -- Default Dashboard Loading END --
 
-@app.route('/dashboard/account', methods=['GET'])
+@app.route('/dashboard/account', methods=['GET', 'POST'])
 def dash_account():
     logger.info("Entering dashboard account..")
     if current_user.is_anonymous:
         logger.warning("Anonymous user in dashboard account, going to index..")
         return redirect(url_for('index'))
-    return render_template('dashboard/dashboard_account.html')
+
+    form = AccountSettingsForm()
+
+    if form.validate_on_submit():
+        logger.debug("%s password change entered", user)
+        user = db.session.query(User).filter(User.user_id == current_user.user_id).first()
+        user.set_password(form.new_password.data)
+        try:
+            db.session.commit()
+            logger.debug("Successfully changed user %s password, updated database", user)
+        except IntegrityError:
+            db.session.rollback()
+            logger.error("Failed to change password for %s, rolling back database", user)
+
+    return render_template('dashboard/dashboard_account.html',
+    current_user = current_user.username, form = form)
+
 
 
 @app.route('/dashboard/emails/phish/<mid>')
