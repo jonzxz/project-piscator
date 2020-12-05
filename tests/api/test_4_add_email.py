@@ -1,5 +1,5 @@
 from app import app as flask_app
-from api.test_3_login import login
+from test_3_login import login
 
 import pytest
 
