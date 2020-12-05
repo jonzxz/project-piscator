@@ -36,7 +36,7 @@
 
                     <div class="navbar-btn d-none d-sm-inline-block">
                         {% if current_user.is_anonymous %}
-                            <a class="main-btn" data-scroll-nav="0" href="{{ url_for ('login') }}" rel="nofollow">Sign In</a>
+                            <a class="main-btn" data-scroll-nav="0" name="login" href="{{ url_for ('login') }}" rel="nofollow">Sign In</a>
                         {% else %}
                             <a class="main-btn" data-scroll-nav="0" href="{{ url_for ('logout') }}" rel="nofollow">Sign Out</a>
                         {% endif %}

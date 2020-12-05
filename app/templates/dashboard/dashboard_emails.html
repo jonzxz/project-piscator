@@ -22,10 +22,10 @@
         <td class="text-center">{{ email.email_address }}</td>
         <td class="text-center">{{ email.phishing_mail_detected }}</td>
         <td class="text-center">{{ email.last_updated }}</td>
-        <td class="text-center"> {{ email.active }}</td>
+        <td class="text-center" name="status-{{ email.email_address }}"> {{ email.active }}</td>
         <td class="text-center"> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.email_id }});"></a></td>
         <td class="text-center"> <a class="lni lni-pencil"></a></td>
-        <td class="text-center"> <a class="lni lni-power-switch" id="{{ email.email_id }}" name="{{ email.email_address}}" href="#" onclick="activate({{ email.email_id }});"></a></td>
+        <td class="text-center"> <a class="lni lni-power-switch" id="{{ email.email_id }}" name="activate-{{ email.email_address}}" href="#" onclick="activate({{ email.email_id }});"></a></td>
       </tr>
       {% endfor %}
     </table>
