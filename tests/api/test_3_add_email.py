@@ -31,4 +31,3 @@ def test_valid_disable_mail(client, db):
     updated_status = EmailAddress.query.filter(EmailAddress.email_address == 'testmail456@mymail.com').first().get_active_status()
     assert response.status_code == 200
     assert updated_status == False
-    assert b'testmail456@mymail.com' not in response.data
