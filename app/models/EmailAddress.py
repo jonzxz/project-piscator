@@ -73,3 +73,6 @@ class EmailAddress(db.Model):
 
     def get_last_updated(self) -> datetime:
         return self.last_updated
+
+    def get_email_id(self) -> int:
+        return self.email_id

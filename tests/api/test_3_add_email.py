@@ -1,21 +1,9 @@
-from app import app as flask_app
-from test_3_login import login
+from test_2_authentication import login
+from app.models.EmailAddress import EmailAddress
 
 import pytest
 
-from app import db
-from app.models.EmailAddress import EmailAddress
 
-@pytest.fixture
-def app():
-    yield flask_app
-
-@pytest.fixture
-def client(app):
-    # WTF_CSRF_ENABLED = False to allow form submission in tests
-    app.config['WTF_CSRF_ENABLED'] = False
-    app.config['TESTING'] = True
-    return app.test_client()
 
 def add_mail(client, email, password):
     return client.post(
@@ -28,10 +16,19 @@ def add_mail(client, email, password):
 
 # Make sure user is valid and email does not exist in database
 # Assert HTTP code, assert database entry, assert new mail displayed in page
-def test_valid_add_mail(client):
+def test_valid_add_mail(client, db):
     login(client, 'testuser123', 'password')
     response = add_mail(client, 'testmail456@mymail.com', 'password')
 
     assert response.status_code == 200
     assert db.session.query(EmailAddress).filter(EmailAddress.email_address == 'testmail456@mymail.com').first()
     assert b'testmail456@mymail.com' in response.data
+
+def test_valid_disable_mail(client, db):
+    mail_address = EmailAddress.query.filter(EmailAddress.email_address == 'testmail456@mymail.com').first()
+    mail_id = mail_address.get_email_id()
+    response = client.get('/dashboard/emails/activation/{}'.format(mail_id))
+    updated_status = EmailAddress.query.filter(EmailAddress.email_address == 'testmail456@mymail.com').first().get_active_status()
+    assert response.status_code == 200
+    assert updated_status == False
+    assert b'testmail456@mymail.com' not in response.data
