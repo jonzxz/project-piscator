@@ -3,11 +3,99 @@
 
 <html class="no-js" lang="en">
 	<!-- not in use i think -->
-	<link rel="stylesheet/css" href="{{ url_for('static', filename='css/dash_style.css') }}">
 
-	<div class="d-flex">
+	<style>
+	body {
+	  font-family: "Lato", sans-serif;
+	}
+
+	.sidepanel  {
+	  width: 0;
+	  position: fixed;
+	  z-index: 1;
+	  height: 100%;
+	  top: 0;
+	  left: 0;
+	  overflow-x: hidden;
+	  transition: 0.5s;
+	  padding-top: 60px;
+		background-color: #F8F9FA;
+	  color: #6A6972;
+	}
+
+	.sidepanel a {
+	  padding: 8px 8px 8px 32px;
+	  text-decoration: none;
+	  font-size: 20px;
+	  color: #818181;
+	  display: block;
+	  transition: 0.3s;
+	}
+
+	.sidepanel a:hover {
+	  color: #f1f1f1;
+	}
+
+	.sidepanel .closebtn {
+	  position: absolute;
+	  top: 0;
+	  font-size: 36px;
+	}
+
+	.openbtn {
+	  font-size: 30px;
+	  cursor: pointer;
+	  background-color: #F8F9FA;
+	  color: #6A6972;
+	  padding: 10px 15px;
+	  border: none;
+	}
+
+	.openbtn:hover {
+	  background-color:#E9ECEF;
+	}
+	</style>
+	<div id="mySidepanel" class="sidepanel">
+	  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+		<a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-light text-left">Dashboard</a>
+		<a href="{{ url_for('dash_account') }}" class="list-group-item list-group-item-action bg-light text-left">Account</a>
+		<a href="{{ url_for('dash_email') }}" class="list-group-item list-group-item-action bg-light text-left">Emails</a>
+		<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action bg-light text-left">Homepage</a>
+		<a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-light text-left">Logout</a>
+	</div>
+
+
+    <button class="openbtn" onclick="openNav()">☰</button>
+		<h3 class="float-right">{{ current_user }}</h3>
+
+
+	<script>
+		function openNav() {
+		  document.getElementById("mySidepanel").style.width = "250px";
+		}
+
+		function closeNav() {
+		  document.getElementById("mySidepanel").style.width = "0";
+		}
+	</script>
+<!--<div class="pos-f-t">
+  <nav class="navbar navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+		<span class="navbar-brand pl-2 h1"> User Dashboard </span>
+		<span class="navbar-brand font-weight-bold h2">{{ current_user }}</span>
+  </nav>
+	<div class="collapse" id="navbarToggleExternalContent">
+    <div class="bg-dark p-4">
+      <h5 class="text-white h4">Collapsed content</h5>
+      <span class="text-muted">Toggleable via the navbar brand.</span>
+    </div>
+  </div>
+</div>-->
+<body>
 		<!-- Sidebar -->
-		<div class="bg-light">
+		<!-- <div class="bg-light">
 			<div class="sidebar-heading h1 p-2">Dashboard</div>
 			<div class="list-group list-group-flush">
 				<a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-light text-center">Dashboard</a>
@@ -16,16 +104,17 @@
 				<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action bg-light text-center">Homepage</a>
 				<a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-light text-center">Logout</a>
 			</div>
-		</div>
+		</div> -->
 		<!-- /#sidebar-wrapper -->
 
 		<!-- Page Content -->
-			<div class="container-fluid">
-				<div class="navbar navbar-light bg-light">
-				  <span class="navbar-brand pl-2 h1"> User Dashboard </span>
-				  <span class="navbar-brand font-weight-bold h2">{{ current_user }}</span>
+		<div class="row">
+			<div class="col-6 col-md-1"></div>
+  		<div class="col-12 col-md-10">
+				<div class="container-fluid">
+					{% block content %}{% endblock %}
 				</div>
-				{% block content %}{% endblock %}
 			</div>
+		</div>
 	</body>
 	</html>
