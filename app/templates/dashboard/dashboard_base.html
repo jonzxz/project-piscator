@@ -1,65 +1,8 @@
 {% include "base.html" %}
-<!doctype html>
-
 <html class="no-js" lang="en">
-<!-- not in use i think -->
-
-<style>
-body {
-	font-family: "Lato", sans-serif;
-}
-
-.sidepanel  {
-	width: 0;
-	position: fixed;
-	z-index: 1;
-	height: 100%;
-	top: 0;
-	left: 0;
-	overflow-x: hidden;
-	transition: 0.5s;
-	padding-top: 60px;
-	background-color: #F8F9FA;
-	color: #6A6972;
-}
-
-.sidepanel a {
-	padding: 8px 8px 8px 32px;
-	text-decoration: none;
-	font-size: 20px;
-	color: #818181;
-	display: block;
-	transition: 0.3s;
-}
-
-.sidepanel a:hover {
-	color: #f1f1f1;
-}
-
-.sidepanel .closebtn {
-	position: absolute;
-	top: 0;
-	font-size: 36px;
-}
-
-.openbtn {
-	font-size: 30px;
-	cursor: pointer;
-	background-color: #F8F9FA;
-	color: #6A6972;
-	padding: 10px 15px;
-	border: none;
-}
-
-.openbtn:hover {
-	background-color:#E9ECEF;
-}
-
-.poppins {
-	font-family: "Poppins", sans-serif;
-	/* font-weight: bold; */
-}
-</style>
+<head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/dash_style.css') }}">
+</head>
 
 <body>
 	<!-- Page Content -->
@@ -68,15 +11,25 @@ body {
 		<div class="col-12 col-md-1">
 			<button class="openbtn lni lni-chevron-right mt-2" onclick="openNav()"></button>
 			<div id="mySidepanel" class="sidepanel">
-				<a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><span class="lni lni-chevron-left"></span></a>
-				<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-home pt-4 pb-4"><span class="pl-2 poppins">Home</span></a>
-				<a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-layout pt-4 pb-4"><span class="pl-2 poppins">Dashboard</span></a>
-				<a href="{{ url_for('dash_email') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-envelope pt-4 pb-4"><span class="pl-2 poppins">Subscription(s)</span></a>
-				<a href="{{ url_for('dash_account') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-cog pt-4 pb-4"><span class="pl-2 poppins">Account Settings</span></a>
-				<a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-power-switch pt-4 pb-4"><span class="pl-2 poppins">Logout</span></a>
+				<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">
+					<span class="lni lni-chevron-left"></span>
+				</a>
+				<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-home pt-4 pb-4">
+					<span class="pl-2 poppins">Home</span>
+				</a>
+				<a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-layout pt-4 pb-4">
+					<span class="pl-2 poppins">Dashboard</span>
+				</a>
+				<a href="{{ url_for('dash_email') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-envelope pt-4 pb-4">
+					<span class="pl-2 poppins">Subscription(s)</span>
+				</a>
+				<a href="{{ url_for('dash_account') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-cog pt-4 pb-4">
+					<span class="pl-2 poppins">Account Settings</span>
+				</a>
+				<a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-power-switch pt-4 pb-4">
+					<span class="pl-2 poppins">Logout</span>
+				</a>
 			</div>
-
-
 		</div>
 		<div class="col-12 col-md-10">
 			<div class="container-fluid ml-5 pl-5 pt-5">
