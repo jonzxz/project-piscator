@@ -19,13 +19,22 @@
     <tbody>
       {% for email in user_emails %}
       <tr>
-        <td class="text-center">{{ email.email_address }}</td>
-        <td class="text-center">{{ email.phishing_mail_detected }}</td>
-        <td class="text-center">{{ email.last_updated }}</td>
-        <td class="text-center" name="status-{{ email.email_address }}"> {{ email.active }}</td>
-        <td class="text-center"> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.email_id }});"></a></td>
+        <td class="text-center">{{ email.get_email_address() }}</td>
+        <td class="text-center">{{ email.get_phishing_mail_detected() }}</td>
+        {% if email.get_last_updated() is none %}
+          <td class="text-center">Never</td>
+        {% else %}
+          <td class="text-center">{{ email.get_prettified_date() }}</td>
+        {% endif %}
+
+        {% if email.get_active_status() %}
+          <td class="text-center" name="status-{{ email.email_address }}">Active</td>
+        {% else %}
+          <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
+        {% endif %}
+        <td class="text-center"> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.get_email_id() }});"></a></td>
         <td class="text-center"> <a class="lni lni-pencil"></a></td>
-        <td class="text-center"> <a class="lni lni-power-switch" id="{{ email.email_id }}" name="activate-{{ email.email_address}}" href="#" onclick="activate({{ email.email_id }});"></a></td>
+        <td class="text-center"> <a class="lni lni-power-switch" id="{{ email.email_id }}" name="activate-{{ email.email_address}}" href="#" onclick="activate({{ email.get_email_id() }});"></a></td>
       </tr>
       {% endfor %}
     </table>

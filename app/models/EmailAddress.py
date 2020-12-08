@@ -76,3 +76,6 @@ class EmailAddress(db.Model):
 
     def get_email_id(self) -> int:
         return self.email_id
+
+    def get_prettified_date(self) -> str:
+        return self.get_last_updated().strftime('%d-%m-%Y %H:%M')
