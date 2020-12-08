@@ -2,7 +2,7 @@ from app import app, db, logger
 
 ## Plugins
 from flask_login import current_user, login_user, logout_user
-from flask import render_template, request, flash, redirect, url_for
+from flask import render_template, request, flash, redirect, url_for, session
 
 ## Forms
 from app.forms.RegistrationForm import RegistrationForm
@@ -59,6 +59,8 @@ def register():
                 db.session.add(new_user)
                 db.session.commit()
                 login_user(new_user)
+                session["user_id"] = new_user.get_id()
+                session["username"] = new_user.get_username()
                 logger.debug("Successfully created user %s", new_user)
                 return redirect(url_for('dashboard'))
             else:
@@ -82,6 +84,8 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
+        session["user_id"] = user.get_id()
+        session["username"] = user.get_username()
         logger.debug("Successfully logged in user %s", user)
         if user.is_admin:
             return redirect(url_for('admin'))
@@ -92,6 +96,8 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
+    session.pop('user_id', None)
+    session.pop('username', None)
     logger.debug("Successfully logged out")
     return redirect(url_for('index'))
 
