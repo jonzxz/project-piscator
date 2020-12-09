@@ -46,7 +46,7 @@ class AdminUserView(AdminBaseView):
 	# PK displayed, selected columns relabelled and displayed
 	can_set_page_size = True
 	column_display_pk = True
-	column_list = ['user_id', 'username',  'created_at', 'last_logged_in', 'is_active', 'is_admin']
+	column_list = ['user_id', 'username', 'created_at', 'last_logged_in', 'is_active', 'is_admin']
 	column_labels = {
 		'user_id' : 'ID',
 		'created_at' : 'Created At',
@@ -102,3 +102,39 @@ class AdminUserView(AdminBaseView):
 		if model == current_user:
 			logger.error("Attempted to delete {} as {}. Throwing error".format(model.get_username(), current_user.get_username()))
 			raise ValidationError('Cannot delete currently logged in account')
+
+class AdminEmailView(AdminBaseView):
+	can_set_page_size = True
+	column_display_pk = True
+	column_list = ['email_id', 'email_address', 'user_id', 'last_mailbox_size', 'phishing_mail_detected', 'created_at', 'last_updated', 'active']
+	column_labels = {
+		'email_id' : 'ID',
+		'email_address' : 'Email Address',
+		'user_id' : 'Owner ID',
+		'last_mailbox_size' : 'Last Mailbox Size',
+		'phishing_mail_detected' : 'Detected',
+		'created_at' : 'Created At',
+		'last_updated' : 'Updated'
+	}
+
+	columns_sortable_list = ['email_id', 'user_id', 'phishing_mail_detected', 'created_at', 'last_updated']
+
+	form_widget_args = {
+		'last_mailbox_size' : {
+			'readonly' : True
+		},
+		'phishing_mail_detected' : {
+			'readonly' : True
+		},
+		'created_at' : {
+			'readonly' : True
+		},
+		'last_updated' : {
+			'readonly' : True
+		}
+	}
+	#
+	form_columns = ['email_address', 'email_password', 'user_id']
+	#
+	# form_create_rules = ['email_address', 'email_password', 'user_id']
+	# form_edit_rules = ['email_address', 'email_password', 'user_id', 'last_mailbox_size']
