@@ -56,6 +56,7 @@ def register():
             if user_exist == None:
                 new_user = User(username=form.username.data)
                 new_user.set_password(form.password.data)
+                new_user.set_last_logged_in(datetime.now())
                 db.session.add(new_user)
                 db.session.commit()
                 login_user(new_user)
@@ -84,6 +85,8 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
+        user.set_last_logged_in(datetime.now())
+        db.session.commit()
         session["user_id"] = user.get_id()
         session["username"] = user.get_username()
         logger.debug("Successfully logged in user %s", user)
