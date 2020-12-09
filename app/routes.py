@@ -99,6 +99,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
+    logger.info("Logging out user, removing credentials from session")
     session.pop('user_id', None)
     session.pop('username', None)
     logger.debug("Successfully logged out")
@@ -106,7 +107,12 @@ def logout():
 
 @app.route('/admin')
 def admin():
-    return render_template('admin/index.html')
+    if current_user.is_admin:
+        logger.info("Admin user logging in, redirecting to admin portal")
+        return render_template('admin/index.html')
+    else:
+        logger.warn("Normal user accessing admin, redirecting to dashboard")
+        return redirect(url_for('dashboard'))
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
