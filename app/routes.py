@@ -88,7 +88,7 @@ def login():
         session["username"] = user.get_username()
         logger.debug("Successfully logged in user %s", user)
         if user.is_admin:
-            return redirect(url_for('admin'))
+            return redirect(url_for('admin.index'))
         if not user.is_admin:
             return redirect(url_for('dashboard'))
     return render_template('login.html', title='Sign In', form=form)
@@ -111,6 +111,8 @@ def dashboard():
     if current_user.is_anonymous:
         logger.warning("Anonymous user in dashboard home, going to index..")
         return redirect(url_for('index'))
+    if current_user.is_admin:
+        return redirect(url_for('admin.index'))
     return render_template('dashboard/dashboard_home.html')
 
 @app.route('/dashboard/emails', methods=['GET', 'POST'])
