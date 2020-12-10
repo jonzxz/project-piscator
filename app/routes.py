@@ -171,21 +171,80 @@ def dash_account():
         return redirect(url_for('index'))
 
     form = AccountSettingsForm()
+    #logger.info(current_user.username)
+    #logger.info(form.current_password.data)
+    user = db.session.query(User).filter(User.user_id == current_user.user_id).first()
+    status = user.is_active
 
     if form.validate_on_submit():
-        logger.debug("%s password change entered", user)
-        user = db.session.query(User).filter(User.user_id == current_user.user_id).first()
-        user.set_password(form.new_password.data)
+        logger.info("%s submitted account settings form", user)
+
+        #both change in state and change of password requires the correct current password
+        if not user.check_password(form.current_password.data):
+            flash('Invalid Current Password!')
+            return redirect(url_for('dash_account'))
+
+        #get the state from form
+        disable_account = request.form.get('disable_account')
+        logger.info("Before")
+        logger.info(user.is_active)
+        logger.info(disable_account)
+
+        #note: if all fields (current, new, confirm new passwords and disabled account) are filled
+        #only disable / enable account, password will not be changed
+
+        #check for state change (db vs form)
+        #if db state is True and form state is False (both means account is active) -> no change
+        #or db state is False and form state is True (both means account is inactive) -> no change
+        if (user.is_active and disable_account is None) or (not user.is_active and disable_account == "on"):
+            #since no change in state, check for password change then
+            logger.info("same state")
+            status = user.is_active
+            if user is not None and user.check_password(form.current_password.data):
+                if form.new_password.data == '' or form.confirm_new_password.data == '':
+                    flash('Please enter a new password to change passwords or select disable account to disable your account.')
+                    return redirect(url_for('dash_account'))
+                elif form.new_password.data == form.confirm_new_password.data:
+                    user.set_password(form.new_password.data)
+                    flash('Password Successfully Changed!')
+                else:
+                    flash('Passwords does not match!')
+                    return redirect(url_for('dash_account'))
+            else:
+                flash('Invalid \'Current Password\'!')
+                return redirect(url_for('dash_account'))
+        else:
+            logger.info("different state")
+            #change in state, disable/enable account
+            if user is not None and user.check_password(form.current_password.data):
+                if disable_account == "on":
+                    #to change db state to False -> disable account
+                    #to disable account
+                    user.is_active = False
+                    flash('Account is Disabled!')
+                elif disable_account is None:
+                    #to change db state to True -> enable account
+                    #to disable account
+                    user.is_active = True
+                    flash('Account is Enabled!')
+            else:
+                flash('Invalid \'Current Password\'!')
+                return redirect(url_for('dash_account'))
+            if form.new_password.data != '' or form.confirm_new_password.data != '':
+                flash('Password is not changed!')
+            status = user.is_active
+
+
         try:
             db.session.commit()
             logger.debug("Successfully changed user %s password, updated database", user)
+            return redirect(url_for('dash_account'))
         except IntegrityError:
             db.session.rollback()
             logger.error("Failed to change password for %s, rolling back database", user)
 
     return render_template('dashboard/dashboard_account.html',
-    current_user = current_user.username, form = form)
-
+    current_user = current_user.username, form = form, status = status)
 
 
 @app.route('/dashboard/emails/phish/<mid>')
