@@ -19,7 +19,7 @@
     <div class="container w-25 p-3 mb-4 round-radius" style="background-color: #f9f9f9">
         <div class="row">
             <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
-                <div class="h2">Login</div>
+                <div class="h3">Login</div>
             </div>
         </div>
 
@@ -74,17 +74,10 @@
 
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
-                        <div class="h2">New User?</div>
+                        <p>New here? <a href="{{ url_for('register') }}"><u>Sign up with us!</u></a></p>
                     </div>
                 </div>
 
-                <div class="row pb-3">
-                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
-                        <div class="login-existing">
-                            <a class="main-btn w-90" href="{{ url_for('register') }}">Sign up with us</a>
-                        </div>
-                    </div>
-                </div>
             </form>
         </div>
     </div>
