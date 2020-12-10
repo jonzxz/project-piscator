@@ -10,6 +10,7 @@ from app.forms.LoginForm import LoginForm
 from app.forms.AddEmailForm import AddEmailForm
 from app.forms.ContactForm import ContactForm
 from app.forms.AccountSettingsForm import AccountSettingsForm
+from app.forms.ResetPasswordForm import ResetPasswordForm
 
 ## Models
 from app.models.User import User
@@ -314,3 +315,8 @@ def reg_form_reset():
 @app.route('/contact_form_reset', methods=['GET'])
 def contact_form_reset():
     return redirect(url_for('index'))
+
+@app.route('/reset', methods=['GET', 'POST'])
+def reset():
+    form = ResetPasswordForm()
+    return render_template('reset.html', form=form)
