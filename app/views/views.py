@@ -55,6 +55,9 @@ class AdminUserView(AdminBaseView):
 		'is_active' : 'Active'
 	}
 
+	## Custom View template
+	list_template = 'admin/admin_base_list.html'
+
 	# Sortable columns
 	column_sortable_list = ['user_id', 'username', 'created_at', 'last_logged_in', 'is_active', 'is_admin']
 
@@ -117,6 +120,7 @@ class AdminEmailView(AdminBaseView):
 		'last_updated' : 'Last Updated'
 	}
 
+	list_template = 'admin/admin_base_list.html'
 	# Sortable columns
 	columns_sortable_list = ['email_id', 'user_id', 'phishing_mail_detected', 'created_at', 'last_updated']
 
