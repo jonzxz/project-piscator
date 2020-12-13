@@ -236,6 +236,12 @@ def dash_account():
                     user.update_active_status(False)
                     logger.info("Setting %s account status to disabled", user.get_username())
                     logger.info("Sleeping for 3 seconds before logging out user")
+                    # Sets all email addresses for user to disabled
+                    user_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == user.user_id).all()
+                    for email in user_emails:
+                        logger.info("Disabling %s", email)
+                        email.set_active_status(False)
+
                     flash('Account is Disabled!')
                 # This block does nothing for now, disabled users cannot log in
                 elif disable_account is None:
@@ -243,6 +249,7 @@ def dash_account():
                     #to disable account
                     user.update_active_status(True)
                     logger.info("Setting %s account status to enabled", user.get_username())
+
                     flash('Account is Enabled!')
             else:
                 flash('Invalid \'Current Password\'!')
