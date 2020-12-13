@@ -1,5 +1,5 @@
-class Email:
-    def __init__(self, raw_data: str):
+class EmailData:
+    def __init__(self, subject, from_, attachments, content):
         self.__feature_https_tokens = 0
         self.__feature_domain_age = 0
         self.__feature_matching_domain = 0
@@ -10,7 +10,10 @@ class Email:
         self.__feature_presence_form_tag = 0
         self.__feature_subdomain_links = 0
 
-        self.__raw_data = raw_data
+        self.__subject = subject
+        self.__content = content
+        self.__from = from_
+        self.__attachments = attachments
 
     ## -- Jon START --
     def process_https_tokens(self):
@@ -64,6 +67,18 @@ class Email:
         self.process_presence_form_tag()
         self.process_subdomain_links()
 
+    def get_subject(self):
+        return self.__subject
+
+    def get_content(self):
+        return self.__content
+
+    def get_from(self):
+        return self.__from
+
+    def get_attachments(self):
+        return self.__attachments
+        
     def __repr__(self):
         return "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}".format(self.__feature_https_tokens, \
             self.__feature_domain_age, \
