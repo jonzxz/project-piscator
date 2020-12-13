@@ -17,7 +17,7 @@ from app.models.User import User
 from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
 
-## Datetime
+## Datetime, time
 from datetime import datetime
 
 ## Utils
@@ -175,65 +175,85 @@ def dash_account():
     #logger.info(current_user.username)
     #logger.info(form.current_password.data)
     user = db.session.query(User).filter(User.user_id == current_user.user_id).first()
-    status = user.is_active
+    status = user.get_active_status()
 
     if form.validate_on_submit():
-        logger.info("%s submitted account settings form", user)
+        logger.info("%s submitted account settings form", user.get_username())
 
-        #both change in state and change of password requires the correct current password
+        # If not password is entered, error is caught on Form level
+
+        # Current password required for changing password / disabling of account
+        # both change in state and change of password requires the correct current password
         if not user.check_password(form.current_password.data):
+            logger.info("%s submitted wrong password, redirecting to dashboard", user.get_username())
             flash('Invalid Current Password!')
             return redirect(url_for('dash_account'))
 
-        #get the state from form
+        # Retrieve slider data
         disable_account = request.form.get('disable_account')
-        logger.info("Before")
-        logger.info(user.is_active)
-        logger.info(disable_account)
 
-        #note: if all fields (current, new, confirm new passwords and disabled account) are filled
-        #only disable / enable account, password will not be changed
+        logger.info("%s -- Active: %s -- DisableSlider: %s",
+        user.get_username(), user.get_active_status(), disable_account)
 
+        # note: if all fields (current, new, confirm new passwords and disabled account) are filled
+        # only disable / enable account will be triggered, password will not be updated
+
+        ## -- Password Change START --
         #check for state change (db vs form)
-        #if db state is True and form state is False (both means account is active) -> no change
-        #or db state is False and form state is True (both means account is inactive) -> no change
-        if (user.is_active and disable_account is None) or (not user.is_active and disable_account == "on"):
-            #since no change in state, check for password change then
-            logger.info("same state")
-            status = user.is_active
+        #if user is active and form state is None (both means account is active) -> no change
+        #or user is inactive and form state is True (both means account is inactive) -> no change
+        if (user.get_active_status() and disable_account is None) or \
+        (not user.get_active_status() and disable_account == "on"): # line does nothing for now, if user is disabled they cannot log in
+            # since no change in state, check for password change then
+            logger.info("Entering password change")
+            status = user.get_active_status()
             if user is not None and user.check_password(form.current_password.data):
-                if form.new_password.data == '' or form.confirm_new_password.data == '':
+                if not form.new_password.data or not form.confirm_new_password.data:
+                    logger.info("Either password fields are empty, redirecting.")
                     flash('Please enter a new password to change passwords or select disable account to disable your account.')
                     return redirect(url_for('dash_account'))
                 elif form.new_password.data == form.confirm_new_password.data:
+                    logger.info("Password changed for %s", user.get_username())
                     user.set_password(form.new_password.data)
                     flash('Password Successfully Changed!')
                 else:
+                    logger.info("Mismatched passwords submited, redirecting.")
                     flash('Passwords does not match!')
                     return redirect(url_for('dash_account'))
             else:
+                logger.info("Invalid current password submitted, redirecting.")
                 flash('Invalid \'Current Password\'!')
                 return redirect(url_for('dash_account'))
+        ## -- Password Change END --
+        ## -- Account State START --
         else:
-            logger.info("different state")
-            #change in state, disable/enable account
+            logger.info("Entering account enable/disable.")
+            # Change in state, disable/enable account
             if user is not None and user.check_password(form.current_password.data):
                 if disable_account == "on":
-                    #to change db state to False -> disable account
+                    #to change is_active state to False -> disable account
                     #to disable account
-                    user.is_active = False
+                    user.update_active_status(False)
+                    logger.info("Setting %s account status to disabled", user.get_username())
+                    logger.info("Sleeping for 3 seconds before logging out user")
                     flash('Account is Disabled!')
+                # This block does nothing for now, disabled users cannot log in
                 elif disable_account is None:
-                    #to change db state to True -> enable account
+                    #to change is_active state to True -> enable account
                     #to disable account
-                    user.is_active = True
+                    user.update_active_status(True)
+                    logger.info("Setting %s account status to enabled", user.get_username())
                     flash('Account is Enabled!')
             else:
                 flash('Invalid \'Current Password\'!')
+                logger.info("User %s entered invalid current password", user.get_username())
                 return redirect(url_for('dash_account'))
-            if form.new_password.data != '' or form.confirm_new_password.data != '':
+            # Password change requested together with account activation, latter take precedence
+            # No changes in password will execute.
+            if form.new_password.data or form.confirm_new_password.data:
+                logger.info("Activation and password triggered - password not updated.")
                 flash('Password is not changed!')
-            status = user.is_active
+        ## -- Account State END --
 
 
         try:
@@ -244,6 +264,9 @@ def dash_account():
             db.session.rollback()
             logger.error("Failed to change password for %s, rolling back database", user)
 
+    # Updates values of status after changing status, does not do anything right now
+    # as user cannot log in after disabling account.
+    status = user.get_active_status()
     return render_template('dashboard/dashboard_account.html',
     current_user = current_user.username, form = form, status = status)
 
