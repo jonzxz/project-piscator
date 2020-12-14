@@ -36,7 +36,7 @@ def test_valid_register(client, db):
 def test_invalid_register(client, db):
     response = register(client, 'testuser123', 'password', 'password')
     assert response.status_code == 200
-    assert b'Create a new Account' in response.data
+    assert b'Create a New Account' in response.data
 
 # Assert HTTP code, assert URL redirect
 def test_valid_login(client):
