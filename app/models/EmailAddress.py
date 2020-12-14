@@ -15,6 +15,7 @@ class EmailAddress(db.Model):
 
     # FK
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
+    user = db.relationship('User', backref='addresses')
     phishing_mails = db.relationship('PhishingEmail', backref='owner', lazy='dynamic')
 
     def __repr__(self):

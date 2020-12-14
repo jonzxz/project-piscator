@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
     # FK
-    emails = db.relationship('EmailAddress', backref='owner', lazy='dynamic')
+    # emails = db.relationship('EmailAddress', backref='owner', lazy='dynamic')
 
     def __repr__(self):
         return "User ID: {} -- Username: {}".format(self.user_id, self.username)

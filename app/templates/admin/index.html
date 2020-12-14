@@ -1,6 +1,72 @@
+<!--
+===============================================================================
+This HTML file is the admin dashboard's HOMEPAGE. It extends the admin_menu.html
+to get the side navbar. This page should contain statistics system-wide, similar
+to the user dashboard (but that only shows for that particular user)
+===============================================================================
+-->
+{% include 'admin/admin_menu.html' %}
+<html class="no-js" lang="en">
+  <body>
+    <div class="w-75 mx-auto pl-5 pt-5">
+      <div class="pl-5 pt-2">
+        <span class="h2 pb-5">Admin Dashboard</span>
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <canvas id="myChart" width="300" height="200"></canvas>
+          </div>
+          <div class="col-12 col-md-6">
+            <canvas id="myChart2" width="300" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- should be moved into base -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+      <script>
+        var ctx = document.getElementById("myChart");
+        var ctx2 = document.getElementById("myChart2");
 
 
-{% block body %}
-<h2 class="center">Logged in as {{ current_user.username }}</h2>
-<a href="{{ url_for('logout') }}">Logout</a>
-{% endblock %}
+        <!--values (y-axis) to be updated here//-->
+        var emailsD = [9, 12, 18, 3, 15];
+        var emailsM = [9, 12, 21, 0, 15];
+
+        <!--values (x-axis) to be updated here//-->
+        var dates = ["08Nov20", "30Dec20", "02Jan21", "15Jan21", "21Mar21"];
+        var months = ["Nov20", "Dec20", "Jan21", "Feb21", "Mar21"]
+
+        var myChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: "Number of Phishing Emails / Day",
+                data: emailsD,
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                borderColor: "rgba(255, 99, 132, 1)",
+                borderWidth: 1
+              }
+            ]
+          }
+        });
+
+        var myChart2 = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Number of Phishing Emails / Month",
+                data: emailsM,
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                borderColor: "rgba(255, 99, 132, 1)",
+                borderWidth: 1
+              }
+            ]
+          }
+        });
+      </script>
+    </div>
+  </body>
+</html>
