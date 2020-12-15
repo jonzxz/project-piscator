@@ -29,6 +29,7 @@ def test_login(driver):
     driver.find_element_by_id('password').send_keys("password")
     driver.find_element_by_id('submit').click()
     # Assert user is redirected to admin
+    # [-2] due to /admin/
     assert driver.current_url.split(sep='/')[-2] == 'admin'
     sleep(2)
     # Logout
