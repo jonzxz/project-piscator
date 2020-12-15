@@ -29,9 +29,9 @@ def test_login(driver):
     driver.find_element_by_id('password').send_keys("password")
     driver.find_element_by_id('submit').click()
     # Assert user is redirected to admin
-    assert driver.current_url.split(sep='/')[-1] == 'admin'
+    assert driver.current_url.split(sep='/')[-2] == 'admin'
     sleep(2)
     # Logout
     wait_logout = WebDriverWait(driver, 5)
-    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[6]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[6]').click()
+    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[5]')))
+    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[5]').click()
