@@ -4,7 +4,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from time import sleep
 
 # Clicks on 'Emails' in dashboard, assert url = dashboard/emails
 # Clicks on 'Add New Email' and wait for Bootstrap modal to pop up
@@ -33,7 +32,6 @@ def test_add_email(driver):
     driver.find_element_by_id('email_address').send_keys("testmail456@mymail.com")
     driver.find_element_by_id('password').send_keys("password1")
     driver.find_element_by_id('submit').click()
-    sleep(5)
     assert 'testmail456@mymail.com' in driver.page_source
 
 # Clicks on power button on added email
@@ -41,4 +39,9 @@ def test_add_email(driver):
 def test_deactivate_email(driver):
     driver.find_element_by_name('activate-testmail456@mymail.com').click()
     assert driver.find_element_by_name('status-testmail456@mymail.com').text == 'Inactive'
-    sleep(5)
+
+    # Logout
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/button').click()
+    wait_logout = WebDriverWait(driver, 5)
+    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[6]')))
+    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[6]').click()

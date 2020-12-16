@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 # Clicks on 'Sign In', enter login credentials and check admin is redirected to admin dashboard
+# Test ends with logging out the session
 def test_login(driver):
     # Click 'Sign In'
     driver.find_element(By.XPATH, '/html/body/header/div[1]/div/div/div/nav/div[2]/a').click()
