@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def update_active_status(self, boolean: bool):
-        self.active = boolean
+        self.is_active = boolean
 
     def update_admin_status(self, boolean: bool):
         self.is_admin = boolean
