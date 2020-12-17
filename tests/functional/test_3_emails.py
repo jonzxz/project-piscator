@@ -39,9 +39,3 @@ def test_add_email(driver):
 def test_deactivate_email(driver):
     driver.find_element_by_name('activate-testmail456@mymail.com').click()
     assert driver.find_element_by_name('status-testmail456@mymail.com').text == 'Inactive'
-
-    # Logout
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/button').click()
-    wait_logout = WebDriverWait(driver, 5)
-    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[6]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[6]').click()

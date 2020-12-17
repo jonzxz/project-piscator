@@ -3,13 +3,11 @@ import sys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from .test_2_authentication import login, logout
 
 # Clicks on 'Sign In', enter login credentials and check admin is redirected to admin dashboard
 # Test ends with logging out the session
-def test_login(driver):
-    # Click 'Sign In'
-    driver.find_element(By.XPATH, '/html/body/header/div[1]/div/div/div/nav/div[2]/a').click()
-    assert driver.current_url.split(sep='/')[-1] == 'login'
+def test_admin_login(driver):
     # Enter credentials
     driver.find_element_by_id('username').send_keys("admin")
     driver.find_element_by_id('password').send_keys("password")
