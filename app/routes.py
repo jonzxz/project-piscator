@@ -211,8 +211,7 @@ def dash_account():
         #check for state change (db vs form)
         #if user is active and form state is None (both means account is active) -> no change
         #or user is inactive and form state is True (both means account is inactive) -> no change
-        if (user.get_active_status() and disable_account is None) or \
-        (not user.get_active_status() and disable_account == "on"): # line does nothing for now, if user is disabled they cannot log in
+        if (user.get_active_status() and disable_account is None) or (not user.get_active_status() and disable_account == "on"): # line does nothing for now, if user is disabled they cannot log in
             # since no change in state, check for password change then
             logger.info("Entering password change")
             status = user.get_active_status()

@@ -8,6 +8,6 @@ class AccountSettingsForm(FlaskForm):
 	current_password = PasswordField('Current Password: ', render_kw={"placeholder": "Current Password"}, validators=[DataRequired(message='Please enter your \'Current Password\'!')])
 	new_password = PasswordField('New Password: ', render_kw={"placeholder": "New Password"})
 	confirm_new_password = PasswordField('Confirm New Password: ', render_kw={"placeholder": "Confirm New Password"},
-		validators=[EqualTo('new_password', message='Password must match!')])
+		validators=[EqualTo('new_password', message='New Password and Confirm New Password must match!')])
 	disable_account = BooleanField('Enable / Disable Account: ')
 	submit = SubmitField('Update')
