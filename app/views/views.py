@@ -57,6 +57,8 @@ class AdminUserView(AdminBaseView):
 
 	## Custom View template
 	list_template = 'admin/admin_base_list.html'
+	create_template = 'admin/admin_base_create.html'
+	edit_template = 'admin/admin_base_edit.html'
 
 	# Sortable columns
 	column_sortable_list = ['user_id', 'username', 'created_at', 'last_logged_in', 'is_active', 'is_admin']
