@@ -23,31 +23,38 @@ def login(client, username, password):
 def logout(client):
     client.get('/logout', follow_redirects=True)
 
-
-## Make sure user does not exist in database!!
 # Assert HTTP code, assert database entry, assert page redirect
 def test_valid_register(client, db):
-    response = register(client, 'testuser123', 'password', 'password')
+    USERNAME = 'testuser123'
+    PASSWORD = 'password'
+    CONF_PASSWORD = 'password'
+    response = register(client, USERNAME, PASSWORD, CONF_PASSWORD)
     assert response.status_code == 200
-    assert db.session.query(User).filter(User.username == 'testuser123').first()
+    assert db.session.query(User).filter(User.username == USERNAME).first()
     assert b'Dashboard' in response.data
     logout(client)
 
 def test_invalid_register(client, db):
-    response = register(client, 'testuser123', 'password', 'password')
+    USERNAME = 'testuser123'
+    PASSWORD = 'password'
+    CONF_PASSWORD = 'NOTpassword'
+    response = register(client, USERNAME, PASSWORD, CONF_PASSWORD)
     assert response.status_code == 200
-    assert b'Create a new Account' in response.data
+    assert b'Create a New Account' in response.data
 
 # Assert HTTP code, assert URL redirect
 def test_valid_login(client):
-    response = login(client, 'user1', 'pa$$w0rd')
+    USERNAME = 'testuser123'
+    PASSWORD = 'password'
+    response = login(client, USERNAME, PASSWORD)
     assert response.status_code == 200
     assert b'dashboard' in response.data
     logout(client)
 
 def test_invalid_login(client):
-    response = login(client, 'tesaaatuser123', '54321')
-    print(response.data)
+    USERNAME = 'INVALIDUSER'
+    PASSWORD = 'wrongpassword'
+    response = login(client, USERNAME, PASSWORD)
     assert response.status_code == 200
     assert b'Invalid username or password' in response.data
 

@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
     # FK
-    emails = db.relationship('EmailAddress', backref='owner', lazy='dynamic')
+    # emails = db.relationship('EmailAddress', backref='owner', lazy='dynamic')
 
     def __repr__(self):
         return "User ID: {} -- Username: {}".format(self.user_id, self.username)
@@ -31,7 +31,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def update_active_status(self, boolean: bool):
-        self.active = boolean
+        self.is_active = boolean
 
     def update_admin_status(self, boolean: bool):
         self.is_admin = boolean
