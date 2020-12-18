@@ -123,6 +123,8 @@ class AdminEmailView(AdminBaseView):
 	}
 
 	list_template = 'admin/admin_base_list.html'
+	create_template = 'admin/admin_base_create.html'
+	edit_template = 'admin/admin_base_edit.html'
 	# Sortable columns
 	columns_sortable_list = ['email_id', 'user_id', 'phishing_mail_detected', 'created_at', 'last_updated']
 
