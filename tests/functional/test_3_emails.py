@@ -37,5 +37,7 @@ def test_add_email(driver):
 # Clicks on power button on added email
 # Assert the "Active" column for added email is now "False"
 def test_deactivate_email(driver):
+    wait_email_entry = WebDriverWait(driver, 5)
+    wait_email_entry.until(EC.visibility_of_element_located((By.NAME, 'activate-testmail456@mymail.com')))
     driver.find_element_by_name('activate-testmail456@mymail.com').click()
     assert driver.find_element_by_name('status-testmail456@mymail.com').text == 'Inactive'
