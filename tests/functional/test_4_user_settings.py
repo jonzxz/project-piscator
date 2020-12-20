@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from .test_2_authentication import login, logout
+from app import db
+from app.models.User import User
 
 # Flows after deactivating email so user is in dashboard still
 # Test password change in account setting by clicking into 'Account'
@@ -78,3 +80,4 @@ def test_disable_account(driver):
     # Assert login failed so user does not go into dashboard
     login(driver, USERNAME, PASSWORD)
     assert not driver.current_url.split(sep='/')[-1] == 'dashboard'
+    assert db.session.query(User).filter(User.username == USERNAME).first().get_active_status() == False
