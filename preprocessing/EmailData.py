@@ -1,3 +1,5 @@
+import re
+
 class EmailData:
     def __init__(self, subject, from_, attachments, content):
         self.__feature_https_tokens = 0
@@ -18,7 +20,9 @@ class EmailData:
     ## -- Jon START --
     def process_https_tokens(self):
         # self.feature_https_tokens =
-        pass
+        num_http = len(re.findall(r'http:', self.get_content()))
+        num_https = len(re.findall(r'https:', self.get_content()))
+        self.set_feature_https_token(num_https)
 
     def process_domain_age(self):
         # self.__feature_domain_age =
@@ -78,7 +82,7 @@ class EmailData:
 
     def get_attachments(self):
         return self.__attachments
-        
+
     def __repr__(self):
         return "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}".format(self.__feature_https_tokens, \
             self.__feature_domain_age, \
@@ -89,3 +93,9 @@ class EmailData:
             self.__feature_presence_js, \
             self.__feature_presence_form_tag, \
             self.__feature_subdomain_links)
+
+    def set_feature_https_token(self, num):
+        self.__feature_https_tokens = num
+
+    def get_feature_https_token(self):
+        return self.__feature_https_tokens
