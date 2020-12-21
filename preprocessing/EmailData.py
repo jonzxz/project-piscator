@@ -1,4 +1,5 @@
-import re
+import re, datetime, whois
+from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
 
 class EmailData:
     def __init__(self, subject, from_, attachments, content):
@@ -13,20 +14,57 @@ class EmailData:
         self.__feature_subdomain_links = 0
 
         self.__subject = subject
-        self.__content = content
-        self.__from = from_
+        self.__content = clean_up_raw_body(content)
+        self.__from = flatten_from_tuples(from_)
         self.__attachments = attachments
+        # Returns a list of domains
+        self.__domain = identify_domains(self.get_from())
 
     ## -- Jon START --
     def process_https_tokens(self):
-        # self.feature_https_tokens =
         num_http = len(re.findall(r'http:', self.get_content()))
         num_https = len(re.findall(r'https:', self.get_content()))
+        # Need to determine 1 or -1 based on num https counted
+        # eg. 1 HTTP 3 HTTPS, 1 or -1??? there isn't a clear determining of what
+        # does processing the https token do and what's the threshold if any
         self.set_feature_https_token(num_https)
 
+
+    # One issue with processing domain age is that the From: header can be spoofed to be a valid one
+    # There will be chances where encoding will fail in future processing if it contains things like
+    # service@intI-ÒaypaÓ.com
     def process_domain_age(self):
-        # self.__feature_domain_age =
-        pass
+        # Iterate through a list of domain (likely only one) to perform whois and
+        # return a creation date. Some entries for some reason are nested in a [1][1] list
+        # so isinstance checks if 1st element is a list and takes it out into a flat list
+
+        # Returns a list of creation dates for domains
+        domain_age = ([whois.whois(dom).creation_date for dom in self.get_domain()])
+
+        # -- Test domains - gmail is valid for both conditions
+        # domain_age = [whois.whois(dom).creation_date for dom in ['gmail.com']]
+        # domain_age = [whois.whois(dom).creation_date for dom in ['skyfi.com']]
+
+        # eg. [[datetime.datetime(1995, 8, 13, 4, 0), datetime.datetime(1995, 8, 13, 0, 0)]]
+        # transforms into flat list
+        if isinstance(domain_age[0], list):
+            domain_age = domain_age[0]
+
+        # eg. [datetime.datetime(1995, 8, 13, 4, 0), datetime.datetime(1995, 8, 13, 0, 0)]
+        # returns 1995/8/13:0400
+        # max returns the "youngest" (latest) creation date
+
+        # If domain returns a single datetime then [0] domain_age to get the only element
+        if not len(domain_age) == 1:
+            domain_age = max(domain_age)
+        else:
+            domain_age = domain_age[0]
+
+        # Compares difference in days from current time to domain_age in days
+        diff_days = (datetime.datetime.now() - domain_age).days
+
+        # If domain age more than 30 days return 1 (not phish) else -1 (phish)
+        self.set_feature_domain_age(1 if diff_days <= 30 else -1)
 
     def process_matching_domain(self):
         # self.__feature_matching_domain =
@@ -83,6 +121,9 @@ class EmailData:
     def get_attachments(self):
         return self.__attachments
 
+    def get_domain(self):
+        return self.__domain
+
     def __repr__(self):
         return "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}".format(self.__feature_https_tokens, \
             self.__feature_domain_age, \
@@ -99,3 +140,9 @@ class EmailData:
 
     def get_feature_https_token(self):
         return self.__feature_https_tokens
+
+    def set_feature_domain_age(self, num):
+        self.__feature_domain_age = num
+
+    def get_feature_domain_age(self):
+        return self.__feature_domain_age
