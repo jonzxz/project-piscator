@@ -3,7 +3,7 @@ body {
 }
 
 .sidepanel  {
-	width: 0;
+	width: 250px;
 	position: fixed;
 	z-index: 1;
 	height: 100%;
@@ -29,24 +29,6 @@ body {
 	color: #f1f1f1;
 }
 
-.sidepanel .closebtn {
-	position: absolute;
-	top: 0;
-	font-size: 36px;
-}
-
-.openbtn {
-	font-size: 30px;
-	cursor: pointer;
-	background-color: #F8F9FA;
-	color: #6A6972;
-	padding: 10px 15px;
-	border: none;
-}
-
-.openbtn:hover {
-	background-color:#E9ECEF;
-}
 
 .poppins {
 	font-family: "Poppins", sans-serif;

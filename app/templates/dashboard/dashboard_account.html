@@ -1,44 +1,47 @@
 {% extends "dashboard/dashboard_base.html" %}
 {% block content %}
-
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-
-<span class="h3 pt-2">Account Settings</span>
-<hr>
+<div class="w-90 mx-auto pl-5 pt-5">
+  <span class="h2 pt-2">Account Settings</span>
+  <hr style="background-color:white">
 <form action="" method="post" novalidate>
   {{ form.hidden_tag() }}
-  <div class="row pb-2">
-    <div class="col-6"><p class="text-right">{{ form.username.label }}</p></div>
-    <div class="col-3"><input class="form-control" type="text" id="subdomaintwo" value="  {{ current_user }}" disabled /></div>
+  <div class="row pb-3">
+    <div class="col-5"><p class="text-right">{{ form.username.label }}</p></div>
+    <div class="col-2"><input class="form-control" type="text" id="subdomaintwo" value="  {{ current_user }}" disabled /></div>
   </div>
-  <div class="row pb-2">
-    <div class="col-6"><p class="text-right">{{ form.current_password.label }}</p></div>
-    <div class="col-3">{{ form.current_password(class_='form-control') }}</div>
+  <div class="row pb-3">
+    <div class="col-5"><p class="text-right">{{ form.current_password.label }}</p></div>
+    <div class="col-2">{{ form.current_password(class_='form-control') }}</div>
   </div>
-  <div class="row pb-2">
-    <div class="col-6"><p class="text-right">{{ form.new_password.label }}</p></div>
-    <div class="col-3">{{ form.new_password(class_='form-control') }}</div>
+  <div class="row pb-3">
+    <div class="col-5"><p class="text-right">{{ form.new_password.label }}</p></div>
+    <div class="col-2">{{ form.new_password(class_='form-control') }}</div>
   </div>
-  <div class="row pb-2">
-    <div class="col-6"><p class="text-right">{{ form.confirm_new_password.label }}</p></div>
-    <div class="col-3">{{ form.confirm_new_password(class_='form-control') }}</div>
+  <div class="row pb-3">
+    <div class="col-5"><p class="text-right">{{ form.confirm_new_password.label }}</p></div>
+    <div class="col-2">{{ form.confirm_new_password(class_='form-control') }}</div>
   </div>
-  <div class="row pb-2">
-    <div class="col-6"><p class="text-right">{{ form.disable_account.label }}</p></div>
-    <div class="col-3"><div class="row mx-md-n3"><div class="col pt-md-1">
-      <div class="custom-control custom-switch">
-          {% if status %}
-            <input type="checkbox" class="custom-control-input" id="disable_acc_switch" name='disable_account'>
-          {% else %}
-            <input type="checkbox" class="custom-control-input" id="disable_acc_switch" name='disable_account' checked>
-          {% endif %}
-          <label class="custom-control-label" for="disable_acc_switch"></label>
+  <div class="row pb-3">
+    <div class="col-5"><p class="text-right">{{ form.disable_account.label }}</p></div>
+    <div class="col-2">
+      <div class="row mx-md-n3">
+        <div class="col pt-md-1">
+          <div class="custom-control custom-switch">
+            {% if status %}
+              <input type="checkbox" class="custom-control-input" id="disable_acc_switch" name='disable_account'>
+            {% else %}
+              <input type="checkbox" class="custom-control-input" id="disable_acc_switch" name='disable_account' checked>
+            {% endif %}
+            <label class="custom-control-label" for="disable_acc_switch"></label>
+          </div>
+        </div>
       </div>
-    </div></div></div>
+    </div>
   </div>
+
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       {% for message in messages %}
@@ -54,23 +57,23 @@
   {% endwith %}
   {% if form.errors %}
     {% for error in form.current_password.errors %}
-    <div class="row mt-2 mb-2 justify-content-center">
-      <div class="alert alert-danger">{{ error }}</div>
-    </div>
+      <div class="row mt-2 mb-2 justify-content-center">
+        <div class="alert alert-danger">{{ error }}</div>
+      </div>
     {% endfor %}
     {% for error in form.confirm_new_password.errors %}
-    <div class="row mt-2 mb-2 justify-content-center">
-      <div class="alert alert-danger">{{ error }}</div>
-    </div>
+      <div class="row mt-2 mb-2 justify-content-center">
+        <div class="alert alert-danger">{{ error }}</div>
+      </div>
     {% endfor %}
   {% endif %}
   <hr>
   <div class="row">
-    <div class="col-4"></div>
-    <div class="col-2"><p class="text-right">{{ form.submit(class_='btn btn-secondary btn-block') }}</p></div>
-    <div class="col-2"><button type="button" class = "btn btn-default btn-block">Cancel</button></div>
+    <div class="col-3"></div>
+    <div class="col-2"><p class="text-right">{{ form.submit(class_='main-btn m-3') }}</p></div>
+    <button type="button" class="main-btn m-3" data-toggle="modal" data-target="#addMailModal">Cancel</button>
     <div class="col-4"></div>
   </div>
 </form>
-
+</div>
 {% endblock %}
