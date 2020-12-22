@@ -1,5 +1,6 @@
 import re, datetime, whois
 from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
+from whois.parser import PywhoisError
 
 class EmailData:
     def __init__(self, subject, from_, attachments, content):
@@ -38,33 +39,36 @@ class EmailData:
         # return a creation date. Some entries for some reason are nested in a [1][1] list
         # so isinstance checks if 1st element is a list and takes it out into a flat list
 
-        # Returns a list of creation dates for domains
-        domain_age = ([whois.whois(dom).creation_date for dom in self.get_domain()])
+        try:
+            # Returns a list of creation dates for domains
+            domain_age = ([whois.whois(dom).creation_date for dom in self.get_domain()])
 
-        # -- Test domains - gmail is valid for both conditions
-        # domain_age = [whois.whois(dom).creation_date for dom in ['gmail.com']]
-        # domain_age = [whois.whois(dom).creation_date for dom in ['skyfi.com']]
+            # -- Test domains - gmail is valid for both conditions
+            # domain_age = [whois.whois(dom).creation_date for dom in ['gmail.com']]
+            # domain_age = [whois.whois(dom).creation_date for dom in ['skyfi.com']]
 
-        # eg. [[datetime.datetime(1995, 8, 13, 4, 0), datetime.datetime(1995, 8, 13, 0, 0)]]
-        # transforms into flat list
-        if isinstance(domain_age[0], list):
-            domain_age = domain_age[0]
+            # eg. [[datetime.datetime(1995, 8, 13, 4, 0), datetime.datetime(1995, 8, 13, 0, 0)]]
+            # transforms into flat list
+            if isinstance(domain_age[0], list):
+                domain_age = domain_age[0]
 
-        # eg. [datetime.datetime(1995, 8, 13, 4, 0), datetime.datetime(1995, 8, 13, 0, 0)]
-        # returns 1995/8/13:0400
-        # max returns the "youngest" (latest) creation date
+            # eg. [datetime.datetime(1995, 8, 13, 4, 0), datetime.datetime(1995, 8, 13, 0, 0)]
+            # returns 1995/8/13:0400
+            # max returns the "youngest" (latest) creation date
 
-        # If domain returns a single datetime then [0] domain_age to get the only element
-        if not len(domain_age) == 1:
-            domain_age = max(domain_age)
-        else:
-            domain_age = domain_age[0]
+            # If domain returns a single datetime then [0] domain_age to get the only element
+            if not len(domain_age) == 1:
+                domain_age = max(domain_age)
+            else:
+                domain_age = domain_age[0]
 
-        # Compares difference in days from current time to domain_age in days
-        diff_days = (datetime.datetime.now() - domain_age).days
+            # Compares difference in days from current time to domain_age in days
+            diff_days = (datetime.datetime.now() - domain_age).days
 
-        # If domain age more than 30 days return 1 (not phish) else -1 (phish)
-        self.set_feature_domain_age(1 if diff_days <= 30 else -1)
+            # If domain age more than 30 days return 1 (not phish) else -1 (phish)
+            self.set_feature_domain_age(1 if diff_days <= 30 else -1)
+        except PywhoisError:
+            self.set_feature_domain_age(1)
 
     def process_matching_domain(self):
         # self.__feature_matching_domain =
