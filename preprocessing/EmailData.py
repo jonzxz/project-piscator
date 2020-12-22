@@ -30,7 +30,6 @@ class EmailData:
         # does processing the https token do and what's the threshold if any
         self.set_feature_https_token(num_https)
 
-
     # One issue with processing domain age is that the From: header can be spoofed to be a valid one
     # There will be chances where encoding will fail in future processing if it contains things like
     # service@intI-ÒaypaÓ.com
@@ -70,8 +69,56 @@ class EmailData:
         except PywhoisError:
             self.set_feature_domain_age(1)
 
+    # main_domain iterates through self.__domain which is set as a list
+    # splits each element and returns the last 2 elements because some domains are like
+    # test.ebay.com, the split and join returns 'ebay.com'
+    # it is done in this way so that even if it's just 'ebay.com' it will return the same thing
+
+    # domains_in_mail does a regex catch to get all <site>.<TLD> with the same split idea as above
+    # from the content body of email. Returns a set so that duplicates are removed
+    # Regex searches for all http:// or https:// or https://www. so on and returns the
+    # website.com or website.net or whatever found
+    # If the length of main_domain is actually 1 (which in most cases it should be)
+    # then it checks if the main_domain is in each element of domains_in_mail
+    # If it is not then count is incremented
+    # If length of main_domain is more than 1 then it'll enter a nested loop to tally
+    # For this function IP addresses will not be split correctly resulting in half-IP
+    # which itself is sufficient to test for matching domains, since in the first place
+    # a legitimate sender will be DNS resolved instead of raw IP.
     def process_matching_domain(self):
-        # self.__feature_matching_domain =
+        main_domains = ['.'.join(dom.split(sep='.')[-2:]) for dom in self.get_domain()]
+        domains_in_mail = set(['.'.join((b[0]).split(sep='.')[-2:]) for b in \
+        re.findall('((http://www.|https://www.|http://|www.|https://).+?(?=\/))' \
+        , self.get_content())])
+
+        count = 0
+        if len(main_domains) == 1:
+            main_domains= main_domains[0]
+            for domain in domains_in_mail:
+                print("Comparing {} against {}".format(main_domains, domain))
+                if main_domains not in domain:
+                    count+=1
+        else:
+            for main_d in main_domains:
+                print("Comparing {} against {}".format(main_d, domain))
+                for domain in domains_in_mail:
+                    if main_d not in domain:
+                        count+=1
+
+        # Threshold is set to > 1
+        # If more than 1 domain does not match the sender domain then it is
+        # given a score of phish (-1)
+        self.set_feature_matching_domain(1 if count > 1 else -1)
+
+
+        """
+        Check if domain of ‘From:’ matches domain(s) found in links in email body
+        To use: ‘From’ header’s domain to compare with links
+
+        From -> get_domain()
+        check content with
+        r.findall('(http://www.|https://www.|http://|www.|https://)[^\/]*', self.get_content())
+        """
         pass
 
     def process_keyword_count(self):
