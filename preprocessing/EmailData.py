@@ -128,24 +128,95 @@ class EmailData:
 
     ## -- Zuhree START --
     def process_html_header(self):
-        # self.__feature_presence_html_header =
-        pass
+        # Regex check for html header
+        checkhtmlheader = re.compile(r'(<html>)')
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            return 0
+
+        # Checks the message with the regex and extracts it out
+        header = re.search(checkhtmlheader, self.get_content())
+        # If matches with the regex
+        if header:
+            return 1
+        else:
+            return -1
 
     def process_ip_url(self):
-        # self.__feature_ip_url =
-        pass
+        # Regex check for ip address
+        checkipregex = re.compile(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            return 0
+
+        # Checks the message with the regex and extracts it out
+        ips = re.findall(checkipregex, self.get_content())
+
+        # For each ip found, checks if it matches the regex
+        for ip in ips:
+            print(ip)
+            # Checks the ip with a black list ip checker
+            # ip_checker = pydnsbl.DNSBLIpChecker()
+            # result = ip_checker.check(ip)
+            # if result.blacklisted:
+            return 1
+            # continue
+
+        return -1
 
     def process_presence_js(self):
-        # self.__feature_presence_js =
-        pass
+        # Regex check for javascript
+        checkjavascript = re.compile(r'(javascript|Javascript|JavaScript|<script>)')
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            return 0
+
+        # Checks the message with the regex and extracts it out
+        checkJS = re.search(checkjavascript, self.get_content())
+        # If matches with the regex
+        if checkJS:
+            return 1
+        else:
+            return -1
 
     def process_presence_form_tag(self):
-        # self.__feature_presence_form_tag =
-        pass
+        # Regex check for form
+        checkformtag = re.compile(r'<(?:form|Form)')
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            return 0
+
+        # Checks the message with the regex and extracts it out
+        checkForm = re.search(checkformtag, self.get_content())
+        # If matches with the regex
+        if checkForm:
+            return 1
+        else:
+            return -1
 
     def process_subdomain_links(self):
-        # self.__feature_subdomain_links =
-        pass
+        # Regex check for sub domain
+        subdomainregex = re.compile(r'([a-z0-9|-]+\.)*[a-z0-9|-]+\.[a-z]+')
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            return 0
+
+        # Checks the message with the regex and extracts it out
+        links = re.findall(subdomainregex, self.get_content())
+
+        # Check each link if the domain has more than 3 dots
+        for link in links:
+            if link.count('.') > 3:
+                return 1
+            else:
+                continue
+
+        return -1
     ## -- Zuhree END --
 
     def generate_features(self):
