@@ -1,0 +1,69 @@
+{% extends 'admin/base.html' %}
+{% import 'admin/lib.html' as lib with context %}
+{% include 'admin/admin_menu.html' %}
+{% from 'admin/lib.html' import extra with context %} {# backward compatible #}
+{% import 'admin/actions.html' as actionlib with context %}
+
+{% block head %}
+{{ super() }}
+{{ lib.form_css() }}
+{% endblock %}
+
+{% block page_body %}
+<div class="pt-3 container{% if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %}">
+
+  {% block messages %}
+  {{ layout.messages() }}
+  {% endblock %}
+
+  {# store the jinja2 context for form_rules rendering logic #}
+  {% set render_ctx = h.resolve_ctx() %}
+
+  {% block body %}
+  {% block navlinks %}
+  <div class="w-90 mx-auto pl-5 pt-5">
+    <div class="pl-5 pt-2">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a href="{{ return_url }}" class="nav-link">{{ _gettext('List') }}</a>
+        </li>
+
+        {%- if admin_view.can_create -%}
+          <li class="nav-item">
+            <a href="{{ get_url('.create_view', url=return_url) }}" class="nav-link">{{ _gettext('Create') }}</a>
+          </li>
+        {%- endif -%}
+          <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link active">{{ _gettext('Edit') }}</a>
+          </li>
+
+        {%- if admin_view.can_view_details -%}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ get_url('.details_view', id=request.args.get('id'), url=return_url) }}">{{ _gettext('Details') }}</a>
+          </li>
+        {%- endif -%}
+      </ul>
+      {% endblock %}
+
+      {% block edit_form %}
+      {{ lib.render_form(form, return_url, extra(), form_opts) }}
+      {% endblock %}
+      {% endblock %}
+
+      {% block tail %}
+      {{ super() }}
+
+      {% if filter_groups %}
+        <div id="filter-groups-data" style="display:none;">{{ filter_groups|tojson|safe }}</div>
+        <div id="active-filters-data" style="display:none;">{{ active_filters|tojson|safe }}</div>
+      {% endif %}
+
+      <script src="{{ admin_static.url(filename='admin/js/bs4_modal.js', v='1.0.0') }}"></script>
+      <script src="{{ admin_static.url(filename='admin/js/bs4_filters.js', v='1.0.0') }}"></script>
+      {{ lib.form_js() }}
+      {{ actionlib.script(_gettext('Please select at least one record.'), actions, actions_confirmation) }}
+      {% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}
