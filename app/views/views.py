@@ -74,10 +74,12 @@ class AdminUserView(AdminBaseView):
 	# Changes created_at and last_logged_in to be unmodifiable when editing entity
 	form_widget_args = {
 		'created_at' : {
-			'readonly' : True
+			'readonly' : True,
+			'disabled' : True
 		},
 		'last_logged_in' : {
-			'readonly' : True
+			'readonly' : True,
+			'disabled' : True
 		},
 	}
 
@@ -104,6 +106,13 @@ class AdminUserView(AdminBaseView):
 		if model == current_user:
 			logger.error("Attempted to delete {} as {}. Throwing error".format(model.get_username(), current_user.get_username()))
 			raise ValidationError('Cannot delete currently logged in account')
+
+	# Function to prefill edit forms - called when edit_view is invoked
+	# During editing of entries, the username is set to readonly so it cannot be modified
+	def on_form_prefill(self, form, model):
+		form.username.render_kw = {
+			'readonly':True
+		}
 
 class AdminEmailView(AdminBaseView):
 	### Display Rules
@@ -140,16 +149,20 @@ class AdminEmailView(AdminBaseView):
 	# Read only columns for the following supposedly manually unmodifiable columns
 	form_widget_args = {
 		'last_mailbox_size' : {
-			'readonly' : True
+			'readonly' : True,
+			'disabled' : True
 		},
 		'phishing_mail_detected' : {
-			'readonly' : True
+			'readonly' : True,
+			'disabled' : True
 		},
 		'created_at' : {
-			'readonly' : True
+			'readonly' : True,
+			'disabled' : True
 		},
 		'last_updated' : {
-			'readonly' : True
+			'readonly' : True,
+			'disabled' : True
 		}
 	}
 
@@ -168,3 +181,10 @@ class AdminEmailView(AdminBaseView):
 			if form.change_password.data:
 				logger.info("Email Addr {}'s password is changed".format(model.get_email_address()))
 				model.set_email_password(form.change_password.data)
+
+	# Function to prefill edit forms - called when edit_view is invoked
+	# During editing of entries, the email is set to readonly so it cannot be modified
+	def on_form_prefill(self, form, model):
+		form.email_address.render_kw = {
+			'readonly':True
+		}
