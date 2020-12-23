@@ -107,10 +107,16 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/admin')
+@app.route('/admin/')
 def admin():
+    logger.info("Entering admin route")
     if current_user.is_admin:
         logger.info("Admin user logging in, redirecting to admin portal")
-        return render_template('admin/index.html')
+        usersA = db.session.query(User).filter(User.is_active==True).count()
+        usersI = db.session.query(User).filter(User.is_active==False).count()
+        logger.info("Active users: %s -- Inactive Users: %s", usersA, usersI)
+        user_stats = [usersI, usersA]
+        return render_template('admin/index.html', user_stats = user_stats)
     else:
         logger.warn("Normal user accessing admin, redirecting to dashboard")
         return redirect(url_for('dashboard'))
