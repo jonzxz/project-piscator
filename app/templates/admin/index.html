@@ -27,8 +27,9 @@ to the user dashboard (but that only shows for that particular user)
         var ctx2 = document.getElementById("myChart2");
 
         <!--values (y-axis) to be updated here//-->
-        var usersT = {{ user_stats }}
-        var emailsM = [9, 12, 21, 0, 15];
+        var users_stats = {{ user_stats }}
+        var email_stats = {{ email_stats }}
+        // var users_stats = [9, 12, 21, 0, 15];
 
         <!--values (x-axis) to be updated here//-->
         var dates = ["08Nov20", "30Dec20", "02Jan21", "15Jan21", "21Mar21"];
@@ -40,7 +41,7 @@ to the user dashboard (but that only shows for that particular user)
             labels: ["Inactive Users", "Active Users"],
             datasets: [
               {
-                data: usersT,
+                data: users_stats,
                 backgroundColor: ["#63FF84", "#6384FF"],
               }
             ]
@@ -48,16 +49,13 @@ to the user dashboard (but that only shows for that particular user)
         });
 
         var myChart2 = new Chart(ctx2, {
-          type: "line",
+          type: "pie",
           data: {
-            labels: months,
+            labels: ["Inactive Addresses", "Active Addresses"],
             datasets: [
               {
-                label: "Number of Phishing Emails / Month",
-                data: emailsM,
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                borderWidth: 1
+                data: email_stats,
+                backgroundColor: ["#A5EAF4", "#CFA5F4"]
               }
             ]
           }
