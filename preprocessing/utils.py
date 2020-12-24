@@ -7,6 +7,7 @@ def clean_up_raw_body(raw_text):
 # By right there SHOULD only be a single pair but kept in list just in case!
 # Even indexes are Sender and odd indexs are SenderDomains
 def flatten_from_tuples(list_tupl):
+    # print("Retrieved: {}".format(list_tupl))
     return [item for tup in list_tupl for item in tup]
 
 # Retrieves a list of [Sender, SenderDomain] and returns domain names only
@@ -14,4 +15,6 @@ def flatten_from_tuples(list_tupl):
 # Returns [Company.com]
 # By right there should only be one entry but kept in list just in case
 def identify_domains(list_of_sender_domain_pairs):
-    return [item.split(sep='@')[1] for item in list_of_sender_domain_pairs if '@' in item]
+    if isinstance(list_of_sender_domain_pairs, list):
+        return [item.split(sep='@')[1] for item in list_of_sender_domain_pairs if '@' in item]
+    return list_of_sender_domain_pairs.split(sep='@')[-1]
