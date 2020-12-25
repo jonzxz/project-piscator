@@ -55,8 +55,8 @@ class AdminUserView(AdminBaseView):
 		'is_active' : 'Active'
 	}
 
-	# create_modal = True
-	# edit_modal = True
+	create_modal = True
+	edit_modal = True
 	# column_searchable_list = ['username', 'user_id']
 	column_filters = ['user_id']
 
@@ -106,6 +106,7 @@ class AdminUserView(AdminBaseView):
 				# Password hashing is automatically done on Model level
 				model.set_password(form.change_password.data)
 
+
 	# Function on deleting user - handling of deleting currently logged in user
 	def on_model_delete(self, model):
 		if model == current_user:
@@ -136,8 +137,8 @@ class AdminEmailView(AdminBaseView):
 		'last_updated' : 'Last Updated'
 	}
 
-	# create_modal = True
-	# edit_modal = True
+	create_modal = True
+	edit_modal = True
 
 	list_template = 'admin/admin_base_list.html'
 	create_template = 'admin/admin_base_create.html'
@@ -212,8 +213,8 @@ class AdminPhishingView(AdminBaseView):
 		'created_at' : 'Created At'
 	}
 
-	# create_modal = True
-	# edit_modal = True
+	create_modal = True
+	edit_modal = True
 
 	## Custom View template
 	list_template = 'admin/admin_base_list.html'
