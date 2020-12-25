@@ -3,8 +3,6 @@ from app.models.EmailAddress import EmailAddress
 
 import pytest
 
-
-
 def add_mail(client, email, password):
     return client.post(
     '/dashboard/emails', data={
@@ -13,6 +11,9 @@ def add_mail(client, email, password):
     },
     follow_redirects=True
     )
+
+def enable_disable_mail(client, mail_id):
+    return client.get('/dashboard/emails/activation/{}'.format(mail_id), follow_redirects=True)
 
 # Make sure user is valid and email does not exist in database
 # Assert HTTP code, assert database entry, assert new mail displayed in page
@@ -27,7 +28,7 @@ def test_valid_add_mail(client, db):
 def test_valid_disable_mail(client, db):
     mail_address = EmailAddress.query.filter(EmailAddress.email_address == 'testmail456@mymail.com').first()
     mail_id = mail_address.get_email_id()
-    response = client.get('/dashboard/emails/activation/{}'.format(mail_id), follow_redirects=True)
+    response = enable_disable_mail(client, mail_id)
     updated_status = EmailAddress.query.filter(EmailAddress.email_address == 'testmail456@mymail.com').first().get_active_status()
     assert response.status_code == 200
     assert updated_status == False
