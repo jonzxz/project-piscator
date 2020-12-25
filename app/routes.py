@@ -25,6 +25,7 @@ from datetime import datetime, date
 from app.utils.EmailUtils import test_mailbox_conn
 from app.utils.EmailUtils import send_contact_us_email
 from app.utils.EmailUtils import get_imap_svr
+from app.utils.EmailUtils import send_phish_check_notice
 from app.utils.DBUtils import get_user_by_id
 from app.utils.DBUtils import get_user_by_name
 from app.utils.DBUtils import get_email_address_by_address
@@ -355,7 +356,7 @@ def check_phish(mid):
         # imap_tool's Mail item instead of our EmailData.
         # Inserts all phishing mails to the database
         for msg in all_mails:
-            if not msg.from_ == mailaddr.get_email_address():
+            if not msg.from_ == mailaddr.get_email_address() or not msg.from_ == 'piscator.fisherman@gmail.com':
                 # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
                 mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html))
                 mail_item.generate_features()
@@ -363,7 +364,6 @@ def check_phish(mid):
                 detection_count = 0
                 if result == 1:
                     logger.info("Phishing mail detected, subject: %s", msg.subject)
-                    phishing_mails.append(Mail(msg.from_, msg.date, msg.subject))
 
                     # Checks that the detected mail item is not already in the database
                     # This is to avoid duplicate rows of same item by
@@ -377,6 +377,7 @@ def check_phish(mid):
                     PhishingEmail.content == mail_item.get_content()).first()
 
                     if not mail_exist:
+                        phishing_mails.append(Mail(msg.from_, msg.date, msg.subject))
                         detection_count+=1
                         detected_mail = PhishingEmail( \
                         sender_address = msg.from_, \
@@ -391,6 +392,7 @@ def check_phish(mid):
         db.session.commit()
         logger.info("Finished checking mails.. logging out")
         mailbox.logout()
+        send_phish_check_notice(mailaddr.get_email_address(), phishing_mails)
     except ConnectionRefusedError:
         logger.error("Unable to connect to mailbox for %s", mailaddr.get_email_address())
         flash("Unable to connect to mailbox!")

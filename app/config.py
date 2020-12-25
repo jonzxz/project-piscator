@@ -22,8 +22,8 @@ class Config(object):
     RECAPTCHA_OPTIONS = {'theme' : 'black'}
 
     # Configures ReCAPTCHA and Contact Us
-    # If TESTING = True, ReCAPTCHA will be active and Flask-Mail Contact us will work
-    # If TESTING = False, ReCAPTCHA will be inactive and Flask-Mail Contact us will NOT work
+    # If TESTING = True, ReCAPTCHA will be inactive and Flask-Mail Contact us will NOT work
+    # If TESTING = False, ReCAPTCHA will be active and Flask-Mail Contact us will work
     TESTING=os.environ.get('TESTING') or True
 
     # Flask-Mail Configs

@@ -28,6 +28,7 @@ def get_imap_svr(email_addr):
         return IMAP_OUTLOOK
     # more imap servers to be added - test mailbox conn first before adding in here
 
+# Will not work if TESTING is True
 def send_contact_us_email(email, msg_body):
     logger.info("Entering send_email")
     # logger.debug("USERNAME %s", username)
@@ -36,3 +37,18 @@ def send_contact_us_email(email, msg_body):
     email, datetime.now(), msg_body)
     mailer.send(msg)
     logger.info("Email sent")
+
+# Will not work if TESTING is True
+def send_phish_check_notice(destination, phishing_mails):
+    logger.info("Entering send_phish_check_notice")
+    msg = Message("Piscator: Phishing Check Completed for {} on {}" \
+    .format(destination, datetime.now().strftime("%d-%m-%Y, %H:%M"))\
+    , recipients = [destination])
+
+    msg.body = "You have recently requested for a phishing check on {}\n".format(destination)
+    msg.body += "These are the phishing emails detected - \n\n"
+
+    for phish_mail in phishing_mails:
+        msg.body += phish_mail.__repr__() + '\n\n'
+    mailer.send(msg)
+    logger.info("Phish check notice sent.")

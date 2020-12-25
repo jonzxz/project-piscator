@@ -17,3 +17,7 @@ class Mail():
 
     def get_subject(self):
         return self.__subject
+
+    def __repr__(self):
+        return "Sender: {} -- Subject: {} -- Date: {}" \
+        .format(self.get_sender(), self.get_subject(), self.get_date())
