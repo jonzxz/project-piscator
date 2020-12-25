@@ -6,6 +6,9 @@ from flask_login import LoginManager
 from flask_admin import Admin
 import logging
 
+# Random Forest Model
+from app.machine_learning.utils import load_model
+model = load_model('app/machine_learning/PhishingForest')
 
 # Application instance and application config instance
 app = Flask(__name__)
