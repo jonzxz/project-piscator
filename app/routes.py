@@ -295,6 +295,15 @@ def check_phish(mid):
 
     # Retrieves the email address instance
     logger.info("Click-to-check entered..")
+
+    owner_id = db.session.query(EmailAddress) \
+    .filter(EmailAddress.email_id == mid) \
+    .first() \
+    .get_user_id()
+    if current_user.is_anonymous or not owner_id == current_user.get_id() : # or CU ID is not owner of MID
+        logger.warning("Anonymous or unauthorized user attempting phish check of address ID {}!".format(mid))
+        return redirect(url_for('index'))
+
     mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
 
     # Redirects back to page if selected email is inactive
@@ -390,6 +399,16 @@ def check_phish(mid):
 
 @app.route('/dashboard/emails/activation/<mid>')
 def mail_activation(mid):
+    logger.info("MID: {}".format(mid))
+    owner_id = db.session.query(EmailAddress) \
+    .filter(EmailAddress.email_id == mid) \
+    .first() \
+    .get_user_id()
+
+    if current_user.is_anonymous or not owner_id == current_user.get_id() : # or CU ID is not owner of MID
+        logger.warning("Anonymous or unauthorized user attempting activation of address ID {}!".format(mid))
+        return redirect(url_for('index'))
+
     logger.info("Entering function to enable/disable email..")
     mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
     if mailaddr.get_active_status() == True:
