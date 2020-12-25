@@ -49,7 +49,7 @@ class EmailAddress(db.Model):
         return self.last_mailbox_size
 
     def set_phishing_mail_detected(self, num_phish_detected: int):
-        self.phishing_mail_detected = num_phish_detected
+        self.phishing_mail_detected += num_phish_detected
 
     def get_phishing_mail_detected(self) -> int:
         return self.phishing_mail_detected

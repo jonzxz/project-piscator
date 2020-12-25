@@ -315,7 +315,7 @@ def check_phish(mid):
         logger.info("Connected to mailbox %s", mailaddr.get_email_address())
 
         # Retrieves date last updated: converts datetime to date
-        last_updated = mailaddr.get_last_updated().date()
+        last_updated = mailaddr.get_last_updated().date() if mailaddr.get_last_updated() else datetime.now().date()
         # Updates last updated to current time
         mailaddr.set_last_updated(datetime.now())
         logger.info("Updating mailbox last updated from %s to %s",\
@@ -328,6 +328,7 @@ def check_phish(mid):
         # Sets a check criteria so that
         # only mails newer than last_updated and unread mails are checked
         check_criteria = AND(date_gte=last_updated, seen=False)
+
         # check_criteria = AND(date_gte=[date(2020, 12, 23)], seen=False)
 
         # Fetch mails from mailbox based on criteria, does not "read" the mail
@@ -348,6 +349,7 @@ def check_phish(mid):
                 mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html))
                 mail_item.generate_features()
                 result = model.predict(mail_item.repr_in_arr())
+                detection_count = 0
                 if result == 1:
                     logger.info("Phishing mail detected, subject: %s", msg.subject)
                     phishing_mails.append(Mail(msg.from_, msg.date, msg.subject))
@@ -364,6 +366,7 @@ def check_phish(mid):
                     PhishingEmail.content == mail_item.get_content()).first()
 
                     if not mail_exist:
+                        detection_count+=1
                         detected_mail = PhishingEmail( \
                         sender_address = msg.from_, \
                         subject = msg.subject, \
@@ -373,6 +376,7 @@ def check_phish(mid):
                         )
                         db.session.add(detected_mail)
 
+        mailaddr.set_phishing_mail_detected(detection_count)
         db.session.commit()
         logger.info("Finished checking mails.. logging out")
         mailbox.logout()
