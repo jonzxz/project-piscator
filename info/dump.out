@@ -81,7 +81,8 @@ CREATE TABLE public.phishing_email (
     sender_address character varying(30) NOT NULL,
     content text NOT NULL,
     created_at timestamp without time zone,
-    receiver_address integer NOT NULL
+    receiver_id integer NOT NULL,
+    subject text NOT NULL
 );
 
 
@@ -174,7 +175,7 @@ ALTER TABLE ONLY public."user" ALTER COLUMN user_id SET DEFAULT nextval('public.
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-85dcee72b6c4
+923836e9b856
 \.
 
 
@@ -183,6 +184,7 @@ COPY public.alembic_version (version_num) FROM stdin;
 --
 
 COPY public.email_address (email_id, email_address, created_at, user_id, active, email_password, last_mailbox_size, last_updated, phishing_mail_detected) FROM stdin;
+1	piscator.fisherman@gmail.com	2020-12-25 15:11:24.443306	2	t	gAAAAABf5ZCcp847rRQIs2YstFZ2eXztMp-mG8DI1kLSoThTeasyEmXnm2qEM_-8JH9m9MQNsDXy-1ZYNqyfOZCEWdERvIjX4e3yEwNnN1V8z3RKnGR1iS4=	\N	2020-12-25 15:13:56.861286	1
 \.
 
 
@@ -190,7 +192,8 @@ COPY public.email_address (email_id, email_address, created_at, user_id, active,
 -- Data for Name: phishing_email; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.phishing_email (mail_id, sender_address, content, created_at, receiver_address) FROM stdin;
+COPY public.phishing_email (mail_id, sender_address, content, created_at, receiver_id, subject) FROM stdin;
+1	jonathankerk@gmail.com	keywords: suspend verify username password update confirm user customer client restrict hold verify account login ssn social security nric label invoice post document postal calculations copy fedex statement financial dhl usps notification delivery ticket paypal bank <html> tag http://fake-website-qweabc.com http://www.fakewebtwo-qweabc.com https://fake-web-secure-qwebac.com contains ipurl http://192.168.1.1/abcabc/qweqwe/ contains js tag <script> contains form tag <form subdomains http://very.fake.website.quebec.com/ <div dir="ltr">keywords: suspend verify username password update confirm user customer client restrict hold verify account login ssn social security nric label invoice post document postal calculations copy fedex statement financial dhl usps notification delivery ticket paypal bank<br><div><br></div><div>&lt;html&gt; tag</div><div><br></div><div><a href="http://fake-website-qweabc.com">http://fake-website-qweabc.com</a></div><div><a href="http://www.fakewebtwo-qweabc.com">http://www.fakewebtwo-qweabc.com</a></div><div><a href="https://fake-web-secure-qwebac.com">https://fake-web-secure-qwebac.com</a></div><div><br></div><div>contains ipurl</div><div><a href="http://192.168.1.1/abcabc/qweqwe/">http://192.168.1.1/abcabc/qweqwe/</a></div><div><br></div><div>contains js tag</div><div>&lt;script&gt;</div><div><br></div><div>contains form tag</div><div>&lt;form</div><div><br></div><div>subdomains</div><div><a href="http://very.fake.website.quebec.com/">http://very.fake.website.quebec.com/</a></div></div>	2020-12-25 15:12:04.737458	1	TestPhishing: suspend verify username password update confirm user\r\n customer client restrict hold verify account login ssn social security nric\r\n label invoice post document postal
 \.
 
 
@@ -199,7 +202,8 @@ COPY public.phishing_email (mail_id, sender_address, content, created_at, receiv
 --
 
 COPY public."user" (user_id, username, password, created_at, is_active, is_admin, last_logged_in) FROM stdin;
-7	admin	pbkdf2:sha256:150000$UpdGR6Re$016515c0a9c6cd0af3e694b7180603ef3479e29c15238b63bc0bf91ed88e6630	2020-11-11 22:46:03.325646	t	f	\N
+1	admin	pbkdf2:sha256:150000$ICzY3n6B$ffa2af1992683263845e9acf851251afea8a158b04e6cbf2b6c8e4a459400759	2020-12-25 15:00:35.33375	t	t	2020-12-25 15:02:17.201351
+2	user	pbkdf2:sha256:150000$YhvcWZlI$678cc9868b47a8bc8cf0fd3c2982ec18553d4f3406176713353eada195d89f8a	2020-12-25 15:00:47.4858	t	f	2020-12-25 15:02:31.505859
 \.
 
 
@@ -207,21 +211,21 @@ COPY public."user" (user_id, username, password, created_at, is_active, is_admin
 -- Name: email_address_email_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.email_address_email_id_seq', 1, false);
+SELECT pg_catalog.setval('public.email_address_email_id_seq', 1, true);
 
 
 --
 -- Name: phishing_email_mail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.phishing_email_mail_id_seq', 1, false);
+SELECT pg_catalog.setval('public.phishing_email_mail_id_seq', 1, true);
 
 
 --
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_user_id_seq', 7, true);
+SELECT pg_catalog.setval('public.user_user_id_seq', 2, true);
 
 
 --
@@ -278,17 +282,17 @@ CREATE INDEX ix_phishing_email_created_at ON public.phishing_email USING btree (
 
 
 --
--- Name: ix_phishing_email_receiver_address; Type: INDEX; Schema: public; Owner: postgres
+-- Name: ix_phishing_email_receiver_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX ix_phishing_email_receiver_address ON public.phishing_email USING btree (receiver_address);
+CREATE INDEX ix_phishing_email_receiver_id ON public.phishing_email USING btree (receiver_id);
 
 
 --
 -- Name: ix_phishing_email_sender_address; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX ix_phishing_email_sender_address ON public.phishing_email USING btree (sender_address);
+CREATE INDEX ix_phishing_email_sender_address ON public.phishing_email USING btree (sender_address);
 
 
 --
@@ -314,11 +318,11 @@ ALTER TABLE ONLY public.email_address
 
 
 --
--- Name: phishing_email phishing_email_receiver_address_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: phishing_email phishing_email_receiver_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.phishing_email
-    ADD CONSTRAINT phishing_email_receiver_address_fkey FOREIGN KEY (receiver_address) REFERENCES public.email_address(email_id);
+    ADD CONSTRAINT phishing_email_receiver_id_fkey FOREIGN KEY (receiver_id) REFERENCES public.email_address(email_id);
 
 
 --
