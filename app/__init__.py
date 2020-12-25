@@ -7,6 +7,10 @@ from flask_admin import Admin
 import logging
 import warnings
 
+# Random Forest Model
+from app.machine_learning.utils import load_model
+model = load_model('app/machine_learning/PhishingForest')
+
 # Application instance and application config instance
 app = Flask(__name__)
 app.config.from_object(Config)
