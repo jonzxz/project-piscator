@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 def randomForest():
-    dataset = pd.read_csv('test.csv', encoding = "ISO-8859-1")
+    dataset = pd.read_csv('train.csv', encoding = "ISO-8859-1")
     dataset.columns = ['X1','X2','X3','X4', 'X5', 'X6', 'X7', 'X8', 'X9','Y']
     dataset.head()
 

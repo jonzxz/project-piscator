@@ -46,9 +46,10 @@ class EmailData:
             # print("Domain Age: {} -- Type: {}".format(domain_age, type(domain_age)))
             # Some TLDs don't work with python-whois because it's not in the data of the lib
             # eg. .com.sg - so just return a 0 in this case
-            if domain_age.count(0) < 1 and domain_age[0] is None:
-                self.set_feature_domain_age(0)
-                return
+            if not isinstance(domain_age, datetime.datetime):
+                if domain_age.count(0) < 1 and domain_age[0] is None:
+                    self.set_feature_domain_age(0)
+                    return
 
             # -- Test domains - gmail is valid for both conditions
             # domain_age = [whois.whois(dom).creation_date for dom in ['gmail.com']]
