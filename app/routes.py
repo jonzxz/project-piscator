@@ -1,4 +1,4 @@
-from app import app, db, logger
+from app import app, db, logger, model
 
 ## Plugins
 from flask_login import current_user, login_user, logout_user
@@ -28,8 +28,9 @@ from app.utils.EmailUtils import get_imap_svr
 from sqlalchemy.exc import IntegrityError
 
 # Mailbox
-from imap_tools import MailBox
+from imap_tools import MailBox, AND, OR
 from app.models.Mail import Mail
+from app.machine_learning.EmailData import EmailData
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -199,37 +200,65 @@ def dash_account():
 
 @app.route('/dashboard/emails/phish/<mid>')
 def check_phish(mid):
-    mail_items = []
+    phishing_mails = []
 
+    # Retrieves the email address instance
     logger.info("Click-to-check entered..")
     mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
+
+    # Retrieves date last updated: converts datetime to date
+    last_updated = mailaddr.get_last_updated().date()
+    logger.info("Mailbox last updated: %s", last_updated.strftime("%d-%m-%Y"))
+
+    # Updates last updated to current time
     mailaddr.set_last_updated(datetime.now())
     db.session.commit()
+
     logger.info("Mailbox selected is %s", mailaddr.get_email_address())
 
+    # Logs in to mailbox by retrieving the corresponding IMAP server
     imap_svr = get_imap_svr(mailaddr.get_email_address())
     logger.info("Retrieving IMAP server: %s", imap_svr)
     mailbox = MailBox(imap_svr)
     mailbox.login(mailaddr.get_email_address(), mailaddr.get_decrypted_email_password())
+
+    # Selects mailbox to Inbox only
     mailbox.folder.set("INBOX")
     logger.info("Connected to mailbox %s", mailaddr.get_email_address())
     logger.info("Fetching mails..")
 
-    all_mails = mailbox.fetch(reverse=True, mark_seen=False, bulk=True)
+    # Sets a check criteria so that
+    # only mails newer than last_updated and unread mails are checked
+    check_criteria = AND(date_gte=last_updated, seen=False)
+
+    # Fetch mails from mailbox based on criteria, does not "read" the mail
+    # and retrieves in bulk for faster performance at higher computing cost
+    all_mails = mailbox.fetch(check_criteria, reverse=True, mark_seen=False, bulk=True)
     logger.info("Mails fetched..")
 
+    # Iterates through the mails that are not sent from the sender's address
+    # Creates a EmailData instance for each mail to generate features based on
+    # preprocessing logic, passes it into the model - if predict returns 1 it is a detected phish
+    # appends the detected mail into a list of Mail (phishing_mails)
+    # The purpose of Mail class is for easier display - the values are pulled from the
+    # imap_tool's Mail item instead of our EmailData.
+    # Inserts all phishing mails to the database
     for msg in all_mails:
         if not msg.from_ == mailaddr.get_email_address():
-            logger.info("Date: {}".format(msg.date))
-            logger.info("Sender: {}".format(msg.from_))
-            logger.info("Subject: {}".format(msg.subject))
-            mail_items.append(Mail(msg.from_, msg.date, msg.subject))
+            logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
+            mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html))
+            mail_item.generate_features()
+            result = model.predict(mail_item.repr_in_arr())
+            if result == 1:
+                logger.info("Phishing mail detected, subject: %s", msg.subject)
+                phishing_mails.append(Mail(msg.from_, msg.date, msg.subject))
+                # Insert into database
 
     logger.info("Finished displaying all mails.. logging out")
     mailbox.logout()
 
     # return redirect(url_for('dashboard'))
-    return render_template('success.html', mail_items = mail_items)
+    return render_template('success.html', phishing_mails = phishing_mails)
 
 @app.route('/dashboard/emails/activation/<mid>')
 def mail_activation(mid):
