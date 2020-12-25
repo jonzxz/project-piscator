@@ -17,13 +17,9 @@ from app.models.User import User
 from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
 
-<<<<<<< HEAD
-## Datetime, time
-from datetime import datetime
-=======
 ## Datetime
 from datetime import datetime, date
->>>>>>> Random-Forest
+
 
 ## Utils
 from app.utils.EmailUtils import test_mailbox_conn
