@@ -55,6 +55,11 @@ class AdminUserView(AdminBaseView):
 		'is_active' : 'Active'
 	}
 
+	# create_modal = True
+	# edit_modal = True
+	# column_searchable_list = ['username', 'user_id']
+	column_filters = ['user_id']
+
 	## Custom View template
 	list_template = 'admin/admin_base_list.html'
 	create_template = 'admin/admin_base_create.html'
@@ -131,6 +136,9 @@ class AdminEmailView(AdminBaseView):
 		'last_updated' : 'Last Updated'
 	}
 
+	# create_modal = True
+	# edit_modal = True
+
 	list_template = 'admin/admin_base_list.html'
 	create_template = 'admin/admin_base_create.html'
 	edit_template = 'admin/admin_base_edit.html'
@@ -203,6 +211,9 @@ class AdminPhishingView(AdminBaseView):
 		'content' : 'Content',
 		'created_at' : 'Created At'
 	}
+
+	# create_modal = True
+	# edit_modal = True
 
 	## Custom View template
 	list_template = 'admin/admin_base_list.html'
