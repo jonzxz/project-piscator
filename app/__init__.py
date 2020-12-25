@@ -72,3 +72,4 @@ with warnings.catch_warnings():
 	warnings.filterwarnings('ignore', 'Fields missing from ruleset', UserWarning)
 	admin.add_view(views.AdminUserView(User.User, db.session))
 	admin.add_view(views.AdminEmailView(EmailAddress.EmailAddress, db.session))
+	admin.add_view(views.AdminPhishingView(PhishingEmail.PhishingEmail, db.session))
