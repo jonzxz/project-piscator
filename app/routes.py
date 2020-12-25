@@ -25,6 +25,12 @@ from datetime import datetime, date
 from app.utils.EmailUtils import test_mailbox_conn
 from app.utils.EmailUtils import send_contact_us_email
 from app.utils.EmailUtils import get_imap_svr
+from app.utils.DBUtils import get_user_by_id
+from app.utils.DBUtils import get_user_by_name
+from app.utils.DBUtils import get_email_address_by_address
+from app.utils.DBUtils import get_email_address_by_email_id
+from app.utils.DBUtils import get_existing_addresses_by_user_id
+from app.utils.DBUtils import get_owner_id_from_email_id
 
 ## Exceptions
 from sqlalchemy.exc import IntegrityError
@@ -55,7 +61,7 @@ def register():
     if request.method =='POST':
         logger.debug("Register form submitted")
         if form.validate_on_submit():
-            user_exist = db.session.query(User).filter(User.username == form.username.data).first()
+            user_exist = get_user_by_name(form.username.data)
             if user_exist == None:
                 new_user = User(username=form.username.data)
                 new_user.set_password(form.password.data)
@@ -83,7 +89,7 @@ def login():
     logger.debug("Entering login function")
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = get_user_by_name(form.username.data)
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -142,7 +148,7 @@ def dash_email():
         password = form.password.data
 
         # Checks if email already exist in database
-        email_exist = db.session.query(EmailAddress).filter(EmailAddress.email_address == email_addr).first()
+        email_exist = get_email_address_by_address(email_addr)
 
         if email_exist == None:
             # Attempts a mailbox login via imap_tools based on submit
@@ -170,10 +176,10 @@ def dash_email():
     ## -- Add Email Form submission END --
 
     ## -- Default Dashboard Loading START --
-    existing_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == current_user.user_id).all()
+    existing_addresses = get_existing_addresses_by_user_id(current_user.user_id)
     return render_template('dashboard/dashboard_emails.html',
     current_user = current_user.username, form = form,
-    user_emails = existing_emails)
+    user_emails = existing_addresses)
     ## -- Default Dashboard Loading END --
 
 @app.route('/dashboard/account', methods=['GET', 'POST'])
@@ -186,7 +192,7 @@ def dash_account():
     form = AccountSettingsForm()
     #logger.info(current_user.username)
     #logger.info(form.current_password.data)
-    user = db.session.query(User).filter(User.user_id == current_user.user_id).first()
+    user = get_user_by_id(current_user.user_id)
     status = user.get_active_status()
 
     if form.validate_on_submit():
@@ -248,7 +254,7 @@ def dash_account():
                     logger.info("Setting %s account status to disabled", user.get_username())
                     logger.info("Sleeping for 3 seconds before logging out user")
                     # Sets all email addresses for user to disabled
-                    user_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id == user.user_id).all()
+                    user_emails = get_existing_addresses_by_user_id(user.user_id)
                     for email in user_emails:
                         logger.info("Disabling %s", email)
                         email.set_active_status(False)
@@ -273,7 +279,6 @@ def dash_account():
                 flash('Password is not changed!')
         ## -- Account State END --
 
-
         try:
             db.session.commit()
             logger.debug("Successfully changed user %s password, updated database", user)
@@ -296,15 +301,12 @@ def check_phish(mid):
     # Retrieves the email address instance
     logger.info("Click-to-check entered..")
 
-    owner_id = db.session.query(EmailAddress) \
-    .filter(EmailAddress.email_id == mid) \
-    .first() \
-    .get_user_id()
-    if current_user.is_anonymous or not owner_id == current_user.get_id() : # or CU ID is not owner of MID
+    owner_id = get_owner_id_from_email_id(mid)
+    if current_user.is_anonymous or not owner_id == current_user.get_id() :
         logger.warning("Anonymous or unauthorized user attempting phish check of address ID {}!".format(mid))
         return redirect(url_for('index'))
 
-    mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
+    mailaddr = get_email_address_by_email_id(mid)
 
     # Redirects back to page if selected email is inactive
     if mailaddr.get_active_status() == False:
@@ -399,18 +401,14 @@ def check_phish(mid):
 
 @app.route('/dashboard/emails/activation/<mid>')
 def mail_activation(mid):
-    logger.info("MID: {}".format(mid))
-    owner_id = db.session.query(EmailAddress) \
-    .filter(EmailAddress.email_id == mid) \
-    .first() \
-    .get_user_id()
+    owner_id = get_owner_id_from_email_id(mid)
 
     if current_user.is_anonymous or not owner_id == current_user.get_id() : # or CU ID is not owner of MID
         logger.warning("Anonymous or unauthorized user attempting activation of address ID {}!".format(mid))
         return redirect(url_for('index'))
 
     logger.info("Entering function to enable/disable email..")
-    mailaddr = EmailAddress.query.filter_by(email_id=mid).first()
+    mailaddr = get_email_address_by_email_id(mid)
     if mailaddr.get_active_status() == True:
         mailaddr.set_active_status(False)
     else:
