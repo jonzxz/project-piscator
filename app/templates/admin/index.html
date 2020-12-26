@@ -6,20 +6,39 @@ to the user dashboard (but that only shows for that particular user)
 ===============================================================================
 -->
 {% include 'admin/admin_menu.html' %}
-  <html class="no-js" lang="en">
-    <body>
-      <div class="w-75 mx-auto pl-5 pt-5">
-        <div class="pl-5 pt-2">
-          <span class="h2 pb-5">Admin Dashboard</span>
-          <div class="row">
-            <div class="col-12 col-md-6">
-              <canvas id="myChart" width="300" height="200"></canvas>
+<html class="no-js" lang="en">
+  <body>
+    <div class="w-75 mx-auto pl-5 pt-5">
+      <div class="pl-5 pt-2">
+        <span class="h2 pb-5">Admin Dashboard</span>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card card-chart">
+            <div class="card-header bg-info text-white">
+              <h5 class="card-category">Users</h5>
             </div>
-            <div class="col-12 col-md-6">
-              <canvas id="myChart2" width="300" height="200"></canvas>
+            <div class="card-body">
+              <div class="chart-area">
+                <canvas id="myChart" width="300" height="200"></canvas>
+              </div>
             </div>
           </div>
         </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card card-chart">
+            <div class="card-header">
+              <h5 class="card-category">Email Addresses</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-area">
+                <canvas id="myChart2" width="300" height="200"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
       <!-- should be moved into base -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
       <script>
@@ -45,6 +64,12 @@ to the user dashboard (but that only shows for that particular user)
                 backgroundColor: ["#95D9DA", "#6DD6DA"],
               }
             ]
+          },
+
+          options:{
+            legend:{
+              position: "bottom"
+            }
           }
         });
 
@@ -58,9 +83,14 @@ to the user dashboard (but that only shows for that particular user)
                 backgroundColor: ["#88CCF1", "#C1DFF0"]
               }
             ]
+          },
+
+          options:{
+            legend:{
+              position: "bottom"
+            }
           }
         });
       </script>
-    </div>
   </body>
 </html>
