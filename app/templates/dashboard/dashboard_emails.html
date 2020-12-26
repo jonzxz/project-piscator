@@ -1,12 +1,12 @@
-
 {% extends "dashboard/dashboard_base.html" %}
 {% block content %}
+<div class="w-90 mx-auto pl-5 pt-5">
 <span class="h2 pt-2">Subscription(s)</span>
 <hr>
 <div class="mt-5">
   <table class="table table-hover">
     <thead>
-      <tr>
+      <tr style="color: #889B95">
         <th class="text-center" scope="col">Email</th>
         <th class="text-center" scope="col">Phishing Emails Detected</th>
         <th class="text-center" scope="col">Last Updated</th>
@@ -26,7 +26,6 @@
         {% else %}
           <td class="text-center">{{ email.get_prettified_date() }}</td>
         {% endif %}
-
         {% if email.get_active_status() %}
           <td class="text-center" name="status-{{ email.email_address }}">Active</td>
         {% else %}
@@ -38,7 +37,7 @@
       </tr>
       {% endfor %}
     </table>
-  </div>
+    </div>
   <hr>
   <!-- Button trigger modal -->
   <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#addMailModal">
@@ -85,6 +84,7 @@
         </form>
       </div>
     </div>
+  </div>
   </div>
 
   <script>

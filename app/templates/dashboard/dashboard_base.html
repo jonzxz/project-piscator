@@ -3,17 +3,15 @@
 <head>
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/dash_style.css') }}">
 </head>
-
 <body>
 	<!-- Page Content -->
-	<h3 class="float-right p-3 mr-3">{{ session['username'] }}</h3>
 	<div class="row">
 		<div class="col-12 col-md-1">
-			<button class="openbtn lni lni-chevron-right mt-2" onclick="openNav()"></button>
 			<div id="mySidepanel" class="sidepanel">
-				<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">
-					<span class="lni lni-chevron-left"></span>
-				</a>
+				<div class="pl-4">
+					<img src="{{ url_for('static', filename='icons/logo.svg') }}" alt='Logo' width=40%>
+					<span>{{ session['username'] }}</span>
+				</div>
 				<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-home pt-4 pb-4">
 					<span class="pl-2 poppins">Home</span>
 				</a>
@@ -38,15 +36,7 @@
 		</div>
 		<div class="col-12 col-md-1"></div>
 	</div>
+	<div id="particles-2" class="particles"></div>
 </body>
-
-<script>
-function openNav() {
-	document.getElementById("mySidepanel").style.width = "250px";
-}
-
-function closeNav() {
-	document.getElementById("mySidepanel").style.width = "0";
-}
-</script>
+</div>
 </html>
