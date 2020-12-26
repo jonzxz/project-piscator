@@ -355,13 +355,13 @@ def check_phish(mid):
         # The purpose of Mail class is for easier display - the values are pulled from the
         # imap_tool's Mail item instead of our EmailData.
         # Inserts all phishing mails to the database
+        detection_count = 0
         for msg in all_mails:
             if not msg.from_ == mailaddr.get_email_address() or not msg.from_ == 'piscator.fisherman@gmail.com':
                 # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
                 mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html))
                 mail_item.generate_features()
                 result = model.predict(mail_item.repr_in_arr())
-                detection_count = 0
                 if result == 1:
                     logger.info("Phishing mail detected, subject: %s", msg.subject)
 
