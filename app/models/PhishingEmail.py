@@ -5,7 +5,7 @@ from datetime import datetime
 class PhishingEmail(db.Model):
     __tablename__ = 'phishing_email'
     mail_id = db.Column(db.Integer, primary_key=True)
-    sender_address = db.Column(db.String(30), index=True, unique=False, nullable=False)
+    sender_address = db.Column(db.String(255), index=True, unique=False, nullable=False)
     subject = db.Column(db.Text, nullable=False, unique=False)
     content = db.Column(db.Text, nullable=False, unique=False)
     created_at = db.Column(db.DateTime, index=True,default=datetime.now)
