@@ -147,7 +147,15 @@ def dashboard():
         return redirect(url_for('index'))
     if current_user.is_admin:
         return redirect(url_for('admin.index'))
-    return render_template('dashboard/dashboard_home.html')
+    logger.info("User logging in, redirecting to users portal")
+    email_active = db.session.query(EmailAddress) \
+    .filter(EmailAddress.active==True).count()
+    email_inactive = db.session.query(EmailAddress) \
+    .filter(EmailAddress.active==False).count()
+    logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
+    , email_active, email_inactive)
+    email_stats = email_active + email_inactive
+    return render_template('dashboard/dashboard_home.html', email_active = email_active, email_stats = email_stats)
 
 @app.route('/dashboard/emails', methods=['GET', 'POST'])
 def dash_email():
