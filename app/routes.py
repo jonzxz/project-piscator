@@ -354,9 +354,9 @@ def check_phish(mid):
 
         # Sets a check criteria so that
         # only mails newer than last_updated and unread mails are checked
-        check_criteria = AND(date_gte=last_updated, seen=False)
+        # check_criteria = AND(date_gte=last_updated, seen=False)
 
-        # check_criteria = AND(date_gte=[date(2020, 12, 23)], seen=False)
+        check_criteria = AND(date_gte=[date(2020, 12, 23)], seen=False)
 
         # Fetch mails from mailbox based on criteria, does not "read" the mail
         # and retrieves in bulk for faster performance at higher computing cost
@@ -414,7 +414,7 @@ def check_phish(mid):
         return redirect(url_for('dash_email'))
 
     # return redirect(url_for('dashboard'))
-    return render_template('success.html', phishing_mails = phishing_mails)
+    return render_template('dashboard/detection_results.html', phishing_mails = phishing_mails)
 
 @app.route('/dashboard/emails/activation/<mid>')
 def mail_activation(mid):
@@ -432,6 +432,18 @@ def mail_activation(mid):
         mailaddr.set_active_status(True)
     db.session.commit()
     return redirect(url_for('dash_email'))
+
+@app.route('/dashboard/emails/history/<mid>')
+def detection_history(mid):
+    owner_id = get_owner_id_from_email_id(mid)
+
+    if current_user.is_anonymous or not owner_id == current_user.get_id() : # or CU ID is not owner of MID
+        logger.warning("Anonymous or unauthorized user attempting activation of address ID {}!".format(mid))
+        return redirect(url_for('index'))
+
+    detection_history = db.session.query(PhishingEmail).filter(PhishingEmail.receiver_id == mid).all()
+    logger.info(detection_history)
+    return render_template('dashboard/detection_history.html', phishing_mails = detection_history)
 
 @app.route('/privacy')
 def privacy():

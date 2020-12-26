@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<span class="h1">Showing detection history<span>
+<a href="{{ url_for('dash_email')}}">Click to go back to dashboard</a>
+
+<div class="card mt-5">
+  <div class="card-body">
+    <table class="table table-dark">
+      <thead>
+        <tr>
+          <th scope="col">Sender</th>
+          <th scope="col">Subject</th>
+          <th scope="col">Detection Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mail in phishing_mails %}
+        <tr>
+          <td>{{ mail.get_sender_address() }}</td>
+          <td>{{ mail.get_subject() }}</td>
+          <td>{{ mail.get_detected_on() }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

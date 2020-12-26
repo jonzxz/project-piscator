@@ -9,6 +9,7 @@
       <tr style="color: #889B95">
         <th class="text-center" scope="col">Email</th>
         <th class="text-center" scope="col">Phishing Emails Detected</th>
+        <th class="text-center" scope="col">Detection History</th>
         <th class="text-center" scope="col">Last Updated</th>
         <th class="text-center" scope="col">Active Status</th>
         <th class="text-center" scope="col">Clean Mailbox</th>
@@ -21,6 +22,7 @@
       <tr>
         <td class="text-center">{{ email.get_email_address() }}</td>
         <td class="text-center">{{ email.get_phishing_mail_detected() }}</td>
+        <td class="text-center"> <a class="lni lni-keyword-research" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="history({{ email.get_email_id() }});"></a></td>
         {% if email.get_last_updated() is none %}
           <td class="text-center">Never</td>
         {% else %}
@@ -96,6 +98,10 @@
 
     function activate(mail_id) {
       window.location.href = "emails/activation/" + mail_id;
+    }
+
+    function history(mail_id) {
+      window.location.href = "emails/history/" + mail_id
     }
   </script>
 

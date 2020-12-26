@@ -15,3 +15,12 @@ class PhishingEmail(db.Model):
 
     def __repr__(self):
         return "Phishing Mail from: {} -- Received by: {}".format(self.sender_address, self.receiver_id)
+
+    def get_sender_address(self):
+        return self.sender_address
+
+    def get_subject(self):
+        return self.subject
+
+    def get_detected_on(self):
+        return self.created_at
