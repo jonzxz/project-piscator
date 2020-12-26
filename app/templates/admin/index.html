@@ -9,64 +9,88 @@ to the user dashboard (but that only shows for that particular user)
 <html class="no-js" lang="en">
   <body>
     <div class="w-75 mx-auto pl-5 pt-5">
-      <div class="pl-5 pt-2">
+      <div class="mx-auto pl-5 pt-2">
         <span class="h2 pb-5">Admin Dashboard</span>
-        <div class="row">
-          <div class="col-12 col-md-6">
-            <canvas id="myChart" width="300" height="200"></canvas>
+      </div>
+      <div class="row">
+        <div class="mx-auto col-lg-4">
+          <div class="card card-chart">
+            <div class="card-header bg-info text-white">
+              <h5 class="card-category">Users</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-area">
+                <canvas id="myChart" width="300" height="200"></canvas>
+              </div>
+            </div>
           </div>
-          <div class="col-12 col-md-6">
-            <canvas id="myChart2" width="300" height="200"></canvas>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card card-chart">
+            <div class="card-header bg-primary text-white">
+              <h5 class="card-category">Email Addresses</h5>
+            </div>
+            <div class="card-body">
+              <div class="chart-area">
+                <canvas id="myChart2" width="300" height="200"></canvas>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
       <!-- should be moved into base -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
       <script>
         var ctx = document.getElementById("myChart");
         var ctx2 = document.getElementById("myChart2");
 
-
         <!--values (y-axis) to be updated here//-->
-        var emailsD = [9, 12, 18, 3, 15];
-        var emailsM = [9, 12, 21, 0, 15];
+        var users_stats = {{ user_stats }}
+        var email_stats = {{ email_stats }}
+        // var users_stats = [9, 12, 21, 0, 15];
 
         <!--values (x-axis) to be updated here//-->
         var dates = ["08Nov20", "30Dec20", "02Jan21", "15Jan21", "21Mar21"];
         var months = ["Nov20", "Dec20", "Jan21", "Feb21", "Mar21"]
 
         var myChart = new Chart(ctx, {
-          type: "line",
+          type: "pie",
           data: {
-            labels: dates,
+            labels: ["Inactive Users", "Active Users"],
             datasets: [
               {
-                label: "Number of Phishing Emails / Day",
-                data: emailsD,
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                borderWidth: 1
+                data: users_stats,
+                backgroundColor: ["#95D9DA", "#6DD6DA"],
               }
             ]
+          },
+
+          options:{
+            legend:{
+              position: "bottom"
+            }
           }
         });
 
         var myChart2 = new Chart(ctx2, {
-          type: "line",
+          type: "pie",
           data: {
-            labels: months,
+            labels: ["Inactive Addresses", "Active Addresses"],
             datasets: [
               {
-                label: "Number of Phishing Emails / Month",
-                data: emailsM,
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                borderWidth: 1
+                data: email_stats,
+                backgroundColor: ["#88CCF1", "#C1DFF0"]
               }
             ]
+          },
+
+          options:{
+            legend:{
+              position: "bottom"
+            }
           }
         });
       </script>
-    </div>
   </body>
 </html>
