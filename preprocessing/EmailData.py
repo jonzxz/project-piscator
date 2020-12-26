@@ -37,7 +37,9 @@ class EmailData:
         # Iterate through a list of domain (likely only one) to perform whois and
         # return a creation date. Some entries for some reason are nested in a [1][1] list
         # so isinstance checks if 1st element is a list and takes it out into a flat list
-
+        self.set_feature_domain_age(0)
+        return
+        
         try:
             # Returns a either a list of datetime, a datetime or string
             domain_age = ([whois.whois(dom).creation_date for dom in self.get_domain()]) \
