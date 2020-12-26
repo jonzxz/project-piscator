@@ -13,72 +13,69 @@
 {% endblock %}
 
 {% block page_body %}
-<div class="w-75 mx-auto pl-5 pt-5">
-  <div class="pl-5 pt-2">
-  </div>
-<div class="pt-3 container{% if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %}">
-
-  {% block messages %}
-  {% macro messages() %}
-    {% with messages = get_flashed_messages(with_categories=True) %}
-      {% if messages %}
-        {% for category, m in messages %}
-          {% if category %}
-            {# alert-error changed to alert-danger in bootstrap 3, mapping is for backwards compatibility #}
-            {% set mapping = {'message': 'info', 'error': 'danger'} %}
-            <div class="pl-5 ml-5 alert alert-{{ mapping.get(category, category) }} alert-dismissable">
-          {% else %}
-            <div class="alert alert-dismissable">
-          {% endif %}
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        {{ m }}
-        </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  {% endmacro %}
-  {{ messages() }}
-  {% endblock %}
-
-  {# store the jinja2 context for form_rules rendering logic #}
-  {% set render_ctx = h.resolve_ctx() %}
-
-  {% block body %}
-  {% block navlinks %}
-  <div class="w-80 mx-auto pl-5 pt-5">
-    <div class="pl-5 pt-2">
-      <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a href="{{ return_url }}" class="nav-link">{{ _gettext('List') }}</a>
-        </li>
-        <li class="nav-item">
-          <a href="javascript:void(0)" class="nav-link active">{{ _gettext('Create') }}</a>
-        </li>
-      </ul>
+  <div class="w-75 mx-auto pl-5 pt-5">
+    <div class="pt-3 container{% if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %}">
+      {% block messages %}
+        {% macro messages() %}
+          {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+              {% for category, m in messages %}
+                {% if category %}
+                  {# alert-error changed to alert-danger in bootstrap 3, mapping is for backwards compatibility #}
+                  {% set mapping = {'message': 'info', 'error': 'danger'} %}
+                  <div class="pl-5 ml-5 alert alert-{{ mapping.get(category, category) }} alert-dismissable">
+                {% else %}
+                  <div class="alert alert-dismissable">
+                {% endif %}
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {{ m }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        {% endmacro %}
+        {{ messages() }}
       {% endblock %}
 
-      {% block create_form %}
-      {{ lib.render_form(form, return_url, extra(), form_opts) }}
+      {# store the jinja2 context for form_rules rendering logic #}
+      {% set render_ctx = h.resolve_ctx() %}
 
-      {% endblock %}
+      {% block body %}
+        {% block navlinks %}
+          <div class="w-80 mx-auto pl-5 pt-5">
+            <div class="pl-5 pt-2">
+              <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <a href="{{ return_url }}" class="nav-link">{{ _gettext('List') }}</a>
+                </li>
+                <li class="nav-item">
+                  <a href="javascript:void(0)" class="nav-link active">{{ _gettext('Create') }}</a>
+                </li>
+              </ul>
+        {% endblock %}
+
+        {% block create_form %}
+        {{ lib.render_form(form, return_url, extra(), form_opts) }}
+
+        {% endblock %}
       {% endblock %}
 
       {% block tail %}
       {{ super() }}
 
-      {% if filter_groups %}
-        <div id="filter-groups-data" style="display:none;">{{ filter_groups|tojson|safe }}</div>
-        <div id="active-filters-data" style="display:none;">{{ active_filters|tojson|safe }}</div>
-      {% endif %}
+        {% if filter_groups %}
+          <div id="filter-groups-data" style="display:none;">{{ filter_groups|tojson|safe }}</div>
+          <div id="active-filters-data" style="display:none;">{{ active_filters|tojson|safe }}</div>
+        {% endif %}
 
-      <script src="{{ admin_static.url(filename='admin/js/bs4_modal.js', v='1.0.0') }}"></script>
-      <script src="{{ admin_static.url(filename='admin/js/bs4_filters.js', v='1.0.0') }}"></script>
-      {{ lib.form_js() }}
+        <script src="{{ admin_static.url(filename='admin/js/bs4_modal.js', v='1.0.0') }}"></script>
+        <script src="{{ admin_static.url(filename='admin/js/bs4_filters.js', v='1.0.0') }}"></script>
+        {{ lib.form_js() }}
 
-      {{ actionlib.script(_gettext('Please select at least one record.'), actions, actions_confirmation) }}
+        {{ actionlib.script(_gettext('Please select at least one record.'), actions, actions_confirmation) }}
       {% endblock %}
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</div>
+    </div>
 {% endblock %}
