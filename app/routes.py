@@ -374,7 +374,16 @@ def check_phish(mid):
         for msg in all_mails:
             if not msg.from_ == mailaddr.get_email_address() or not msg.from_ == 'piscator.fisherman@gmail.com':
                 # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
-                mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html))
+                try:
+                    arc_auth = ''.join(ele for ele in msg.headers['ARC-Authentication-Results'][0])
+                except KeyError:
+                    try:
+                        arc_auth = ''.join(ele for ele in msg.headers['Authentication-Results'][0])
+                    except:
+                        arc_auth = None
+
+                logger.info(arc_auth)
+                mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html), arc_auth)
                 mail_item.generate_features()
                 logger.info("Checking mail: %s", mail_item.__repr__())
                 result = model.predict(mail_item.repr_in_arr())
