@@ -1,6 +1,6 @@
 import re, datetime, whois
 from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
-from whois.parser import PywhoisError
+# from whois.parser import PywhoisError
 import dns.resolver
 class EmailData:
     def __init__(self, subject, from_, attachments, content, auth_results):
@@ -38,6 +38,10 @@ class EmailData:
         num_https = len(re.findall(r'https:', self.get_content()))
         self.set_feature_https_token(1 if num_http/(num_https+num_http) >= 0.25 else -1)
 
+    """
+    DISABLED DUE TO PERFORMANCE IMPACTS
+    """
+    """
     # One issue with processing domain age is that the From: header can be spoofed to be a valid one
     # There will be chances where encoding will fail in future processing if it contains things like
     # service@intI-ÒaypaÓ.com
@@ -108,6 +112,7 @@ class EmailData:
             self.set_feature_domain_age(1 if diff_days <= 30 else -1)
         except PywhoisError:
             self.set_feature_domain_age(1)
+    """
 
     # main_domain iterates through self.__domain which is set as a list
     # splits each element and returns the last 2 elements because some domains are like
@@ -188,6 +193,7 @@ class EmailData:
         # given a score of phish (-1)
         # self.set_feature_matching_domain(1 if count > 1 else -1)
 
+    # Keyword count above 20% of length of keyword list
     def process_keyword_count(self):
         keywordList = ["suspend", "verify", "username", "password", "update", \
          "confirm", "user", "customer", "client", "restrict", "hold", "verify", \
@@ -203,7 +209,7 @@ class EmailData:
             if i.lower() in self.get_content().lower():
                 count += 1
 
-        self.set_feature_keyword_count(1 if count > 8 else -1)
+        self.set_feature_keyword_count(1 if count/len(keywordList) >= 0.20 else -1)
     ## -- Jon END --
 
     ## -- Zuhree START --
@@ -289,7 +295,7 @@ class EmailData:
 
         # Check each link if the domain has more than 3 dots
         for link in links:
-            if link.count('.') > 3:
+            if link.count('.') > 2:
                 self.set_feature_subdomain_links(1)
                 return
 
@@ -297,7 +303,6 @@ class EmailData:
     ## -- Zuhree END --
 
     def process_dkim_status(self):
-
         if not self.get_auth_results():
             self.set_feature_dkim_status(0)
             return
@@ -372,7 +377,6 @@ class EmailData:
 
     def generate_features(self):
         self.process_https_tokens()
-        self.process_domain_age()
         self.process_matching_domain()
         self.process_keyword_count()
         self.process_html_header()
@@ -385,6 +389,7 @@ class EmailData:
         self.process_dmarc_status()
         self.process_spf_status()
         self.process_mx_record()
+        # self.process_domain_age()
 
     def get_subject(self):
         return self.__subject
@@ -405,27 +410,37 @@ class EmailData:
         return self.__auth_results
 
     def __repr__(self):
-        return "{0},{1},{2},{3},{4},{5},{6},{7},{8}".format(self.__feature_https_tokens, \
-            self.__feature_domain_age, \
+        return "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}".format( \
+            self.__feature_https_tokens, \
+            # self.__feature_domain_age, \
             self.__feature_matching_domain, \
             self.__feature_keyword_count, \
             self.__feature_presence_html_header, \
             self.__feature_ip_url, \
             self.__feature_presence_js, \
             self.__feature_presence_form_tag, \
-            self.__feature_subdomain_links)
+            self.__feature_subdomain_links, \
+            self.__feature_dkim_status, \
+            self.__feature_spf_status, \
+            self.__feature_dmarc_status, \
+            self.__feature_mx_record
+            )
 
 
     def repr_in_arr(self):
+        # self.__feature_domain_age, \
         return [[self.__feature_https_tokens, \
-            self.__feature_domain_age, \
             self.__feature_matching_domain, \
             self.__feature_keyword_count, \
             self.__feature_presence_html_header, \
             self.__feature_ip_url, \
             self.__feature_presence_js, \
             self.__feature_presence_form_tag, \
-            self.__feature_subdomain_links]]
+            self.__feature_subdomain_links, \
+            self.__feature_dkim_status, \
+            self.__feature_spf_status, \
+            self.__feature_dmarc_status, \
+            self.__feature_mx_record]]
 
     def set_feature_https_token(self, num):
         self.__feature_https_tokens = num
