@@ -148,46 +148,6 @@ def main():
     # test_model_single(model, SINGLE_TEST_FILE)
     serialize_model(model)
 
-import email
-from email.message import EmailMessage
-from email.parser import BytesParser, Parser, HeaderParser
-from email.policy import default, EmailPolicy
-
-import re
-def parse_mail_test():
-    with open ('../../Mailboxes/IndividualTestMails/Phish/3.eml', 'rb') as pf:
-    # with open ('../../Mailboxes/IndividualTestMails/phish/phish_3.eml', 'rb') as pf:
-    # with open ('../../Mailboxes/IndividualTestMails/ham/ham_1.eml', 'rb') as pf:
-        # msg = EmailMessage()
-        # msg.set_content(pf.read())
-        policy = EmailPolicy(utf8=True)
-        headers = BytesParser(policy=policy).parse(pf)
-    # print(headers['ARC-Authentication-Results'] if headers['ARC-Authentication-Results']  else headers['Authentication-Results'])
-    print(headers.keys())
-
-# Reads all .eml files and rewrites it by prepending a tab for non-header starts
-# this is so that the .eml files are modified such that the headers are properly parseable
-def format_all_mails(FILE_PATH, start, end):
-    spl = []
-    for i in range(start, end+1):
-        with open ('{}{}.eml'.format(FILE_PATH, i), 'r', encoding='utf-8') as pf:
-            data = pf.read()
-            spl = data.split(sep='\n')
-            for idx, line in enumerate(spl):
-                result = re.search(r'(^(Received|Authentication-Results|DKIM-Signature|X-Facebook|Date|To|Subject|Reply-to|Return-Path|From|Errors-To|Feedback-ID|Content-|Message-|X-.*:))', line)
-                if not result:
-                    spl[idx] = '\t{}'.format(spl[idx])
-                # print(result)
-
-        with open('{}../{}.eml'.format(FILE_PATH, i), 'w', encoding='utf-8') as nf:
-            for line in spl:
-                nf.write(line + "\n")
-            nf.close()
-
-# format_all_mails('../../Mailboxes/IndividualTestMails/Phish/ORG/', 1, 45)
-# parse_mail_test()
-
-
 import mailparser
 
 def get_mail_files():
@@ -219,5 +179,3 @@ def get_mail_files():
             # print("DKIM: {}".format(test_mail_item.get_domain()))
         except FileNotFoundError:
             pass
-
-get_mail_files()
