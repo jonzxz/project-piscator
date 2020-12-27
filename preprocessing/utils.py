@@ -1,4 +1,5 @@
 import re
+import joblib
 
 # Cleans up a messed up HTML / tabbed raw content into space delimited content
 def clean_up_raw_body(raw_text):
@@ -46,3 +47,6 @@ def format_all_mails(FILE_PATH, start, end):
                 nf.close()
         except FileNotFoundError:
             pass
+
+def load_model(MODEL_NAME) -> RandomForestClassifier:
+    return joblib.load(MODEL_NAME)
