@@ -28,29 +28,24 @@ def train_model() -> RandomForestClassifier:
 
     return forest
 
-def serialize_model(model):
+def serialize_model(model: RandomForestClassifier):
     joblib.dump(model, 'PhishingForest')
 
 def load_model() -> RandomForestClassifier:
     return joblib.load('PhishingForest')
 
-def test_model(model: RandomForestClassifier):
+def test_model(model: RandomForestClassifier, test_data_dir: str):
     count = 0
     phish = 0
     for i in range(1, 133):
         try:
-            # mail = mailparser.parse_from_file(r'../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
-            # mail = mailparser.parse_from_file(r'../../Mailboxes/enron_mail_20150507/maildir/arora-h/all_documents/{}..eml'.format(i))
-            # mail = mailparser.parse_from_file(r'../../Mailboxes/enron_mail_20150507/maildir/allen-p/all_documents/{}..eml'.format(i))
-            mail = mailparser.parse_from_file(r'../../Mailboxes/Yannis_Mailbox/{}.eml'.format(i))
+            mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
             test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
             test_mail.generate_features()
-            # print(test_mail)
             result = model.predict(test_mail.repr_in_arr())
             count+=1
             # change to -1 if testing for non phish
             if result == 1:
-                # print("Phishing detected: {}".format(test_mail.get_subject()))
                 phish+=1
             print("Mail {} -- Result: {}".format(i, result))
         except FileNotFoundError:
@@ -59,19 +54,19 @@ def test_model(model: RandomForestClassifier):
     print("Detected Mails: {} -- Total Mails: {}".format(phish, count))
     print("Accuracy: {}".format((phish/count)*100))
 
-def test_model_single(model):
-    mail = mailparser.parse_from_file(r'../../Mailboxes/IndividualTestMails/Ham/ham_1.eml')
+def test_model_single(model: RandomForestClassifier, file_path: str):
+    mail = mailparser.parse_from_file(r'{}'.format(file_path))
     test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
     test_mail.generate_features()
     result = model.predict(test_mail.repr_in_arr())
     print("Result: {}".format(result))
 
-def test_model_modern_phish(model):
+def test_model_modern_phish(model, test_data_dir, start, end):
     count = 0
     phish = 0
-    for i in range(1, 33):
+    for i in range(start, end+1):
         try:
-            mail = mailparser.parse_from_file(r'../../Mailboxes/IndividualTestMails/Phish/phish_{}.eml'.format(i))
+            mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
             test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
@@ -84,12 +79,12 @@ def test_model_modern_phish(model):
     print("Detected Mails: {} -- Total Mails: {}".format(phish, count))
     print("Accuracy: {}".format((phish/count)*100))
 
-def test_model_modern_ham(model):
+def test_model_modern_ham(model, test_data_dir, start, end):
     count = 0
     ham = 0
-    for i in range(1, 133):
+    for i in range(start, end+1):
         try:
-            mail = mailparser.parse_from_file(r'../../Mailboxes/Yannis_Mailbox/{}.eml'.format(i))
+            mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
             test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
@@ -102,12 +97,12 @@ def test_model_modern_ham(model):
     print("Ham: {} -- Total Mails: {}".format(ham, count))
     print("Accuracy: {}".format((ham/count)*100))
 
-def test_model_olden_ham(model):
+def test_model_olden_ham(model, test_data_dir, start, end):
     count = 0
     ham = 0
-    for i in range(1, 300):
+    for i in range(start, end+1):
         try:
-            mail = mailparser.parse_from_file(r'../../Mailboxes/enron_mail_20150507/maildir/badeer-r/all_documents/{}.eml'.format(i))
+            mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
             test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
@@ -120,12 +115,12 @@ def test_model_olden_ham(model):
     print("Ham: {} -- Total Mails: {}".format(ham, count))
     print("Accuracy: {}".format((ham/count)*100))
 
-def test_model_olden_phish(model):
+def test_model_olden_phish(model, test_data_dir, start, end):
     count = 0
     phish = 0
-    for i in range(1301, 1601):
+    for i in range(start, end+1):
         try:
-            mail = mailparser.parse_from_file(r'../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
+            mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
             test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
@@ -139,13 +134,18 @@ def test_model_olden_phish(model):
     print("Accuracy: {}".format((phish/count)*100))
 
 def main():
+    MODERN_HAM_PATH = '../../Mailboxes/Yannis_Mailbox/'
+    MODERN_PHISH_PATH = '../../Mailboxes/IndividualTestMails/Phish/'
+    OLDEN_HAM_PATH = '../../Mailboxes/enron_mail_20150507/maildir/badeer-r/all_documents/'
+    OLDEN_PHISH_PATH = '../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3'
+    SINGLE_TEST_FILE = '../../Mailboxes/IndividualTestMails/Ham/ham_1.eml'
     model = train_model()
-    # test_model_olden_phish(model)
-    # test_model_olden_ham(model)
-    # test_model(model)
-    test_model_modern_phish(model)
-    # test_model_modern_ham(model)
-    # test_model_single(model)
-    # serialize_model(model)
+    # test_model_olden_phish(model, OLDEN_PHISH_PATH, 1301, 1601)
+    # test_model_olden_ham(model, OLDEN_HAM_PATH, 1, 300)
+    # test_model(model, '../../Mailboxes/Yannis_Mailbox/', 1, 134)
+    # test_model_modern_phish(model, MODERN_PHISH_PATH, 25, 46)
+    # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 134)
+    # test_model_single(model, SINGLE_TEST_FILE)
+    serialize_model(model)
 
 main()

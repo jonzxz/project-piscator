@@ -376,6 +376,7 @@ def check_phish(mid):
                 # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
                 mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html))
                 mail_item.generate_features()
+                logger.info("Checking mail: %s", mail_item.__repr__())
                 result = model.predict(mail_item.repr_in_arr())
                 if result == 1:
                     logger.info("Phishing mail detected, subject: %s", msg.subject)
