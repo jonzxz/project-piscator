@@ -14,7 +14,8 @@ def flatten_from_tuples(list_tupl):
 # eg. ['Person', 'Person@Company.com']
 # Returns [Company.com]
 # By right there should only be one entry but kept in list just in case
+# set list to remove duplicates
 def identify_domains(list_of_sender_domain_pairs):
     if isinstance(list_of_sender_domain_pairs, list):
-        return [item.split(sep='@')[1] for item in list_of_sender_domain_pairs if '@' in item]
+        return list(set([item.split(sep='@')[1] for item in list_of_sender_domain_pairs if '@' in item]))
     return list_of_sender_domain_pairs.split(sep='@')[-1]
