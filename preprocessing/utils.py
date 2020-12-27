@@ -30,16 +30,19 @@ def identify_domains(list_of_sender_domain_pairs):
 def format_all_mails(FILE_PATH, start, end):
     spl = []
     for i in range(start, end+1):
-        with open ('{}{}.eml'.format(FILE_PATH, i), 'r', encoding='utf-8') as pf:
-            data = pf.read()
-            spl = data.split(sep='\n')
-            for idx, line in enumerate(spl):
-                result = re.search(r'(^(Received|Authentication-Results|DKIM-Signature|X-Facebook|Date|To|Subject|Reply-to|Return-Path|From|Errors-To|Feedback-ID|Content-|Message-|X-.*:)|(\+0000))', line)
-                if not result:
-                    spl[idx] = '\t{}'.format(spl[idx])
-                # print(result)
+        try:
+            with open ('{}{}.eml'.format(FILE_PATH, i), 'r', encoding='utf-8') as pf:
+                data = pf.read()
+                spl = data.split(sep='\n')
+                for idx, line in enumerate(spl):
+                    result = re.search(r'(^(Received|Authentication-Results|DKIM-Signature|X-Facebook|Date|To|Subject|Reply-to|Return-Path|From|Errors-To|Feedback-ID|Content-|OriginalChecksum|Message-|X-.*:|--))', line)
+                    if not result:
+                        spl[idx] = '\t{}'.format(spl[idx])
+                    # print(result)
 
-        with open('{}../{}.eml'.format(FILE_PATH, i), 'w', encoding='utf-8') as nf:
-            for line in spl:
-                nf.write(line + "\n")
-            nf.close()
+            with open('{}../{}.eml'.format(FILE_PATH, i), 'w', encoding='utf-8') as nf:
+                for line in spl:
+                        nf.write(line + "\n")
+                nf.close()
+        except FileNotFoundError:
+            pass
