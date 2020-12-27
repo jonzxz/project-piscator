@@ -1,5 +1,5 @@
 import os
-
+from utils import format_all_mails
 # Mail Utils
 import mailparser
 from EmailData import EmailData
@@ -11,14 +11,14 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 def train_model() -> RandomForestClassifier:
-    dataset = pd.read_csv('dsv3.csv', encoding = "ISO-8859-1")
+    dataset = pd.read_csv('dsv4.csv', encoding = "ISO-8859-1")
     # dataset = pd.read_csv('train.csv', encoding = "ISO-8859-1")
-    dataset.columns = ['X1','X2','X3','X4', 'X5', 'X6', 'X7', 'X8', 'X9','Y']
+    dataset.columns = ['X1','X2','X3','X4', 'X5', 'X6', 'X7', 'X8', 'X9', 'X10', 'X11', 'X12','Y']
     dataset.head()
 
     forest = RandomForestClassifier(n_estimators=100, oob_score=True, random_state=123456)
-    X = dataset.values[:, 0:9]
-    Y = dataset.values[:, 9]
+    X = dataset.values[:, 0:12]
+    Y = dataset.values[:, 12]
     trainX, testX, trainY, testY = train_test_split(X, Y, test_size=0.3)
     #Training
     forest.fit(trainX, trainY)
@@ -40,7 +40,14 @@ def test_model(model: RandomForestClassifier, test_data_dir: str):
     for i in range(1, 133):
         try:
             mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
-            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
+            if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
+                try:
+                    headers = mail.headers['ARC-Authentication-Results']
+                except KeyError:
+                    headers = mail.headers['Authentication-Results']
+            else:
+                headers = None
+            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body, headers)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
             count+=1
@@ -56,7 +63,15 @@ def test_model(model: RandomForestClassifier, test_data_dir: str):
 
 def test_model_single(model: RandomForestClassifier, file_path: str):
     mail = mailparser.parse_from_file(r'{}'.format(file_path))
-    test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
+    if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
+        try:
+            headers = mail.headers['ARC-Authentication-Results']
+        except KeyError:
+            headers = mail.headers['Authentication-Results']
+    else:
+        headers = None
+    test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body, headers)
+    test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body, headers)
     test_mail.generate_features()
     result = model.predict(test_mail.repr_in_arr())
     print("Result: {}".format(result))
@@ -67,7 +82,14 @@ def test_model_modern_phish(model, test_data_dir, start, end):
     for i in range(start, end+1):
         try:
             mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
-            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
+            if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
+                try:
+                    headers = mail.headers['ARC-Authentication-Results']
+                except KeyError:
+                    headers = mail.headers['Authentication-Results']
+            else:
+                headers = None
+            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body, headers)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
             count+=1
@@ -85,7 +107,14 @@ def test_model_modern_ham(model, test_data_dir, start, end):
     for i in range(start, end+1):
         try:
             mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
-            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
+            if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
+                try:
+                    headers = mail.headers['ARC-Authentication-Results']
+                except KeyError:
+                    headers = mail.headers['Authentication-Results']
+            else:
+                headers = None
+            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body, headers)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
             count+=1
@@ -103,7 +132,14 @@ def test_model_olden_ham(model, test_data_dir, start, end):
     for i in range(start, end+1):
         try:
             mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
-            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
+            if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
+                try:
+                    headers = mail.headers['ARC-Authentication-Results']
+                except KeyError:
+                    headers = mail.headers['Authentication-Results']
+            else:
+                headers = None
+            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body, headers)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
             count+=1
@@ -121,7 +157,14 @@ def test_model_olden_phish(model, test_data_dir, start, end):
     for i in range(start, end+1):
         try:
             mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
-            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body)
+            if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
+                try:
+                    headers = mail.headers['ARC-Authentication-Results']
+                except KeyError:
+                    headers = mail.headers['Authentication-Results']
+            else:
+                headers = None
+            test_mail = EmailData(mail.subject, mail.from_, mail.attachments, mail.body, headers)
             test_mail.generate_features()
             result = model.predict(test_mail.repr_in_arr())
             count+=1
@@ -137,16 +180,18 @@ def main():
     MODERN_HAM_PATH = '../../Mailboxes/Yannis_Mailbox/'
     MODERN_PHISH_PATH = '../../Mailboxes/IndividualTestMails/Phish/'
     OLDEN_HAM_PATH = '../../Mailboxes/enron_mail_20150507/maildir/badeer-r/all_documents/'
-    OLDEN_PHISH_PATH = '../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3'
+    OLDEN_PHISH_PATH = '../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/'
     SINGLE_TEST_FILE = '../../Mailboxes/IndividualTestMails/Ham/ham_1.eml'
     model = train_model()
     # test_model_olden_phish(model, OLDEN_PHISH_PATH, 1301, 1601)
     # test_model_olden_ham(model, OLDEN_HAM_PATH, 1, 300)
     # test_model(model, '../../Mailboxes/Yannis_Mailbox/', 1, 134)
-    # test_model_modern_phish(model, MODERN_PHISH_PATH, 25, 46)
+    # test_model_modern_phish(model, MODERN_PHISH_PATH, 31, 46)
     # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 134)
     # test_model_single(model, SINGLE_TEST_FILE)
     serialize_model(model)
+
+main()
 
 import mailparser
 
@@ -175,7 +220,7 @@ def get_mail_files():
             )
 
             test_mail_item.generate_features()
-            print("MX: {}".format(test_mail_item.get_feature_mx_record()))
-            # print("DKIM: {}".format(test_mail_item.get_domain()))
         except FileNotFoundError:
             pass
+
+# format_all_mails('../../Mailboxes/IndividualTestMails/Phish/ORG/', 1, 45)
