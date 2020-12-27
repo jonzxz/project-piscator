@@ -155,7 +155,7 @@ from email.policy import default, EmailPolicy
 
 import re
 def parse_mail_test():
-    with open ('../../Mailboxes/IndividualTestMails/Ham/TEST.eml', 'rb') as pf:
+    with open ('../../Mailboxes/IndividualTestMails/Phish/3.eml', 'rb') as pf:
     # with open ('../../Mailboxes/IndividualTestMails/phish/phish_3.eml', 'rb') as pf:
     # with open ('../../Mailboxes/IndividualTestMails/ham/ham_1.eml', 'rb') as pf:
         # msg = EmailMessage()
@@ -186,3 +186,34 @@ def format_all_mails(FILE_PATH, start, end):
 
 # format_all_mails('../../Mailboxes/IndividualTestMails/Phish/ORG/', 1, 45)
 # parse_mail_test()
+
+
+import mailparser
+
+def get_mail_files():
+    i = 17
+    try:
+        mail = mailparser.parse_from_file('../../Mailboxes/IndividualTestMails/Phish/{}.eml'.format(i))
+        try:
+            headers = mail.headers['ARC-Authentication-Results']
+        except KeyError:
+            headers = mail.headers['Authentication-Results']
+
+        test_mail_item = EmailData( \
+        mail.subject, \
+        mail.from_, \
+        mail.attachments, \
+        mail.body, \
+        headers
+        )
+
+        test_mail_item.generate_features()
+        print("DKIM: {}".format(test_mail_item.get_feature_dkim_status()))
+        print("SPF: {}".format(test_mail_item.get_feature_spf_status()))
+        print("DMARC: {}".format(test_mail_item.get_feature_dmarc_status()))
+
+
+    except FileNotFoundError:
+        pass
+
+get_mail_files()

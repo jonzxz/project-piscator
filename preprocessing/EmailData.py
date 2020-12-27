@@ -3,7 +3,7 @@ from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
 from whois.parser import PywhoisError
 
 class EmailData:
-    def __init__(self, subject, from_, attachments, content):
+    def __init__(self, subject, from_, attachments, content, auth_results):
         self.__feature_https_tokens = 0
         self.__feature_domain_age = 0
         self.__feature_matching_domain = 0
@@ -13,22 +13,29 @@ class EmailData:
         self.__feature_presence_js = 0
         self.__feature_presence_form_tag = 0
         self.__feature_subdomain_links = 0
+        self.__feature_dkim_status = 0
+        self.__feature_spf_status = 0
+        self.__feature_dmarc_status = 0
 
         self.__subject = subject
         self.__content = clean_up_raw_body(content)
         self.__from = flatten_from_tuples(from_) if isinstance(from_, list) else from_
         self.__attachments = attachments
+        self.__auth_results = clean_up_raw_body(auth_results).split(sep=' ')
         # Returns a list of domains
         self.__domain = identify_domains(self.get_from())
 
     ## -- Jon START --
+    # number of http / total count. if more than 25% of links are http return a 1
+    # if no http return -1
     def process_https_tokens(self):
         num_http = len(re.findall(r'http:', self.get_content()))
+        if num_http == 0:
+            self.set_feature_https_token(-1)
+            return
+
         num_https = len(re.findall(r'https:', self.get_content()))
-        # Need to determine 1 or -1 based on num https counted
-        # eg. 1 HTTP 3 HTTPS, 1 or -1??? there isn't a clear determining of what
-        # does processing the https token do and what's the threshold if any
-        self.set_feature_https_token(num_http-num_https)
+        self.set_feature_https_token(1 if num_http/(num_https+num_http) >= 0.25 else -1)
 
     # One issue with processing domain age is that the From: header can be spoofed to be a valid one
     # There will be chances where encoding will fail in future processing if it contains things like
@@ -39,7 +46,7 @@ class EmailData:
         # so isinstance checks if 1st element is a list and takes it out into a flat list
         self.set_feature_domain_age(0)
         return
-        
+
         try:
             # Returns a either a list of datetime, a datetime or string
             domain_age = ([whois.whois(dom).creation_date for dom in self.get_domain()]) \
@@ -288,6 +295,45 @@ class EmailData:
         self.set_feature_subdomain_links(-1)
     ## -- Zuhree END --
 
+    def process_dkim_status(self):
+        dkim_status = [item for item in self.get_auth_results() if 'dkim' in item]
+        if dkim_status:
+            dkim_status = dkim_status[0].split(sep='=')[1]
+
+        if dkim_status == 'none':
+            self.set_feature_dkim_status(1)
+        elif dkim_status == 'pass':
+            self.set_feature_dkim_status(-1)
+        else:
+            self.set_feature_dkim_status(0)
+        return
+
+    def process_dmarc_status(self):
+        dmarc_status = [item for item in self.get_auth_results() if 'dmarc' in item]
+        if dmarc_status:
+            dmarc_status = dmarc_status[0].split(sep='=')[1]
+
+        if dmarc_status == 'pass':
+            self.set_feature_dmarc_status(-1)
+        elif dmarc_status == 'bestguesspass' or dmarc_status == 'none' or dmarc_status == 'permerror':
+            self.set_feature_dmarc_status(1)
+        else:
+            self.set_feature_dmarc_status(0)
+        return
+
+    def process_spf_status(self):
+        spf_status = [item for item in self.get_auth_results() if 'spf' in item]
+        if spf_status:
+            spf_status = spf_status[0].split(sep='=')[1]
+
+        if spf_status == 'pass':
+            self.set_feature_spf_status(-1)
+        elif spf_status == 'none' or spf_status == 'fail':
+            self.set_feature_spf_status(1)
+        else:
+            self.set_feature_spf_status(0)
+        return
+
     def generate_features(self):
         self.process_https_tokens()
         self.process_domain_age()
@@ -299,6 +345,9 @@ class EmailData:
         self.process_presence_js()
         self.process_presence_form_tag()
         self.process_subdomain_links()
+        self.process_dkim_status()
+        self.process_dmarc_status()
+        self.process_spf_status()
 
     def get_subject(self):
         return self.__subject
@@ -314,6 +363,9 @@ class EmailData:
 
     def get_domain(self):
         return self.__domain
+
+    def get_auth_results(self):
+        return self.__auth_results
 
     def __repr__(self):
         return "{0},{1},{2},{3},{4},{5},{6},{7},{8}".format(self.__feature_https_tokens, \
@@ -391,3 +443,21 @@ class EmailData:
 
     def get_feature_subdomain_links(self):
         return self.__feature_keyword_count
+
+    def set_feature_dkim_status(self, num):
+        self.__feature_dkim_status = num
+
+    def get_feature_dkim_status(self):
+        return self.__feature_dkim_status
+
+    def set_feature_dmarc_status(self, num):
+        self.__feature_dmarc_status = num
+
+    def get_feature_dmarc_status(self):
+        return self.__feature_dmarc_status
+
+    def set_feature_spf_status(self, num):
+        self.__feature_spf_status = num
+
+    def get_feature_spf_status(self):
+        return self.__feature_spf_status
