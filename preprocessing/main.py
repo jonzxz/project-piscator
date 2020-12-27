@@ -191,34 +191,33 @@ def format_all_mails(FILE_PATH, start, end):
 import mailparser
 
 def get_mail_files():
-    i = 17
-    try:
-        # mail = mailparser.parse_from_file('../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
-        mail = mailparser.parse_from_file('../../Mailboxes/IndividualTestMails/Phish/{}.eml'.format(i))
+    for i in range(1, 46):
+        try:
+            # mail = mailparser.parse_from_file('../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
+            mail = mailparser.parse_from_file('../../Mailboxes/IndividualTestMails/Phish/{}.eml'.format(i))
+            # mail = mailparser.parse_from_file('../../Mailboxes/IndividualTestMails/Ham/{}.eml'.format(i))
+            # mail = mailparser.parse_from_file('../../Mailboxes/Jonathan_Mailbox/{}.eml'.format(i))
 
-        if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
-            try:
-                headers = mail.headers['ARC-Authentication-Results']
-            except KeyError:
-                headers = mail.headers['Authentication-Results']
-        else:
-            headers = None
+            if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
+                try:
+                    headers = mail.headers['ARC-Authentication-Results']
+                except KeyError:
+                    headers = mail.headers['Authentication-Results']
+            else:
+                headers = None
 
-        test_mail_item = EmailData( \
-        mail.subject, \
-        mail.from_, \
-        mail.attachments, \
-        mail.body, \
-        headers
-        )
+            test_mail_item = EmailData( \
+            mail.subject, \
+            mail.from_, \
+            mail.attachments, \
+            mail.body, \
+            headers
+            )
 
-        test_mail_item.generate_features()
-        print("DKIM: {}".format(test_mail_item.get_feature_dkim_status()))
-        print("SPF: {}".format(test_mail_item.get_feature_spf_status()))
-        print("DMARC: {}".format(test_mail_item.get_feature_dmarc_status()))
-
-
-    except FileNotFoundError:
-        pass
+            test_mail_item.generate_features()
+            print("MX: {}".format(test_mail_item.get_feature_mx_record()))
+            # print("DKIM: {}".format(test_mail_item.get_domain()))
+        except FileNotFoundError:
+            pass
 
 get_mail_files()

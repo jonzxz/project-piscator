@@ -1,7 +1,7 @@
 import re, datetime, whois
 from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
 from whois.parser import PywhoisError
-
+import dns.resolver
 class EmailData:
     def __init__(self, subject, from_, attachments, content, auth_results):
         self.__feature_https_tokens = 0
@@ -16,6 +16,7 @@ class EmailData:
         self.__feature_dkim_status = 0
         self.__feature_spf_status = 0
         self.__feature_dmarc_status = 0
+        self.__feature_mx_record = 0
 
         self.__subject = subject
         self.__content = clean_up_raw_body(content)
@@ -336,7 +337,7 @@ class EmailData:
         if not self.get_auth_results():
             self.set_feature_dkim_status(0)
             return
-            
+
         spf_status = [item for item in self.get_auth_results() if 'spf' in item]
         if spf_status:
             spf_status = spf_status[0].split(sep='=')[1]
@@ -348,6 +349,26 @@ class EmailData:
         else:
             self.set_feature_spf_status(0)
         return
+
+    def process_mx_record(self):
+        try:
+            if len(self.get_domain()) == 1:
+                result = dns.resolver.query(self.get_domain()[0], 'MX')
+            else:
+                results = [dns.resolver.query(domain, 'MX') for domain in self.get_domain()]
+            self.set_feature_mx_record(-1)
+        except dns.resolver.NoAnswer:
+            # No response, legit domains can also hit this
+            self.set_feature_mx_record(1)
+        except dns.resolver.NXDOMAIN:
+            # No DNS Query name exist
+            self.set_feature_mx_record(1)
+        except UnicodeError:
+            # contains NON ASCII characters
+            self.set_feature_mx_record(1)
+        except dns.name.LabelTooLong:
+            # Exist because of processing error in domain identification
+            self.set_feature_mx_record(0)
 
     def generate_features(self):
         self.process_https_tokens()
@@ -363,6 +384,7 @@ class EmailData:
         self.process_dkim_status()
         self.process_dmarc_status()
         self.process_spf_status()
+        self.process_mx_record()
 
     def get_subject(self):
         return self.__subject
@@ -476,3 +498,9 @@ class EmailData:
 
     def get_feature_spf_status(self):
         return self.__feature_spf_status
+
+    def set_feature_mx_record(self, num):
+        self.__feature_mx_record = num
+
+    def get_feature_mx_record(self):
+        return self.__feature_mx_record
