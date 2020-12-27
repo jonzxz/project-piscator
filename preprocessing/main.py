@@ -193,11 +193,16 @@ import mailparser
 def get_mail_files():
     i = 17
     try:
+        # mail = mailparser.parse_from_file('../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
         mail = mailparser.parse_from_file('../../Mailboxes/IndividualTestMails/Phish/{}.eml'.format(i))
-        try:
-            headers = mail.headers['ARC-Authentication-Results']
-        except KeyError:
-            headers = mail.headers['Authentication-Results']
+
+        if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
+            try:
+                headers = mail.headers['ARC-Authentication-Results']
+            except KeyError:
+                headers = mail.headers['Authentication-Results']
+        else:
+            headers = None
 
         test_mail_item = EmailData( \
         mail.subject, \

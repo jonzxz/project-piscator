@@ -21,7 +21,7 @@ class EmailData:
         self.__content = clean_up_raw_body(content)
         self.__from = flatten_from_tuples(from_) if isinstance(from_, list) else from_
         self.__attachments = attachments
-        self.__auth_results = clean_up_raw_body(auth_results).split(sep=' ')
+        self.__auth_results = clean_up_raw_body(auth_results).split(sep=' ') if auth_results else None
         # Returns a list of domains
         self.__domain = identify_domains(self.get_from())
 
@@ -296,6 +296,11 @@ class EmailData:
     ## -- Zuhree END --
 
     def process_dkim_status(self):
+
+        if not self.get_auth_results():
+            self.set_feature_dkim_status(0)
+            return
+
         dkim_status = [item for item in self.get_auth_results() if 'dkim' in item]
         if dkim_status:
             dkim_status = dkim_status[0].split(sep='=')[1]
@@ -309,6 +314,11 @@ class EmailData:
         return
 
     def process_dmarc_status(self):
+
+        if not self.get_auth_results():
+            self.set_feature_dkim_status(0)
+            return
+
         dmarc_status = [item for item in self.get_auth_results() if 'dmarc' in item]
         if dmarc_status:
             dmarc_status = dmarc_status[0].split(sep='=')[1]
@@ -322,6 +332,11 @@ class EmailData:
         return
 
     def process_spf_status(self):
+
+        if not self.get_auth_results():
+            self.set_feature_dkim_status(0)
+            return
+            
         spf_status = [item for item in self.get_auth_results() if 'spf' in item]
         if spf_status:
             spf_status = spf_status[0].split(sep='=')[1]
