@@ -269,7 +269,7 @@ class EmailData:
 
     def process_presence_form_tag(self):
         # Regex check for form
-        checkformtag = re.compile(r'<(?:form|Form)')
+        checkformtag = re.compile(r'<(?:form|Form|forms.google)')
 
         # Checks if the string is empty
         if not self.get_content().strip():
