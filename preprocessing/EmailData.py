@@ -199,7 +199,9 @@ class EmailData:
          "confirm", "user", "customer", "client", "restrict", "hold", "verify", \
          "account", "login", "SSN", "Social Security", "NRIC", "label", "invoice", \
          "post", "document", "postal", "calculations", "copy", "fedex", "statement", \
-         "financial", "dhl", "usps", "notification", "delivery", "ticket", "paypal", "bank" ]
+         "financial", "dhl", "usps", "notification", "delivery", "ticket", "paypal", "bank", \
+         "survey", "transfer", "bank", "compensation", "bitcoin", "payment", "investment", \
+          ]
         count = 0
         # Checks if the string is empty
         if not self.get_content().strip():
