@@ -154,22 +154,22 @@ class EmailData:
             if len(main_domains) == 1:
                 main_domains = main_domains[0]
                 for domain in domains_in_mail:
-                    if not main_domains == domain:
-                        self.set_feature_matching_domain(1)
+                    if main_domains == domain:
+                        self.set_feature_matching_domain(-1)
                         return
             else:
                 for main_d in main_domains:
                     for domain in domains_in_mail:
-                        if not main_d == domain:
-                            self.set_feature_matching_domain(1)
+                        if main_d == domain:
+                            self.set_feature_matching_domain(-1)
                             return
         else:
             for domain in domains_in_mail:
-                if not main_domains == domain:
-                    self.set_feature_matching_domain(1)
+                if main_domains == domain:
+                    self.set_feature_matching_domain(-1)
                     return
 
-        self.set_feature_matching_domain(-1)
+        self.set_feature_matching_domain(1)
         # if isinstance(main_domains, list):
         #     if len(main_domains) == 1:
         #         main_domains= main_domains[0]

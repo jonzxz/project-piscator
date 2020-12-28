@@ -186,10 +186,10 @@ def main():
     # test_model_olden_phish(model, OLDEN_PHISH_PATH, 1301, 1601)
     # test_model_olden_ham(model, OLDEN_HAM_PATH, 1, 300)
     # test_model(model, '../../Mailboxes/Yannis_Mailbox/', 1, 134)
-    # test_model_modern_phish(model, MODERN_PHISH_PATH, 31, 46)
+    test_model_modern_phish(model, MODERN_PHISH_PATH, 31, 46)
     # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 134)
     # test_model_single(model, SINGLE_TEST_FILE)
-    serialize_model(model)
+    # serialize_model(model)
 
 main()
 

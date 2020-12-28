@@ -1,5 +1,6 @@
 import re
 import joblib
+from sklearn.ensemble import RandomForestClassifier
 
 # Cleans up a messed up HTML / tabbed raw content into space delimited content
 def clean_up_raw_body(raw_text):
