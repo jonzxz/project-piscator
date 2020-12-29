@@ -13,7 +13,7 @@
         <div class="card-body">
           <h6>Active Email Addresses</h6>
           <p id="emailactive"></p>
-          <progress id="progress_bar" value="0" max="5"></progress>
+          <progress id="progress_bar" value="0" max="0"></progress>
         </div>
       </div>
     </div>
@@ -21,15 +21,15 @@
   </div>
   <div class="row">
     <div class="col-3">
-      <div class="card border-success mb-3">
-        <div class="card-body text-success">
-          <h6 class="m-b-25">Today Detection</h6>
-          <h3 class="f-w-700 text-c-blue">1,563</h3>
+      <div class="card bg-c-yellow">
+        <div class="card-body">
+          <h6 class="m-b-25 text-white">Today Detection</h6>
+          <h3 class="text-white">1,563</h3>
           <div class="col-auto">
             <i class="fas fa-eye bg-c-blue"></i>
           </div>
-          <div class="card-footer">
-            <p><i id="systime" class="lni lni-alarm-clock"></i> Updated</p>
+          <div class="card-footer bg-c-yellow">
+            <p class="text-white"><i id="systime" class="lni lni-alarm-clock"></i> Updated</p>
           </div>
         </div>
       </div>
@@ -61,15 +61,15 @@
       </div>
     </div>
     <div class="col-3 ">
-      <div class="card bg-c-yellow update-card">
-        <div class="card-body">
-          <h6 class="m-b-25">All Time Detection</h6>
-          <h3 class="f-w-700 text-c-green">30,564</h3>
+      <div class="card bg-c-all">
+       <div class="card-body">
+          <div class="m-b-25 text-white">All Time Detection</div>
+          <div class="text-white">30,564</div>
           <div class="col-auto">
             <i class="fas fa-bullseye bg-c-green"></i>
           </div>
-          <div class="card-footer">
-            <p><i class="lni lni-alarm-clock"></i> Update : 2:15 am</p>
+          <div class="card-footer bg-c-all">
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Update : 2:15 am</p>
           </div>
         </div>
       </div>
@@ -154,11 +154,6 @@
   var today = new Date();
   var time = today.getHours() + ":" + today.getMinutes();
   document.getElementById("systime").innerHTML = time;
-  document.getElementById("a").innerHTML += time;
-
-  function loadTime(ele) {
-    document.getElementById(ele).innerHTML += time
-  }
 
   // Active Email Addresses display
   var email_active = {{ email_active }}
@@ -166,8 +161,7 @@
   document.getElementById("emailactive").innerHTML = email_active;
   // ele = document.getElementById
   document.getElementById("progress_bar").value = email_active;
-  document.getElementById("progress_bar").innerHTML = email_stats;
-  // document.getElementById("progress_bar").max = 5;
+  document.getElementById("progress_bar").max = email_stats;
 
 </script>
 {% endblock %}
