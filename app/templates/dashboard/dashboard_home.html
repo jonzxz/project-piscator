@@ -1,68 +1,183 @@
 {% extends "dashboard/dashboard_base.html" %}
-<!doctype html>
-<html class="no-js" lang="en">
-<style>
 
-</style>
-<body>
-  {% block content %}
-  <div class="pl-5 pt-2">
-    <span class="h2 pb-5">Dashboard</span>
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <canvas id="myChart" width="300" height="200"></canvas>
+{% block content %}
+<div class="container ml-5">
+  <div class="row">
+    <div class="col-12">
+      <span class="h2 pb-5">Dashboard</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-3">
+      <div class="card proj-progress-card">
+        <div class="card-body">
+          <h6>Active Email Addresses</h6>
+          <p id="emailactive"></p>
+          <progress id="progress_bar" value="0" max="0"></progress>
+        </div>
       </div>
-      <div class="col-12 col-md-6">
-        <canvas id="myChart2" width="300" height="200"></canvas>
+    </div>
+    <div class="col-9"></div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-3">
+      <div class="card bg-c-today">
+        <div class="card-body">
+          <div class="text-white">Today Detection</div>
+          <div id="today-detect" class="text-white"></div>
+          <div class="col-auto">
+            <i class="fas fa-eye bg-c-blue"></i>
+          </div>
+          <div class="card-footer bg-c-today">
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="card bg-c-weekly">
+        <div class="card-body text-info">
+          <div class="text-white">Weekly Detection</div>
+          <div id="weekly-detect" class="text-white"></div>
+          <i class="fas fa-bullseye bg-c-green"></i>
+          <div class="card-footer bg-c-weekly">
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="card bg-c-monthly">
+        <div class="card-body">
+          <div class="text-white">Monthly Detection</div>
+          <div id="monthly-detect" class="text-white"></div>
+          <div class="col-auto">
+            <i class="fas fa-bullseye bg-c-green"></i>
+          </div>
+          <div class="card-footer bg-c-monthly">
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="card bg-c-all">
+       <div class="card-body">
+          <div class="text-white">All Time Detection</div>
+          <div id="all-time-detect" class="text-white"></div>
+          <div class="col-auto">
+            <i class="fas fa-bullseye bg-c-green"></i>
+          </div>
+          <div class="card-footer bg-c-all">
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-  <script>
-  var ctx = document.getElementById("myChart");
-  var ctx2 = document.getElementById("myChart2");
+  <br>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header bg-transparent">
+          <div class="row align-items-center">
+            <div class="col">
+              <h6 class="text-uppercase text-muted ls-1 mb-1">Monthly Overview</h6>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="chart-area">
+            <canvas id="myChart" class="chart-canvas" width="1000" height="400"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script>
+  // -- Bar chart START
+  var ctx = document.getElementById("myChart");
 
   <!--values (y-axis) to be updated here//-->
-  var emailsD = [9, 12, 18, 3, 15];
-  var emailsM = [9, 12, 21, 0, 15];
+  var emailsD = [9, 12, 18, 3, 15, 12, 4, 5, 9, 11, 19, 12];
 
   <!--values (x-axis) to be updated here//-->
-  var dates = ["08Nov20", "30Dec20", "02Jan21", "15Jan21", "21Mar21"];
-  var months = ["Nov20", "Dec20", "Jan21", "Feb21", "Mar21"]
+  var dates = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   var myChart = new Chart(ctx, {
-    type: "line",
+    type: "bar",
     data: {
       labels: dates,
       datasets: [
-        {
-          label: "Number of Phishing Emails / Day",
-          data: emailsD,
-          backgroundColor: "rgba(255, 99, 132, 0.2)",
-          borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 1
-        }
+      {
+        label: "Total Number of Phishing Emails per Month",
+        data: emailsD,
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor:  [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 2,
+        barThickness: 6,
+        maxBarThickness: 8,
+        minBarLength: 4,
+      }
       ]
     }
   });
+  // -- Bar Chart END
 
-  var myChart2 = new Chart(ctx2, {
-    type: "line",
-    data: {
-      labels: months,
-      datasets: [
-        {
-          label: "Number of Phishing Emails / Month",
-          data: emailsM,
-          backgroundColor: "rgba(255, 99, 132, 0.2)",
-          borderColor: "rgba(255, 99, 132, 1)",
-          borderWidth: 1
-        }
-      ]
-    }
-  });
+  // Card values
+  // Active Email Addresses display
+  var email_active = {{ statistics['email_active'] }}
+  var email_stats =  {{ statistics['email_stats'] }}
+  var all_time_detect = {{ statistics['all_time'] }}
+  var monthly_detect = {{ statistics['monthly'] }}
+  var weekly_detect = {{ statistics['weekly'] }}
+  var today_detect = {{ statistics['today'] }}
+
+  document.getElementById("emailactive").innerHTML = email_active;
+  document.getElementById("progress_bar").value = email_active;
+  document.getElementById("progress_bar").max = email_stats;
+
+  // All Time detection
+  document.getElementById("all-time-detect").innerHTML = all_time_detect;
+
+  // Today detection
+  document.getElementById("today-detect").innerHTML = today_detect;
+
+  // Weekly detection
+  document.getElementById("weekly-detect").innerHTML = weekly_detect;
+
+  // Monthly detection
+  document.getElementById("monthly-detect").innerHTML = monthly_detect;
+
 </script>
 {% endblock %}
-</body>
-</html>

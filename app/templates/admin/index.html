@@ -20,7 +20,7 @@ to the user dashboard (but that only shows for that particular user)
             </div>
             <div class="card-body">
               <div class="chart-area">
-                <canvas id="myChart" width="300" height="200"></canvas>
+                <canvas id="user_chart" width="300" height="200"></canvas>
               </div>
             </div>
           </div>
@@ -32,7 +32,7 @@ to the user dashboard (but that only shows for that particular user)
             </div>
             <div class="card-body">
               <div class="chart-area">
-                <canvas id="myChart2" width="300" height="200"></canvas>
+                <canvas id="email_chart" width="300" height="200"></canvas>
               </div>
             </div>
           </div>
@@ -42,8 +42,8 @@ to the user dashboard (but that only shows for that particular user)
       <!-- should be moved into base -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
       <script>
-        var ctx = document.getElementById("myChart");
-        var ctx2 = document.getElementById("myChart2");
+        var users = document.getElementById("user_chart");
+        var emails = document.getElementById("email_chart");
 
         <!--values (y-axis) to be updated here//-->
         var users_stats = {{ user_stats }}
@@ -54,7 +54,7 @@ to the user dashboard (but that only shows for that particular user)
         var dates = ["08Nov20", "30Dec20", "02Jan21", "15Jan21", "21Mar21"];
         var months = ["Nov20", "Dec20", "Jan21", "Feb21", "Mar21"]
 
-        var myChart = new Chart(ctx, {
+        var user_chart = new Chart(users, {
           type: "pie",
           data: {
             labels: ["Inactive Users", "Active Users"],
@@ -73,7 +73,7 @@ to the user dashboard (but that only shows for that particular user)
           }
         });
 
-        var myChart2 = new Chart(ctx2, {
+        var email_chart = new Chart(emails, {
           type: "pie",
           data: {
             labels: ["Inactive Addresses", "Active Addresses"],

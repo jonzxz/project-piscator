@@ -18,7 +18,8 @@ from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
 
 ## Datetime
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from sqlalchemy import Date, cast
 
 
 ## Utils
@@ -147,7 +148,55 @@ def dashboard():
         return redirect(url_for('index'))
     if current_user.is_admin:
         return redirect(url_for('admin.index'))
-    return render_template('dashboard/dashboard_home.html')
+    logger.info("User logging in, redirecting to users portal")
+    email_active = db.session.query(EmailAddress) \
+    .filter(EmailAddress.active==True, EmailAddress.user_id==current_user.user_id).count()
+    email_inactive = db.session.query(EmailAddress) \
+    .filter(EmailAddress.active==False, EmailAddress.user_id==current_user.user_id).count()
+    logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
+    , email_active, email_inactive)
+    email_stats = email_active + email_inactive
+
+    all_time_detect = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id).count()
+
+    today_detect = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id \
+    , (cast(PhishingEmail.created_at, Date) == date.today())).count()
+
+    # weekly detection now retrieves records within 7 days
+    # Have to keep in mind it does not reflect past 2 days if it is a Tuesday
+    seven_days_ago = datetime.today() - timedelta(days=7)
+    weekly_detect = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id \
+    , PhishingEmail.created_at >= seven_days_ago).count()
+
+    # Likewise for month, same as week
+    month_ago = datetime.today() - timedelta(days=30)
+    monthly_detect = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id \
+    , PhishingEmail.created_at >= month_ago).count()
+
+    logger.info("All Time Detection: %s -- Today Detection: %s \
+    -- Weekly Detection: %s -- Monthly Detection: %s" \
+    , all_time_detect, today_detect, weekly_detect, monthly_detect)
+
+    statistics = {
+        'all_time' : all_time_detect,
+        'today' : today_detect,
+        'weekly' : weekly_detect,
+        'monthly' : monthly_detect,
+        'email_active' : email_active,
+        'email_inactive' : email_inactive,
+        'email_stats' : email_stats,
+    }
+
+    return render_template('dashboard/dashboard_home.html', \
+    statistics = statistics)
 
 @app.route('/dashboard/emails', methods=['GET', 'POST'])
 def dash_email():
