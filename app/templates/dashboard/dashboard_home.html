@@ -19,62 +19,64 @@
     </div>
     <div class="col-9"></div>
   </div>
+  <br>
   <div class="row">
     <div class="col-3">
-      <div class="card bg-c-yellow">
+      <div class="card bg-c-today">
         <div class="card-body">
-          <h6 class="m-b-25 text-white">Today Detection</h6>
-          <h3 class="text-white">1,563</h3>
+          <div class="text-white">Today Detection</div>
+          <div id="today-detect" class="text-white"></div>
           <div class="col-auto">
             <i class="fas fa-eye bg-c-blue"></i>
           </div>
-          <div class="card-footer bg-c-yellow">
-            <p class="text-white"><i id="systime" class="lni lni-alarm-clock"></i> Updated</p>
+          <div class="card-footer bg-c-today">
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
           </div>
         </div>
       </div>
     </div>
     <div class="col-3">
-      <div class="card border-info mb-3">
+      <div class="card bg-c-weekly">
         <div class="card-body text-info">
-          <h6 class="m-b-25">Weekly Detection</h6>
-          <h3 class="f-w-700 text-c-green">30,564</h3>
+          <div class="text-white">Weekly Detection</div>
+          <div id="weekly-detect" class="text-white"></div>
           <i class="fas fa-bullseye bg-c-green"></i>
-          <div class="card-footer">
-            <p id="weekly-updated"><i class="lni lni-alarm-clock"></i> Updated</p>
+          <div class="card-footer bg-c-weekly">
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
           </div>
         </div>
       </div>
     </div>
     <div class="col-3">
-      <div class="card border-dark mb-3">
-        <div class="card-body text-dark">
-          <h6 class="m-b-25">Monthly Detection</h6>
-          <h3 class="f-w-700 text-c-green">30,564</h3>
+      <div class="card bg-c-monthly">
+        <div class="card-body">
+          <div class="text-white">Monthly Detection</div>
+          <div id="monthly-detect" class="text-white"></div>
           <div class="col-auto">
             <i class="fas fa-bullseye bg-c-green"></i>
           </div>
-          <div class="card-footer">
-            <p><i id="systime" class="lni lni-alarm-clock"></i> Updated</p>
+          <div class="card-footer bg-c-monthly">
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-3 ">
+    <div class="col-3">
       <div class="card bg-c-all">
        <div class="card-body">
-          <div class="m-b-25 text-white">All Time Detection</div>
-          <div class="text-white">30,564</div>
+          <div class="text-white">All Time Detection</div>
+          <div id="all-time-detect" class="text-white"></div>
           <div class="col-auto">
             <i class="fas fa-bullseye bg-c-green"></i>
           </div>
           <div class="card-footer bg-c-all">
-            <p class="text-white"><i class="lni lni-alarm-clock"></i> Update : 2:15 am</p>
+            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <br>
   <div class="row">
     <div class="col-12">
       <div class="card">
@@ -150,11 +152,6 @@
     }
   });
 
-  // System Time
-  var today = new Date();
-  var time = today.getHours() + ":" + today.getMinutes();
-  document.getElementById("systime").innerHTML = time;
-
   // Active Email Addresses display
   var email_active = {{ email_active }}
   var email_stats =  {{ email_stats }}
@@ -162,6 +159,22 @@
   // ele = document.getElementById
   document.getElementById("progress_bar").value = email_active;
   document.getElementById("progress_bar").max = email_stats;
+
+  // All Time detection
+  var all_time_detect = {{ all_time_detect }}
+  document.getElementById("all-time-detect").innerHTML = all_time_detect;
+
+  // Today detection
+  var today_detect = {{ today_detect }}
+  document.getElementById("today-detect").innerHTML = today_detect;
+
+  // Weekly detection
+  var weekly_detect = {{ weekly_detect }}
+  document.getElementById("weekly-detect").innerHTML = weekly_detect;
+
+  // Monthly detection
+  var monthly_detect = {{ monthly_detect }}
+  document.getElementById("monthly-detect").innerHTML = monthly_detect;
 
 </script>
 {% endblock %}
