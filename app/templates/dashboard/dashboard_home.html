@@ -99,6 +99,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script>
+  // -- Bar chart START
   var ctx = document.getElementById("myChart");
 
   <!--values (y-axis) to be updated here//-->
@@ -151,29 +152,31 @@
       ]
     }
   });
+  // -- Bar Chart END
 
+  // Card values
   // Active Email Addresses display
-  var email_active = {{ email_active }}
-  var email_stats =  {{ email_stats }}
+  var email_active = {{ statistics['email_active'] }}
+  var email_stats =  {{ statistics['email_stats'] }}
+  var all_time_detect = {{ statistics['all_time'] }}
+  var monthly_detect = {{ statistics['monthly'] }}
+  var weekly_detect = {{ statistics['weekly'] }}
+  var today_detect = {{ statistics['today'] }}
+
   document.getElementById("emailactive").innerHTML = email_active;
-  // ele = document.getElementById
   document.getElementById("progress_bar").value = email_active;
   document.getElementById("progress_bar").max = email_stats;
 
   // All Time detection
-  var all_time_detect = {{ all_time_detect }}
   document.getElementById("all-time-detect").innerHTML = all_time_detect;
 
   // Today detection
-  var today_detect = {{ today_detect }}
   document.getElementById("today-detect").innerHTML = today_detect;
 
   // Weekly detection
-  var weekly_detect = {{ weekly_detect }}
   document.getElementById("weekly-detect").innerHTML = weekly_detect;
 
   // Monthly detection
-  var monthly_detect = {{ monthly_detect }}
   document.getElementById("monthly-detect").innerHTML = monthly_detect;
 
 </script>
