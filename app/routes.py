@@ -18,7 +18,8 @@ from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
 
 ## Datetime
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from sqlalchemy import Date, cast
 
 
 ## Utils
@@ -151,11 +152,40 @@ def dashboard():
     email_active = db.session.query(EmailAddress) \
     .filter(EmailAddress.active==True, EmailAddress.user_id==current_user.user_id).count()
     email_inactive = db.session.query(EmailAddress) \
-    .filter(EmailAddress.active==False, EmailAddress.user_id ==current_user.user_id).count()
+    .filter(EmailAddress.active==False, EmailAddress.user_id==current_user.user_id).count()
     logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
     , email_active, email_inactive)
     email_stats = email_active + email_inactive
-    return render_template('dashboard/dashboard_home.html', email_active = email_active, email_stats = email_stats)
+
+    all_time_detect = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id).count()
+
+    today_detect = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id \
+    , (cast(PhishingEmail.created_at, Date) == date.today())).count()
+
+    seven_days_ago = datetime.today() - timedelta(days=7)
+    weekly_detect = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id \
+    , PhishingEmail.created_at >= seven_days_ago).count()
+
+    month_ago = datetime.today() - timedelta(days=30)
+    monthly_detect = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id \
+    , PhishingEmail.created_at >= month_ago).count()
+    
+    logger.info("All Time Detection: %s -- Today Detection: %s \
+    -- Weekly Detection: %s -- Monthly Detection: %s" \
+    , all_time_detect, today_detect, weekly_detect, monthly_detect)
+
+    return render_template('dashboard/dashboard_home.html' \
+    , email_active = email_active, email_stats = email_stats \
+    , all_time_detect= all_time_detect, today_detect = today_detect \
+    , weekly_detect = weekly_detect, monthly_detect = monthly_detect)
 
 @app.route('/dashboard/emails', methods=['GET', 'POST'])
 def dash_email():
