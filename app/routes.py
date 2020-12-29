@@ -149,9 +149,9 @@ def dashboard():
         return redirect(url_for('admin.index'))
     logger.info("User logging in, redirecting to users portal")
     email_active = db.session.query(EmailAddress) \
-    .filter(EmailAddress.active==True).count()
+    .filter(EmailAddress.active==True, EmailAddress.user_id==current_user.user_id).count()
     email_inactive = db.session.query(EmailAddress) \
-    .filter(EmailAddress.active==False).count()
+    .filter(EmailAddress.active==False, EmailAddress.user_id ==current_user.user_id).count()
     logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
     , email_active, email_inactive)
     email_stats = email_active + email_inactive
