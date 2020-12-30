@@ -86,6 +86,13 @@ $(function () {
         }, 1500);
     });
 
+    $('.back-to-top-always-on').on('click', function (event) {
+        event.preventDefault();
+
+        $('html, body').animate({
+            scrollTop: 0,
+        }, 1500);
+    });
 
     //=====  WOW active
 

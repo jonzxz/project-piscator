@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% include "navbar.html" %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/term_privacy_style.css') }}">
 <div class="main-container mt-5">
     <div class="container ex1">
@@ -149,24 +150,9 @@
                 <div class="w-100 animated fadeInDown">
                 </div>
             </div>
-            <div id="myBtn">
-                <button onclick="topFunction()" id="myBtn" title="Go to top">Go to Top</button>
-                <!-- <a href="{{ url_for('privacy') }}">Back to Top</a> -->
-            </div>
+            <div id="particles-2" class="particles"></div>
+            <a href="#" class="back-to-top-always-on"><i class="lni lni-chevron-up"></i></a>
     </div>
-    <div id="particles-2" class="particles"></div>
     </div>
 
-    <script>
-    //Get the button
-    var mybutton = document.getElementById("myBtn");
-
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    }
-    </script>
-
-{% include "navbar.html" %}
 {% endblock %}
