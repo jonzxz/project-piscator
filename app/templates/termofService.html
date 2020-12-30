@@ -248,4 +248,12 @@
     </div>
 </div>
 
+<!-- JQuery to replace hrefs in navbar to index#<section> -->
+<script>
+    $("#home-nav").attr("href", "{{url_for('index') }}");
+    $("#feature-nav").attr("href", "{{url_for('index') }}#features");
+    $("#about-nav").attr("href", "{{url_for('index') }}#about");
+    $("#facts-nav").attr("href", "{{url_for('index') }}#facts");
+    $("#footer-nav").attr("href", "{{url_for('index') }}#footer");
+</script>
 {% endblock %}
