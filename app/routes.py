@@ -500,7 +500,7 @@ def privacy():
 
 @app.route('/terms')
 def tos():
-    return render_template('privacy.html')
+    return render_template('termofService.html')
 
 # Reroute functions to prevent form resubmission on refresh
 @app.route('/mail_form_reset', methods=['GET'])
