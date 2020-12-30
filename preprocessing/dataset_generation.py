@@ -7,12 +7,12 @@ import re
 
 import mailparser
 
-for i in range(1, 31):
+for i in range(1, 17):
     try:
         # mail = mailparser.parse_from_file('../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
         # mail = mailparser.parse_from_file('../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
-        # mail = mailparser.parse_from_file('../../Mailboxes/Jonathan_Mailbox/{}.eml'.format(i))
-        mail = mailparser.parse_from_file('../../Mailboxes/IndividualTestMails/Phish/{}.eml'.format(i))
+        mail = mailparser.parse_from_file('../../Mailboxes/Phish/ModernPhish2/{}.eml'.format(i))
+        # mail = mailparser.parse_from_file('../../Mailboxes/Hams/ModernHam0/{}.eml'.format(i))
         # mail = mailparser.parse_from_file('../../Mailboxes/enron_mail_20150507/maildir/allen-p/all_documents/{}..eml'.format(i))
         # mail = mailparser.parse_from_file('../../Mailboxes/enron_mail_20150507/maildir/arnold-j/all_documents/{}..eml'.format(i))
 

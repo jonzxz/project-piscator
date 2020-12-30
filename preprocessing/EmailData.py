@@ -373,6 +373,10 @@ class EmailData:
         except UnicodeError:
             # contains NON ASCII characters
             self.set_feature_mx_record(1)
+        except dns.resolver.NoNameservers:
+            self.set_feature_mx_record(1)
+        except dns.exception.Timeout:
+            self.set_feature_mx_record(1)
         except dns.name.LabelTooLong:
             # Exist because of processing error in domain identification
             self.set_feature_mx_record(0)
