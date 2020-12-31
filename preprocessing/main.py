@@ -1,8 +1,8 @@
 import os
-from utils import format_all_mails
+from preprocessing.utils import format_all_mails
 # Mail Utils
 import mailparser
-from EmailData import EmailData
+from preprocessing.EmailData import EmailData
 
 # ML Utils
 from sklearn.ensemble import RandomForestClassifier
@@ -13,13 +13,13 @@ import joblib
 def train_model() -> RandomForestClassifier:
     dataset = pd.read_csv('dsv5.csv', encoding = "ISO-8859-1")
     # dataset = pd.read_csv('train.csv', encoding = "ISO-8859-1")
-    dataset.columns = ['X1','X2','X3','X4', 'X5', 'X6', 'X7', 'X8', 'X9', 'X10', 'X11', 'X12','Y']
+    dataset.columns = ['X1','X2','X3','X4', 'X5', 'X6', 'X7', 'X8', 'X9', 'X10', 'X11', 'X12', 'X13', 'X14', 'X15','Y']
     dataset.head()
 
     forest = RandomForestClassifier(n_estimators=100, oob_score=True, random_state=123456)
-    X = dataset.values[:, 0:12]
-    Y = dataset.values[:, 12]
-    trainX, testX, trainY, testY = train_test_split(X, Y, test_size=0.3)
+    X = dataset.values[:, 0:15]
+    Y = dataset.values[:, 15]
+    trainX, testX, trainY, testY = train_test_split(X, Y, test_size=0.7)
     #Training
     forest.fit(trainX, trainY)
     print('Accuracy: \n', forest.score(testX, testY))

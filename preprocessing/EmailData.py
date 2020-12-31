@@ -1,5 +1,5 @@
 import re, datetime, whois
-from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
+from preprocessing.utils import clean_up_raw_body, flatten_from_tuples, identify_domains
 import dns.resolver
 
 class EmailData:
@@ -16,6 +16,9 @@ class EmailData:
         self.__feature_spf_status = 0
         self.__feature_dmarc_status = 0
         self.__feature_mx_record = 0
+        self.__feature_numberOfLinks = 0
+        self.__feature_imagesASURL = 0
+        self.__feature_numberOfDomains = 0
 
         self.__subject = subject
         self.__content = clean_up_raw_body(content)
@@ -104,6 +107,7 @@ class EmailData:
          "survey", "transfer", "bank", "compensation", "bitcoin", "payment", "investment", \
           "suspended", "verified", "activate"
           ]
+        length = len(self.get_content())
         count = 0
         # Checks if the string is empty
         if not self.get_content().strip():
@@ -113,7 +117,8 @@ class EmailData:
             if i.lower() in self.get_content().lower():
                 count += 1
 
-        self.set_feature_keyword_count(1 if count/len(keywordList) >= 0.20 else -1)
+        result = count / length * 100
+        self.set_feature_keyword_count(result)
     ## -- Jon END --
 
     ## -- Zuhree START --
@@ -134,7 +139,7 @@ class EmailData:
     def process_ip_url(self):
         # Regex check for ip address
         checkipregex = re.compile(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
-
+        length = len(self.get_content())
         # Checks if the string is empty
         if not self.get_content().strip():
             self.set_feature_ip_url(0)
@@ -142,7 +147,7 @@ class EmailData:
 
         # Checks the message with the regex and extracts it out
         ips = re.findall(checkipregex, self.get_content())
-
+        count = 0
         # For each ip found, checks if it matches the regex
         for ip in ips:
             # print(ip)
@@ -150,10 +155,10 @@ class EmailData:
             # ip_checker = pydnsbl.DNSBLIpChecker()
             # result = ip_checker.check(ip)
             # if result.blacklisted:
-            self.set_feature_ip_url(1)
-            return
+            count += 1
 
-        self.set_feature_ip_url(-1)
+        result = count / length * 100
+        self.set_feature_ip_url(result)
 
     def process_presence_js(self):
         # Regex check for javascript
@@ -203,6 +208,68 @@ class EmailData:
                 return
 
         self.set_feature_subdomain_links(-1)
+
+    def process_numberOfLinks(self):
+        # Regex check for links
+        urlRegex = re.compile(r'href=[\'"]?([^\'" >]+)')
+
+        length = len(self.get_content())
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            self.set_feature_subdomain_links(0)
+            return
+
+        # Checks the message with the regex and extracts it out
+        links = re.findall(urlRegex, self.get_content())
+        count = 0
+        # Check each link if the domain has more than 3 dots
+        for link in links:
+            count += 1
+        result = count/length * 100
+
+        self.set_feature_numberOfLinks(result)
+
+    def process_imagesAsURL(self):
+        # Regex check for images
+        imageAsURLRegex = re.compile(r'(https?:\/\/.*\.(?:png|jpg|gif))')
+        length = len(self.get_content())
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            self.set_feature_imagesASURL(0)
+            return
+
+        # Checks the message with the regex and extracts it out
+        imageASURL = re.findall(imageAsURLRegex, self.get_content())
+        count = 0
+        # Check each link if the domain has more than 3 dots
+        for link in imageASURL:
+            count += 1
+        result = count / length * 100
+
+        self.set_feature_imagesASURL(result)
+
+    def process_numberOfDomains(self):
+        # Regex check for domains
+        numberOfDomainsRegex = re.compile(r'([a-z0-9|-]+\.)*[a-z0-9|-]+\.[a-z]+')
+        length = len(self.get_content())
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            self.set_feature_numberOfDomains(0)
+            return
+
+        # Checks the message with the regex and extracts it out
+        numberOfDomains = re.findall(numberOfDomainsRegex, self.get_content())
+        count = 0
+        # Check each link if the domain has more than 3 dots
+        for link in numberOfDomains:
+            count += 1
+
+        result = count / length * 100
+
+        self.set_feature_numberOfDomains(result)
     ## -- Zuhree END --
 
     def process_dkim_status(self):
@@ -297,6 +364,9 @@ class EmailData:
         self.process_dmarc_status()
         self.process_spf_status()
         self.process_mx_record()
+        self.process_numberOfLinks()
+        self.process_imagesAsURL()
+        self.process_numberOfDomains()
 
     def get_subject(self):
         return self.__subject
@@ -329,7 +399,10 @@ class EmailData:
             self.__feature_dkim_status, \
             self.__feature_spf_status, \
             self.__feature_dmarc_status, \
-            self.__feature_mx_record
+            self.__feature_mx_record, \
+            self.__feature_numberOfLinks, \
+            self.__feature_imagesASURL, \
+            self.__feature_numberOfDomains
             )
 
 
@@ -424,3 +497,23 @@ class EmailData:
 
     def get_feature_mx_record(self):
         return self.__feature_mx_record
+
+    def set_feature_numberOfLinks(self, num):
+        self.__feature_numberOfLinks = num
+
+    def get_feature_numberOfLinks(self):
+        return self.__feature_numberOfLinks
+
+    def set_feature_imagesASURL(self, num):
+        self.__feature_imagesASURL = num
+
+    def get_feature_imagesASURL(self):
+        return self.__feature_imagesASURL
+
+    def set_feature_numberOfDomains(self, num):
+        self.__feature_numberOfDomains = num
+
+    def get_feature_numberOfDomains(self):
+        return self.__feature_numberOfDomains
+
+
