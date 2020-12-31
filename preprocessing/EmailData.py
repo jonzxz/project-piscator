@@ -1,5 +1,6 @@
 import re, datetime, whois
 from preprocessing.utils import clean_up_raw_body, flatten_from_tuples, identify_domains
+# from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
 import dns.resolver
 
 class EmailData:
@@ -387,7 +388,7 @@ class EmailData:
         return self.__auth_results
 
     def __repr__(self):
-        return "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}".format( \
+        return "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}".format( \
             self.__feature_https_tokens, \
             self.__feature_matching_domain, \
             self.__feature_keyword_count, \
@@ -418,7 +419,10 @@ class EmailData:
             self.__feature_dkim_status, \
             self.__feature_spf_status, \
             self.__feature_dmarc_status, \
-            self.__feature_mx_record]]
+            self.__feature_mx_record, \
+            self.__feature_numberOfLinks, \
+            self.__feature_imagesASURL, \
+            self.__feature_numberOfDomains]]
 
     def set_feature_https_token(self, num):
         self.__feature_https_tokens = num
@@ -515,5 +519,3 @@ class EmailData:
 
     def get_feature_numberOfDomains(self):
         return self.__feature_numberOfDomains
-
-

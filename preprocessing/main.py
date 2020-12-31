@@ -1,8 +1,10 @@
 import os
 from preprocessing.utils import format_all_mails
+# from utils import format_all_mails
 # Mail Utils
 import mailparser
 from preprocessing.EmailData import EmailData
+# from EmailData import EmailData
 
 # ML Utils
 from sklearn.ensemble import RandomForestClassifier
@@ -11,7 +13,7 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 def train_model() -> RandomForestClassifier:
-    dataset = pd.read_csv('dsv5.csv', encoding = "ISO-8859-1")
+    dataset = pd.read_csv('dsv6.csv', encoding = "ISO-8859-1")
     # dataset = pd.read_csv('train.csv', encoding = "ISO-8859-1")
     dataset.columns = ['X1','X2','X3','X4', 'X5', 'X6', 'X7', 'X8', 'X9', 'X10', 'X11', 'X12', 'X13', 'X14', 'X15','Y']
     dataset.head()
@@ -19,7 +21,7 @@ def train_model() -> RandomForestClassifier:
     forest = RandomForestClassifier(n_estimators=100, oob_score=True, random_state=123456)
     X = dataset.values[:, 0:15]
     Y = dataset.values[:, 15]
-    trainX, testX, trainY, testY = train_test_split(X, Y, test_size=0.7)
+    trainX, testX, trainY, testY = train_test_split(X, Y, train_size=0.75, test_size=0.25)
     #Training
     forest.fit(trainX, trainY)
     print('Accuracy: \n', forest.score(testX, testY))
@@ -106,7 +108,6 @@ def test_model_modern_ham(model, test_data_dir, start, end):
     ham = 0
     for i in range(start, end+1):
         try:
-            print("I: {}".format(i))
             mail = mailparser.parse_from_file(r'{}{}.eml'.format(test_data_dir, i))
             if 'ARC-Authentication-Results' in mail.headers or 'Authentication-Results' in mail.headers:
                 try:
@@ -178,8 +179,8 @@ def test_model_olden_phish(model, test_data_dir, start, end):
     print("Accuracy: {}".format((phish/count)*100))
 
 def main():
-    MODERN_HAM_PATH = '../../Mailboxes/Hams/Joy_Mailbox/'
-    MODERN_PHISH_PATH = '../../Mailboxes/Phish/'
+    MODERN_HAM_PATH = '../../Mailboxes/Hams/Yannis_Mailbox/'
+    MODERN_PHISH_PATH = '../../Mailboxes/Phish/ModernPhish1/'
     OLDEN_HAM_PATH = '../../Mailboxes/enron_mail_20150507/maildir/badeer-r/all_documents/'
     OLDEN_PHISH_PATH = '../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/'
     SINGLE_TEST_FILE = '../../Mailboxes/IndividualTestMails/Ham/ham_1.eml'
@@ -187,7 +188,7 @@ def main():
     # test_model_olden_phish(model, OLDEN_PHISH_PATH, 1301, 1601)
     # test_model_olden_ham(model, OLDEN_HAM_PATH, 1, 300)
     # test_model(model, '../../Mailboxes/Yannis_Mailbox/', 1, 134)
-    test_model_modern_phish(model, MODERN_PHISH_PATH, 16, 56)
+    test_model_modern_phish(model, MODERN_PHISH_PATH, 1, 81)
     # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 134)
     # test_model_single(model, SINGLE_TEST_FILE)
     # serialize_model(model)
