@@ -25,7 +25,7 @@
       <div class="card bg-c-today">
         <div class="card-body">
           <div class="text-white">Today Detection</div>
-          <div id="today-detect" class="text-white"></div>
+          <div id="today-detected" class="text-white"></div>
           <div class="col-auto">
             <i class="fas fa-eye bg-c-blue"></i>
           </div>
@@ -39,7 +39,7 @@
       <div class="card bg-c-weekly">
         <div class="card-body text-info">
           <div class="text-white">Weekly Detection</div>
-          <div id="weekly-detect" class="text-white"></div>
+          <div id="weekly-detected" class="text-white"></div>
           <i class="fas fa-bullseye bg-c-green"></i>
           <div class="card-footer bg-c-weekly">
             <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
@@ -51,7 +51,7 @@
       <div class="card bg-c-monthly">
         <div class="card-body">
           <div class="text-white">Monthly Detection</div>
-          <div id="monthly-detect" class="text-white"></div>
+          <div id="monthly-detected" class="text-white"></div>
           <div class="col-auto">
             <i class="fas fa-bullseye bg-c-green"></i>
           </div>
@@ -65,7 +65,7 @@
       <div class="card bg-c-all">
        <div class="card-body">
           <div class="text-white">All Time Detection</div>
-          <div id="all-time-detect" class="text-white"></div>
+          <div id="all-time-detected" class="text-white"></div>
           <div class="col-auto">
             <i class="fas fa-bullseye bg-c-green"></i>
           </div>
@@ -89,7 +89,7 @@
         </div>
         <div class="card-body">
           <div class="chart-area">
-            <canvas id="myChart" class="chart-canvas" width="1000" height="400"></canvas>
+            <canvas id="overview" class="chart-canvas" width="1000" height="400"></canvas>
           </div>
         </div>
       </div>
@@ -100,22 +100,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script>
   // -- Bar chart START
-  var ctx = document.getElementById("myChart");
-
-  <!--values (y-axis) to be updated here//-->
-  var emailsD = [9, 12, 18, 3, 15, 12, 4, 5, 9, 11, 19, 12];
-
-  <!--values (x-axis) to be updated here//-->
+  var ctx = document.getElementById("overview");
+  var monthly_stats = {{ monthly_stats }}
   var dates = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  var myChart = new Chart(ctx, {
+  var overview = new Chart(ctx, {
     type: "bar",
+    options: {
+      legend: {
+        display: false
+      }
+    },
     data: {
       labels: dates,
       datasets: [
       {
-        label: "Total Number of Phishing Emails per Month",
-        data: emailsD,
+        data: monthly_stats,
         backgroundColor: [
         'rgba(255, 99, 132, 0.2)',
         'rgba(54, 162, 235, 0.2)',
@@ -149,7 +149,7 @@
         maxBarThickness: 8,
         minBarLength: 4,
       }
-      ]
+    ],
     }
   });
   // -- Bar Chart END
@@ -158,26 +158,29 @@
   // Active Email Addresses display
   var email_active = {{ statistics['email_active'] }}
   var email_stats =  {{ statistics['email_stats'] }}
-  var all_time_detect = {{ statistics['all_time'] }}
-  var monthly_detect = {{ statistics['monthly'] }}
-  var weekly_detect = {{ statistics['weekly'] }}
-  var today_detect = {{ statistics['today'] }}
+  var all_time_detected = {{ statistics['all_time'] }}
+  var monthly_detected = {{ statistics['monthly'] }}
+  var weekly_detected = {{ statistics['weekly'] }}
+  var today_detected = {{ statistics['today'] }}
+
 
   document.getElementById("emailactive").innerHTML = email_active;
   document.getElementById("progress_bar").value = email_active;
   document.getElementById("progress_bar").max = email_stats;
 
   // All Time detection
-  document.getElementById("all-time-detect").innerHTML = all_time_detect;
+  document.getElementById("all-time-detected").innerHTML = all_time_detected;
 
   // Today detection
-  document.getElementById("today-detect").innerHTML = today_detect;
+  document.getElementById("today-detected").innerHTML = today_detected;
 
   // Weekly detection
-  document.getElementById("weekly-detect").innerHTML = weekly_detect;
+  document.getElementById("weekly-detected").innerHTML = weekly_detected;
 
   // Monthly detection
-  document.getElementById("monthly-detect").innerHTML = monthly_detect;
+  document.getElementById("monthly-detected").innerHTML = monthly_detected;
+
+  // Monthly Overview
 
 </script>
 {% endblock %}

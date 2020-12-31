@@ -19,7 +19,7 @@ from app.models.PhishingEmail import PhishingEmail
 
 ## Datetime
 from datetime import datetime, date, timedelta
-from sqlalchemy import Date, cast
+from sqlalchemy import Date, cast, func, extract
 
 
 ## Utils
@@ -41,6 +41,7 @@ from sqlalchemy.exc import IntegrityError
 from imap_tools import MailBox, AND, OR
 from app.models.Mail import Mail
 from app.machine_learning.EmailData import EmailData
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -147,8 +148,11 @@ def dashboard():
         logger.warning("Anonymous user in dashboard home, going to index..")
         return redirect(url_for('index'))
     if current_user.is_admin:
+        logger.info("Admi nlogging in, redirecting to admin portal")
         return redirect(url_for('admin.index'))
     logger.info("User logging in, redirecting to users portal")
+
+    # -- Email Address Status Count START
     email_active = db.session.query(EmailAddress) \
     .filter(EmailAddress.active==True, EmailAddress.user_id==current_user.user_id).count()
     email_inactive = db.session.query(EmailAddress) \
@@ -156,47 +160,71 @@ def dashboard():
     logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
     , email_active, email_inactive)
     email_stats = email_active + email_inactive
+    # -- Email Address Status count END
 
-    all_time_detect = db.session.query(PhishingEmail) \
+    # -- Phishing Emails Overview START
+    all_time_detected = db.session.query(PhishingEmail) \
     .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
-    , EmailAddress.user_id==current_user.user_id).count()
+    , EmailAddress.user_id==current_user.user_id)
 
-    today_detect = db.session.query(PhishingEmail) \
-    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
-    , EmailAddress.user_id==current_user.user_id \
-    , (cast(PhishingEmail.created_at, Date) == date.today())).count()
+    today_detected = all_time_detected \
+    .filter((cast(PhishingEmail.created_at, Date) == date.today()))
 
-    # weekly detection now retrieves records within 7 days
-    # Have to keep in mind it does not reflect past 2 days if it is a Tuesday
-    seven_days_ago = datetime.today() - timedelta(days=7)
-    weekly_detect = db.session.query(PhishingEmail) \
-    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
-    , EmailAddress.user_id==current_user.user_id \
-    , PhishingEmail.created_at >= seven_days_ago).count()
+    weekly_detected = all_time_detected \
+    .filter(PhishingEmail.created_at_week == datetime.now().isocalendar()[1])
 
     # Likewise for month, same as week
-    month_ago = datetime.today() - timedelta(days=30)
-    monthly_detect = db.session.query(PhishingEmail) \
-    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
-    , EmailAddress.user_id==current_user.user_id \
-    , PhishingEmail.created_at >= month_ago).count()
+    monthly_detected = all_time_detected \
+    .filter(PhishingEmail.created_at_month == datetime.now().month \
+    , PhishingEmail.created_at_year == datetime.now().year)
 
     logger.info("All Time Detection: %s -- Today Detection: %s \
     -- Weekly Detection: %s -- Monthly Detection: %s" \
-    , all_time_detect, today_detect, weekly_detect, monthly_detect)
+    , all_time_detected.count(), today_detected.count() \
+    , weekly_detected.count(), monthly_detected.count())
 
     statistics = {
-        'all_time' : all_time_detect,
-        'today' : today_detect,
-        'weekly' : weekly_detect,
-        'monthly' : monthly_detect,
+        'all_time' : all_time_detected.count(),
+        'today' : today_detected.count(),
+        'weekly' : weekly_detected.count(),
+        'monthly' : monthly_detected.count(),
         'email_active' : email_active,
         'email_inactive' : email_inactive,
         'email_stats' : email_stats,
     }
 
+    monthly_stats = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
+        8: 0,
+        9: 0,
+        10: 0,
+        11: 0,
+        12: 0
+    }
+
+    month = func.date_trunc('month', func.cast(PhishingEmail.created_at, Date))
+
+    # Returns a list of PE owned by cur_user's all email addresses that was detected
+    # in the current year
+    mails_detected_yearly = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.user_id==current_user.user_id \
+    , PhishingEmail.created_at_year == datetime.now().year) \
+    .order_by(month).all() # Order_by not needed but might be faster for dict traversals??
+
+    for pe in mails_detected_yearly:
+        monthly_stats[pe.get_created_month()] = monthly_stats.get(pe.get_created_month(), 0)+1
+    monthly_stats = list(monthly_stats.values())
+    # -- Phishing Emails Overview END
+
     return render_template('dashboard/dashboard_home.html', \
-    statistics = statistics)
+    statistics = statistics, monthly_stats = monthly_stats)
 
 @app.route('/dashboard/emails', methods=['GET', 'POST'])
 def dash_email():
