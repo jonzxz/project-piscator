@@ -21,7 +21,6 @@ from app.models.PhishingEmail import PhishingEmail
 from datetime import datetime, date, timedelta
 from sqlalchemy import Date, cast, func, extract
 
-
 ## Utils
 from app.utils.EmailUtils import test_mailbox_conn
 from app.utils.EmailUtils import send_contact_us_email
@@ -41,8 +40,6 @@ from sqlalchemy.exc import IntegrityError
 from imap_tools import MailBox, AND, OR
 from app.models.Mail import Mail
 from app.machine_learning.EmailData import EmailData
-
-
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -123,19 +120,24 @@ def admin():
     logger.info("Entering admin route")
     if current_user.is_admin:
         logger.info("Admin user logging in, redirecting to admin portal")
-        users_active = db.session.query(User) \
-        .filter(User.is_active==True).count()
-        users_inactive = db.session.query(User) \
-        .filter(User.is_active==False).count()
+
+        # -- User statistics START
+        all_users = db.session.query(User)
+        users_active = all_users.filter(User.is_active==True).count()
+        users_inactive = all_users.filter(User.is_active==False).count()
         logger.info("Active Users: %s -- Inactive Users: %s", users_active, users_inactive)
         user_stats = [users_inactive, users_active]
-        email_active = db.session.query(EmailAddress) \
-        .filter(EmailAddress.active==True).count()
-        email_inactive = db.session.query(EmailAddress) \
-        .filter(EmailAddress.active==False).count()
+        # -- User statistics END
+
+        # -- Email statistics START
+        all_emails = db.session.query(EmailAddress)
+        email_active = all_emails.filter(EmailAddress.active==True).count()
+        email_inactive = all_emails.filter(EmailAddress.active==False).count()
         logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
         , email_active, email_inactive)
-        email_stats = [email_active, email_inactive]
+        # email_stats = [email_active, email_inactive]
+        email_stats = [email_inactive, email_active]
+        # -- Email statistics END
         return render_template('admin/index.html', user_stats = user_stats, email_stats = email_stats)
     else:
         logger.warn("Normal user accessing admin, redirecting to dashboard")
@@ -148,18 +150,17 @@ def dashboard():
         logger.warning("Anonymous user in dashboard home, going to index..")
         return redirect(url_for('index'))
     if current_user.is_admin:
-        logger.info("Admi nlogging in, redirecting to admin portal")
+        logger.info("Admin logging in, redirecting to admin portal")
         return redirect(url_for('admin.index'))
     logger.info("User logging in, redirecting to users portal")
 
     # -- Email Address Status Count START
-    email_active = db.session.query(EmailAddress) \
-    .filter(EmailAddress.active==True, EmailAddress.user_id==current_user.user_id).count()
-    email_inactive = db.session.query(EmailAddress) \
-    .filter(EmailAddress.active==False, EmailAddress.user_id==current_user.user_id).count()
+    all_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id==current_user.user_id)
+    email_active = all_emails.filter(EmailAddress.active==True).count()
+    email_inactive = all_emails.filter(EmailAddress.active==False).count()
     logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
     , email_active, email_inactive)
-    email_stats = email_active + email_inactive
+    email_stats = all_emails.count()
     # -- Email Address Status count END
 
     # -- Phishing Emails Overview START
