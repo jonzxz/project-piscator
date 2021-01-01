@@ -26,6 +26,7 @@ def test_valid_add_mail(client, db):
     assert b'testmail456@mymail.com' in response.data
 
 def test_valid_disable_mail(client, db):
+    login(client, 'testuser123', 'password')
     mail_address = EmailAddress.query.filter(EmailAddress.email_address == 'testmail456@mymail.com').first()
     mail_id = mail_address.get_email_id()
     response = enable_disable_mail(client, mail_id)

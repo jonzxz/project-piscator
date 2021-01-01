@@ -20,14 +20,10 @@ def login(driver, username, password):
 # Reusable function to provide USER logout automation from dashboard
 # clicks the nav bar arrow and clicks sign out
 def logout(driver):
-    # Waits for navbar arrow to appear and click
-    wait_nav_arrow = WebDriverWait(driver, 5)
-    wait_nav_arrow.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/button')))
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/button').click()
     # Waits for logout button to appear and click
     wait_logout = WebDriverWait(driver, 5)
-    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[6]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[6]').click()
+    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[5]')))
+    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[5]').click()
 
 # Test registering a user from homepage
 # Clicks on 'Get Started', enter register credentials and check user is redirected to dashboard

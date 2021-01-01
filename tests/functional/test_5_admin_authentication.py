@@ -29,7 +29,7 @@ def test_admin_can_view_users(driver):
     # Assert redirected to admin/user page
     # Assert table that populates database info is present
     assert '/'.join(driver.current_url.split(sep='/')[-3:]) == 'admin/user/'
-    assert driver.find_element(By.XPATH, '/html/body/div[3]/div[4]/div/div/table')
+    assert driver.find_element(By.XPATH, '/html/body/div[3]/div[4]/div[1]/table')
 
 # Flows from test_admin_can_view_users
 # Logs out admin from administrative dashboard and return to index

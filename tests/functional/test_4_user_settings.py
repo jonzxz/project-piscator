@@ -15,15 +15,10 @@ def test_change_password(driver):
     NEW_PASS = 'newpassword'
     CONF_NEW_PASS = 'newpassword'
 
-    # Wait for navbar arrow to appear and click
-    wait_nav_arrow = WebDriverWait(driver, 5)
-    wait_nav_arrow.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/button')))
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/button').click()
-
     # Wait for account settings button to appear and click
     wait_acc_set_btn = WebDriverWait(driver, 3)
-    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[5]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[5]').click()
+    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[4]')))
+    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[4]').click()
     # Assert redirected to /account page
     assert driver.current_url.split(sep='/')[-1] == 'account'
 
@@ -51,15 +46,10 @@ def test_disable_account(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'newpassword'
 
-    # Wait for navbar arrow to appear and click
-    wait_nav_arrow = WebDriverWait(driver, 5)
-    wait_nav_arrow.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[1]/button')))
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[1]/button').click()
-
     # Wait for account settings button to appear
     wait_acc_set_btn = WebDriverWait(driver, 3)
-    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[5]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[5]').click()
+    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[4]')))
+    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[4]').click()
     # Assert redirected to /account page
     assert driver.current_url.split(sep='/')[-1] == 'account'
 
