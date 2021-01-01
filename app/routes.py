@@ -434,7 +434,7 @@ def check_phish(mid):
         # only mails newer than last_updated and unread mails are checked
         # check_criteria = AND(date_gte=last_updated, seen=False)
 
-        check_criteria = AND(date_gte=[date(2020, 12, 23)], seen=False)
+        check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
 
         # Fetch mails from mailbox based on criteria, does not "read" the mail
         # and retrieves in bulk for faster performance at higher computing cost
@@ -452,9 +452,11 @@ def check_phish(mid):
         for msg in all_mails:
             if not msg.from_ == mailaddr.get_email_address() or not msg.from_ == 'piscator.fisherman@gmail.com':
                 # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
-                mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html))
+
+                mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html), msg.headers)
                 mail_item.generate_features()
                 result = model.predict(mail_item.repr_in_arr())
+                logger.info("Checking mail: %s -- Result: %s", mail_item.get_subject(), result)
                 if result == 1:
                     logger.info("Phishing mail detected, subject: %s", msg.subject)
 

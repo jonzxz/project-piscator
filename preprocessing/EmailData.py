@@ -1,11 +1,11 @@
 import re, datetime, whois
+# from preprocessing.utils import clean_up_raw_body, flatten_from_tuples, identify_domains
 from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
-from whois.parser import PywhoisError
+import dns.resolver
 
 class EmailData:
-    def __init__(self, subject, from_, attachments, content):
+    def __init__(self, subject, from_, attachments, content, headers):
         self.__feature_https_tokens = 0
-        self.__feature_domain_age = 0
         self.__feature_matching_domain = 0
         self.__feature_keyword_count = 0
         self.__feature_presence_html_header = 0
@@ -13,91 +13,35 @@ class EmailData:
         self.__feature_presence_js = 0
         self.__feature_presence_form_tag = 0
         self.__feature_subdomain_links = 0
+        self.__feature_dkim_status = 0
+        self.__feature_spf_status = 0
+        self.__feature_dmarc_status = 0
+        self.__feature_mx_record = 0
+        self.__feature_numberOfLinks = 0
+        self.__feature_imagesASURL = 0
+        self.__feature_numberOfDomains = 0
 
         self.__subject = subject
         self.__content = clean_up_raw_body(content)
         self.__from = flatten_from_tuples(from_) if isinstance(from_, list) else from_
         self.__attachments = attachments
+        self.__headers = headers
+        self.__auth_results = self.identify_auth_results()
         # Returns a list of domains
         self.__domain = identify_domains(self.get_from())
 
+
     ## -- Jon START --
+    # number of http / total count. if more than 25% of links are http return a 1
+    # if no http return -1
     def process_https_tokens(self):
         num_http = len(re.findall(r'http:', self.get_content()))
+        if num_http == 0:
+            self.set_feature_https_token(-1)
+            return
+
         num_https = len(re.findall(r'https:', self.get_content()))
-        # Need to determine 1 or -1 based on num https counted
-        # eg. 1 HTTP 3 HTTPS, 1 or -1??? there isn't a clear determining of what
-        # does processing the https token do and what's the threshold if any
-        self.set_feature_https_token(num_http-num_https)
-
-    # One issue with processing domain age is that the From: header can be spoofed to be a valid one
-    # There will be chances where encoding will fail in future processing if it contains things like
-    # service@intI-ÒaypaÓ.com
-    def process_domain_age(self):
-        # Iterate through a list of domain (likely only one) to perform whois and
-        # return a creation date. Some entries for some reason are nested in a [1][1] list
-        # so isinstance checks if 1st element is a list and takes it out into a flat list
-
-        try:
-            # Returns a either a list of datetime, a datetime or string
-            domain_age = ([whois.whois(dom).creation_date for dom in self.get_domain()]) \
-            if isinstance(self.get_domain(), list) else whois.whois(self.get_domain()).creation_date
-
-            # print("Domain Age: {} -- Type: {}".format(domain_age, type(domain_age)))
-            # Some TLDs don't work with python-whois because it's not in the data of the lib
-            # eg. .com.sg - so just return a 0 in this case
-            if not isinstance(domain_age, datetime.datetime):
-                if domain_age.count(0) < 1 and domain_age[0] is None:
-                    self.set_feature_domain_age(0)
-                    return
-
-            # -- Test domains - gmail is valid for both conditions
-            # domain_age = [whois.whois(dom).creation_date for dom in ['gmail.com']]
-            # domain_age = [whois.whois(dom).creation_date for dom in ['skyfi.com']]
-
-            # eg. [[datetime.datetime(1995, 8, 13, 4, 0), datetime.datetime(1995, 8, 13, 0, 0)]]
-            # transforms into flat list
-            if isinstance(domain_age, list) and isinstance(domain_age[0], list):
-                domain_age = domain_age[0]
-
-            # Sometimes whois returns .creation_date as a str instead of datetime
-            # Attempts to convert string datetime to datetime object
-            # %b if month is represented as Jan/Feb/Mar
-            if isinstance(domain_age, str):
-                try:
-                    domain_age = datetime.datetime.strptime(domain_age, '%Y-%m-%d %H:%M:%S')
-                except ValueError:
-                    domain_age = datetime.datetime.strptime(domain_age, '%d-%b-%Y %H:%M:%S')
-
-            # eg. [datetime.datetime(1995, 8, 13, 4, 0), datetime.datetime(1995, 8, 13, 0, 0)]
-            # returns 1995/8/13:0400
-            # max returns the "youngest" (latest) creation date
-            # If max throws error because of difference in datetime format then
-            # take first element in list
-
-            # If domain returns a single datetime then [0] domain_age to get the only element
-            try:
-                if isinstance(domain_age, list) and not len(domain_age) == 1:
-                        domain_age = max(domain_age)
-                else:
-                    domain_age = domain_age[0]
-            except TypeError:
-                try:
-                    if isinstance(domain_age, datetime.datetime):
-                        domain_age = domain_age
-                    else:
-                        domain_age = domain_age[0]
-                except TypeError:
-                    self.set_feature_domain_age(0)
-                    return
-
-            # Compares difference in days from current time to domain_age in days
-            diff_days = (datetime.datetime.now() - domain_age).days
-
-            # If domain age more than 30 days return 1 (not phish) else -1 (phish)
-            self.set_feature_domain_age(1 if diff_days <= 30 else -1)
-        except PywhoisError:
-            self.set_feature_domain_age(1)
+        self.set_feature_https_token(1 if num_http/(num_https+num_http) >= 0.25 else -1)
 
     # main_domain iterates through self.__domain which is set as a list
     # splits each element and returns the last 2 elements because some domains are like
@@ -155,35 +99,18 @@ class EmailData:
                     return
 
         self.set_feature_matching_domain(1)
-        # if isinstance(main_domains, list):
-        #     if len(main_domains) == 1:
-        #         main_domains= main_domains[0]
-        #         for domain in domains_in_mail:
-        #             # print("Comparing {} against {}".format(main_domains, domain))
-        #             if main_domains not in domain:
-        #                 count+=1
-        #     else:
-        #         for main_d in main_domains:
-        #             # print("Comparing {} against {}".format(main_d, domain))
-        #             for domain in domains_in_mail:
-        #                 if main_d not in domain:
-        #                     count+=1
-        # else:
-        #     for domain in domains_in_mail:
-        #         if main_domains not in domain:
-        #             count+=1
 
-        # Threshold is set to > 1
-        # If more than 1 domain does not match the sender domain then it is
-        # given a score of phish (-1)
-        # self.set_feature_matching_domain(1 if count > 1 else -1)
-
+    # Keyword count above 20% of length of keyword list
     def process_keyword_count(self):
         keywordList = ["suspend", "verify", "username", "password", "update", \
          "confirm", "user", "customer", "client", "restrict", "hold", "verify", \
          "account", "login", "SSN", "Social Security", "NRIC", "label", "invoice", \
          "post", "document", "postal", "calculations", "copy", "fedex", "statement", \
-         "financial", "dhl", "usps", "notification", "delivery", "ticket", "paypal", "bank" ]
+         "financial", "dhl", "usps", "notification", "delivery", "ticket", "paypal", "bank", \
+         "survey", "transfer", "bank", "compensation", "bitcoin", "payment", "investment", \
+          "suspended", "verified", "activate"
+          ]
+        length = len(self.get_content())
         count = 0
         # Checks if the string is empty
         if not self.get_content().strip():
@@ -193,7 +120,8 @@ class EmailData:
             if i.lower() in self.get_content().lower():
                 count += 1
 
-        self.set_feature_keyword_count(1 if count > 8 else -1)
+        result = count / length * 100
+        self.set_feature_keyword_count(result)
     ## -- Jon END --
 
     ## -- Zuhree START --
@@ -214,7 +142,7 @@ class EmailData:
     def process_ip_url(self):
         # Regex check for ip address
         checkipregex = re.compile(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b')
-
+        length = len(self.get_content())
         # Checks if the string is empty
         if not self.get_content().strip():
             self.set_feature_ip_url(0)
@@ -222,7 +150,7 @@ class EmailData:
 
         # Checks the message with the regex and extracts it out
         ips = re.findall(checkipregex, self.get_content())
-
+        count = 0
         # For each ip found, checks if it matches the regex
         for ip in ips:
             # print(ip)
@@ -230,11 +158,10 @@ class EmailData:
             # ip_checker = pydnsbl.DNSBLIpChecker()
             # result = ip_checker.check(ip)
             # if result.blacklisted:
-            self.set_feature_ip_url(1)
-            return
-            # continue
+            count += 1
 
-        self.set_feature_ip_url(-1)
+        result = count / length * 100
+        self.set_feature_ip_url(result)
 
     def process_presence_js(self):
         # Regex check for javascript
@@ -253,7 +180,7 @@ class EmailData:
 
     def process_presence_form_tag(self):
         # Regex check for form
-        checkformtag = re.compile(r'<(?:form|Form)')
+        checkformtag = re.compile(r'<(?:form|Form)|forms.google')
 
         # Checks if the string is empty
         if not self.get_content().strip():
@@ -279,24 +206,179 @@ class EmailData:
 
         # Check each link if the domain has more than 3 dots
         for link in links:
-            if link.count('.') > 3:
+            if link.count('.') > 2:
                 self.set_feature_subdomain_links(1)
                 return
 
         self.set_feature_subdomain_links(-1)
+
+    def process_numberOfLinks(self):
+        # Regex check for links
+        urlRegex = re.compile(r'href=[\'"]?([^\'" >]+)')
+
+        length = len(self.get_content())
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            self.set_feature_subdomain_links(0)
+            return
+
+        # Checks the message with the regex and extracts it out
+        links = re.findall(urlRegex, self.get_content())
+        count = 0
+        # Check each link if the domain has more than 3 dots
+        for link in links:
+            count += 1
+        result = count/length * 100
+
+        self.set_feature_numberOfLinks(result)
+
+    def process_imagesAsURL(self):
+        # Regex check for images
+        imageAsURLRegex = re.compile(r'(https?:\/\/.*\.(?:png|jpg|gif))')
+        length = len(self.get_content())
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            self.set_feature_imagesASURL(0)
+            return
+
+        # Checks the message with the regex and extracts it out
+        imageASURL = re.findall(imageAsURLRegex, self.get_content())
+        count = 0
+        # Check each link if the domain has more than 3 dots
+        for link in imageASURL:
+            count += 1
+        result = count / length * 100
+
+        self.set_feature_imagesASURL(result)
+
+    def process_numberOfDomains(self):
+        # Regex check for domains
+        numberOfDomainsRegex = re.compile(r'([a-z0-9|-]+\.)*[a-z0-9|-]+\.[a-z]+')
+        length = len(self.get_content())
+
+        # Checks if the string is empty
+        if not self.get_content().strip():
+            self.set_feature_numberOfDomains(0)
+            return
+
+        # Checks the message with the regex and extracts it out
+        numberOfDomains = re.findall(numberOfDomainsRegex, self.get_content())
+        count = 0
+        # Check each link if the domain has more than 3 dots
+        for link in numberOfDomains:
+            count += 1
+
+        result = count / length * 100
+
+        self.set_feature_numberOfDomains(result)
     ## -- Zuhree END --
+
+    def process_dkim_status(self):
+        if not self.get_auth_results():
+            self.set_feature_dkim_status(0)
+            return
+
+        dkim_status = [item for item in self.get_auth_results() if 'dkim' in item]
+        if dkim_status:
+            dkim_status = dkim_status[0].split(sep='=')[1]
+
+        if dkim_status == 'none':
+            self.set_feature_dkim_status(1)
+        elif dkim_status == 'pass':
+            self.set_feature_dkim_status(-1)
+        else:
+            self.set_feature_dkim_status(0)
+        return
+
+    def process_dmarc_status(self):
+
+        if not self.get_auth_results():
+            self.set_feature_dkim_status(0)
+            return
+
+        dmarc_status = [item for item in self.get_auth_results() if 'dmarc' in item]
+        if dmarc_status:
+            dmarc_status = dmarc_status[0].split(sep='=')[1]
+
+        if dmarc_status == 'pass':
+            self.set_feature_dmarc_status(-1)
+        elif dmarc_status == 'bestguesspass' or dmarc_status == 'none' or dmarc_status == 'permerror':
+            self.set_feature_dmarc_status(1)
+        else:
+            self.set_feature_dmarc_status(0)
+        return
+
+    def process_spf_status(self):
+
+        if not self.get_auth_results():
+            self.set_feature_dkim_status(0)
+            return
+
+        spf_status = [item for item in self.get_auth_results() if 'spf' in item]
+        if spf_status:
+            spf_status = spf_status[0].split(sep='=')[1]
+
+        if spf_status == 'pass':
+            self.set_feature_spf_status(-1)
+        elif spf_status == 'none' or spf_status == 'fail':
+            self.set_feature_spf_status(1)
+        else:
+            self.set_feature_spf_status(0)
+        return
+
+    def process_mx_record(self):
+        try:
+            if len(self.get_domain()) == 1:
+                result = dns.resolver.query(self.get_domain()[0], 'MX')
+            else:
+                results = [dns.resolver.query(domain, 'MX') for domain in self.get_domain()]
+            self.set_feature_mx_record(-1)
+        except dns.resolver.NoAnswer:
+            # No response, legit domains can also hit this
+            self.set_feature_mx_record(1)
+        except dns.resolver.NXDOMAIN:
+            # No DNS Query name exist
+            self.set_feature_mx_record(1)
+        except UnicodeError:
+            # contains NON ASCII characters
+            self.set_feature_mx_record(1)
+        except dns.resolver.NoNameservers:
+            # No name servers detected
+            self.set_feature_mx_record(1)
+        except dns.exception.Timeout:
+            # Timeouts
+            self.set_feature_mx_record(1)
+        except dns.name.LabelTooLong:
+            # Exist because of processing error in domain identification
+            self.set_feature_mx_record(0)
+
+    def identify_auth_results(self):
+        if 'ARC-Authentication-Results' in self.get_headers() or 'Authentication-Results' in self.get_headers():
+            try:
+                return clean_up_raw_body(self.get_headers()['ARC-Authentication-Results']).split(sep=' ')
+            except KeyError:
+                return clean_up_raw_body(self.get_headers()['Authentication-Results']).split(sep=' ')
+        else:
+            return None
 
     def generate_features(self):
         self.process_https_tokens()
-        self.process_domain_age()
         self.process_matching_domain()
         self.process_keyword_count()
         self.process_html_header()
         self.process_ip_url()
         self.process_presence_js()
-        self.process_presence_js()
         self.process_presence_form_tag()
         self.process_subdomain_links()
+        self.process_dkim_status()
+        self.process_dmarc_status()
+        self.process_spf_status()
+        self.process_mx_record()
+        self.process_numberOfLinks()
+        self.process_imagesAsURL()
+        self.process_numberOfDomains()
 
     def get_subject(self):
         return self.__subject
@@ -310,31 +392,51 @@ class EmailData:
     def get_attachments(self):
         return self.__attachments
 
+    def get_headers(self):
+        return self.__headers
+
+    def get_auth_results(self):
+        return self.__auth_results
+
     def get_domain(self):
         return self.__domain
 
     def __repr__(self):
-        return "{0},{1},{2},{3},{4},{5},{6},{7},{8}".format(self.__feature_https_tokens, \
-            self.__feature_domain_age, \
+        return "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}".format( \
+            self.__feature_https_tokens, \
             self.__feature_matching_domain, \
             self.__feature_keyword_count, \
             self.__feature_presence_html_header, \
             self.__feature_ip_url, \
             self.__feature_presence_js, \
             self.__feature_presence_form_tag, \
-            self.__feature_subdomain_links)
+            self.__feature_subdomain_links, \
+            self.__feature_dkim_status, \
+            self.__feature_spf_status, \
+            self.__feature_dmarc_status, \
+            self.__feature_mx_record, \
+            self.__feature_numberOfLinks, \
+            self.__feature_imagesASURL, \
+            self.__feature_numberOfDomains
+            )
 
 
     def repr_in_arr(self):
         return [[self.__feature_https_tokens, \
-            self.__feature_domain_age, \
             self.__feature_matching_domain, \
             self.__feature_keyword_count, \
             self.__feature_presence_html_header, \
             self.__feature_ip_url, \
             self.__feature_presence_js, \
             self.__feature_presence_form_tag, \
-            self.__feature_subdomain_links]]
+            self.__feature_subdomain_links, \
+            self.__feature_dkim_status, \
+            self.__feature_spf_status, \
+            self.__feature_dmarc_status, \
+            self.__feature_mx_record, \
+            self.__feature_numberOfLinks, \
+            self.__feature_imagesASURL, \
+            self.__feature_numberOfDomains]]
 
     def set_feature_https_token(self, num):
         self.__feature_https_tokens = num
@@ -342,17 +444,17 @@ class EmailData:
     def get_feature_https_token(self):
         return self.__feature_https_tokens
 
-    def set_feature_domain_age(self, num):
-        self.__feature_domain_age = num
-
-    def get_feature_domain_age(self):
-        return self.__feature_domain_age
-
     def set_feature_matching_domain(self, num):
         self.__feature_matching_domain = num
 
     def get_feature_matching_domain(self):
         return self.__feature_matching_domain
+
+    def set_feature_keyword_count(self, num):
+        self.__feature_keyword_count = num
+
+    def get_feature_keyword_count(self):
+        return self.__feature_keyword_count
 
     def set_feature_presence_html_header(self, num):
         self.__feature_presence_html_header = num
@@ -384,8 +486,44 @@ class EmailData:
     def get_feature_subdomain_links(self):
         return self.__feature_subdomain_links
 
-    def set_feature_keyword_count(self, num):
-        self.__feature_keyword_count = num
+    def set_feature_dkim_status(self, num):
+        self.__feature_dkim_status = num
 
-    def get_feature_subdomain_links(self):
-        return self.__feature_keyword_count
+    def get_feature_dkim_status(self):
+        return self.__feature_dkim_status
+
+    def set_feature_dmarc_status(self, num):
+        self.__feature_dmarc_status = num
+
+    def get_feature_dmarc_status(self):
+        return self.__feature_dmarc_status
+
+    def set_feature_spf_status(self, num):
+        self.__feature_spf_status = num
+
+    def get_feature_spf_status(self):
+        return self.__feature_spf_status
+
+    def set_feature_mx_record(self, num):
+        self.__feature_mx_record = num
+
+    def get_feature_mx_record(self):
+        return self.__feature_mx_record
+
+    def set_feature_numberOfLinks(self, num):
+        self.__feature_numberOfLinks = num
+
+    def get_feature_numberOfLinks(self):
+        return self.__feature_numberOfLinks
+
+    def set_feature_imagesASURL(self, num):
+        self.__feature_imagesASURL = num
+
+    def get_feature_imagesASURL(self):
+        return self.__feature_imagesASURL
+
+    def set_feature_numberOfDomains(self, num):
+        self.__feature_numberOfDomains = num
+
+    def get_feature_numberOfDomains(self):
+        return self.__feature_numberOfDomains
