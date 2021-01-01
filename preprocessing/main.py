@@ -21,7 +21,7 @@ def train_model() -> RandomForestClassifier:
     forest = RandomForestClassifier(n_estimators=100, oob_score=True, random_state=123456)
     X = dataset.values[:, 0:15]
     Y = dataset.values[:, 15]
-    trainX, testX, trainY, testY = train_test_split(X, Y, train_size=0.75, test_size=0.25)
+    trainX, testX, trainY, testY = train_test_split(X, Y, train_size=0.8, test_size=0.2)
     #Training
     forest.fit(trainX, trainY)
     print('Accuracy: \n', forest.score(testX, testY))
@@ -125,10 +125,10 @@ def main():
     # test_model_olden_phish(model, OLDEN_PHISH_PATH, 1301, 1601)
     # test_model_olden_ham(model, OLDEN_HAM_PATH, 1, 300)
     # test_model(model, '../../Mailboxes/Yannis_Mailbox/', 1, 134)
-    test_model_modern_phish(model, MODERN_PHISH_PATH, 1, 81)
+    # test_model_modern_phish(model, MODERN_PHISH_PATH, 1, 81)
     # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 134)
     # test_model_single(model, SINGLE_TEST_FILE)
-    # serialize_model(model)
+    serialize_model(model)
 
 main()
 
