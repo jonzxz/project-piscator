@@ -1,10 +1,10 @@
 import re, datetime, whois
-from preprocessing.utils import clean_up_raw_body, flatten_from_tuples, identify_domains
-# from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
+# from preprocessing.utils import clean_up_raw_body, flatten_from_tuples, identify_domains
+from utils import clean_up_raw_body, flatten_from_tuples, identify_domains
 import dns.resolver
 
 class EmailData:
-    def __init__(self, subject, from_, attachments, content, auth_results):
+    def __init__(self, subject, from_, attachments, content, headers):
         self.__feature_https_tokens = 0
         self.__feature_matching_domain = 0
         self.__feature_keyword_count = 0
@@ -25,9 +25,11 @@ class EmailData:
         self.__content = clean_up_raw_body(content)
         self.__from = flatten_from_tuples(from_) if isinstance(from_, list) else from_
         self.__attachments = attachments
-        self.__auth_results = clean_up_raw_body(auth_results).split(sep=' ') if auth_results else None
+        self.__headers = headers
+        self.__auth_results = self.identify_auth_results()
         # Returns a list of domains
         self.__domain = identify_domains(self.get_from())
+
 
     ## -- Jon START --
     # number of http / total count. if more than 25% of links are http return a 1
@@ -352,6 +354,15 @@ class EmailData:
             # Exist because of processing error in domain identification
             self.set_feature_mx_record(0)
 
+    def identify_auth_results(self):
+        if 'ARC-Authentication-Results' in self.get_headers() or 'Authentication-Results' in self.get_headers():
+            try:
+                return clean_up_raw_body(self.get_headers()['ARC-Authentication-Results']).split(sep=' ')
+            except KeyError:
+                return clean_up_raw_body(self.get_headers()['Authentication-Results']).split(sep=' ')
+        else:
+            return None
+
     def generate_features(self):
         self.process_https_tokens()
         self.process_matching_domain()
@@ -381,11 +392,14 @@ class EmailData:
     def get_attachments(self):
         return self.__attachments
 
-    def get_domain(self):
-        return self.__domain
+    def get_headers(self):
+        return self.__headers
 
     def get_auth_results(self):
         return self.__auth_results
+
+    def get_domain(self):
+        return self.__domain
 
     def __repr__(self):
         return "{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}".format( \
@@ -430,17 +444,17 @@ class EmailData:
     def get_feature_https_token(self):
         return self.__feature_https_tokens
 
-    def set_feature_domain_age(self, num):
-        self.__feature_domain_age = num
-
-    def get_feature_domain_age(self):
-        return self.__feature_domain_age
-
     def set_feature_matching_domain(self, num):
         self.__feature_matching_domain = num
 
     def get_feature_matching_domain(self):
         return self.__feature_matching_domain
+
+    def set_feature_keyword_count(self, num):
+        self.__feature_keyword_count = num
+
+    def get_feature_keyword_count(self):
+        return self.__feature_keyword_count
 
     def set_feature_presence_html_header(self, num):
         self.__feature_presence_html_header = num
@@ -471,12 +485,6 @@ class EmailData:
 
     def get_feature_subdomain_links(self):
         return self.__feature_subdomain_links
-
-    def set_feature_keyword_count(self, num):
-        self.__feature_keyword_count = num
-
-    def get_feature_subdomain_links(self):
-        return self.__feature_keyword_count
 
     def set_feature_dkim_status(self, num):
         self.__feature_dkim_status = num
