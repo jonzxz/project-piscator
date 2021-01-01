@@ -1,18 +1,14 @@
-# with open ('../../5.eml', 'r', encoding = "ISO-8859-1") as email:
-#     data = email.read()
-#     print(data)
 from EmailData import EmailData
 import re
 
-
 import mailparser
 
-for i in range(1, 30):
+for i in range(1, 16):
     try:
         # mail = mailparser.parse_from_file('../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
         # mail = mailparser.parse_from_file('../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/{}.eml'.format(i))
-        # mail = mailparser.parse_from_file('../../Mailboxes/Isaac_Mailbox/{}.eml'.format(i))
-        # mail = mailparser.parse_from_file('../../Mailboxes/IndividualTestMails/Phish/{}.eml'.format(i))
+        mail = mailparser.parse_from_file('../../Mailboxes/Phish/ModernPhish2/{}.eml'.format(i))
+        # mail = mailparser.parse_from_file('../../Mailboxes/Hams/ModernHam0/{}.eml'.format(i))
         # mail = mailparser.parse_from_file('../../Mailboxes/enron_mail_20150507/maildir/allen-p/all_documents/{}..eml'.format(i))
         # mail = mailparser.parse_from_file('../../Mailboxes/enron_mail_20150507/maildir/arnold-j/all_documents/{}..eml'.format(i))
 
