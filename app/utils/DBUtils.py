@@ -1,4 +1,4 @@
-from app import db
+from app import db, logger
 from app.models.User import User
 from app.models.EmailAddress import EmailAddress
 
@@ -22,3 +22,10 @@ def get_owner_id_from_email_id(mail_id):
             .filter(EmailAddress.email_id == mail_id) \
             .first() \
             .get_user_id()
+
+def purge_user_tokens():
+    users = db.session.query(User).filter(User.reset_token != None).all()
+    if users:
+        for user in users:
+            user.delete_reset_token()
+    db.session.commit()
