@@ -7,90 +7,89 @@ to the user dashboard (but that only shows for that particular user)
 -->
 {% include 'admin/admin_menu.html' %}
 <html class="no-js" lang="en">
-  <body>
-    <div class="w-75 mx-auto pl-5 pt-5">
-      <div class="mx-auto pl-5 pt-2">
-        <span class="h2 pb-5">Admin Dashboard</span>
-      </div>
-      <div class="row">
-        <div class="mx-auto col-lg-4">
-          <div class="card card-chart">
-            <div class="card-header bg-info text-white">
-              <h5 class="card-category">Users</h5>
-            </div>
-            <div class="card-body">
-              <div class="chart-area">
-                <canvas id="user_chart" width="300" height="200"></canvas>
-              </div>
+<body>
+  <div class="w-75 mx-auto pl-5 pt-5">
+    <div class="mx-auto pl-5 pt-2">
+      <span class="h2 pb-5">Admin Dashboard</span>
+    </div>
+    <div class="row">
+      <div class="mx-auto col-lg-4">
+        <div class="card card-chart">
+          <div class="card-header bg-info text-white">
+            <h5 class="card-category">Users</h5>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="user_chart" width="300" height="200"></canvas>
             </div>
           </div>
         </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="card card-chart">
-            <div class="card-header bg-primary text-white">
-              <h5 class="card-category">Email Addresses</h5>
-            </div>
-            <div class="card-body">
-              <div class="chart-area">
-                <canvas id="email_chart" width="300" height="200"></canvas>
-              </div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="card card-chart">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-category">Email Addresses</h5>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="email_chart" width="300" height="200"></canvas>
             </div>
           </div>
         </div>
       </div>
     </div>
-      <!-- should be moved into base -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-      <script>
-        var users = document.getElementById("user_chart");
-        var emails = document.getElementById("email_chart");
+  </div>
+  <!-- should be moved into base -->
+  <script>
+    var users = document.getElementById("user_chart");
+    var emails = document.getElementById("email_chart");
 
-        <!--values (y-axis) to be updated here//-->
-        var users_stats = {{ user_stats }}
-        var email_stats = {{ email_stats }}
-        // var users_stats = [9, 12, 21, 0, 15];
+    <!--values (y-axis) to be updated here//-->
+    var users_stats = {{ user_stats }}
+    var email_stats = {{ email_stats }}
+    // var users_stats = [9, 12, 21, 0, 15];
 
-        <!--values (x-axis) to be updated here//-->
-        var dates = ["08Nov20", "30Dec20", "02Jan21", "15Jan21", "21Mar21"];
-        var months = ["Nov20", "Dec20", "Jan21", "Feb21", "Mar21"]
+    <!--values (x-axis) to be updated here//-->
+    var dates = ["08Nov20", "30Dec20", "02Jan21", "15Jan21", "21Mar21"];
+    var months = ["Nov20", "Dec20", "Jan21", "Feb21", "Mar21"]
 
-        var user_chart = new Chart(users, {
-          type: "pie",
-          data: {
-            labels: ["Inactive Users", "Active Users"],
-            datasets: [
-              {
-                data: users_stats,
-                backgroundColor: ["#95D9DA", "#6DD6DA"],
-              }
-            ]
-          },
+    var user_chart = new Chart(users, {
+      type: "pie",
+      data: {
+        labels: ["Inactive Users", "Active Users"],
+        datasets: [
+        {
+          data: users_stats,
+          backgroundColor: ["#95D9DA", "#6DD6DA"],
+        }
+        ]
+      },
 
-          options:{
-            legend:{
-              position: "bottom"
-            }
-          }
-        });
+      options:{
+        legend:{
+          position: "bottom"
+        }
+      }
+    });
 
-        var email_chart = new Chart(emails, {
-          type: "pie",
-          data: {
-            labels: ["Inactive Addresses", "Active Addresses"],
-            datasets: [
-              {
-                data: email_stats,
-                backgroundColor: ["#C1DFF0", "#88CCF1"]
-              }
-            ]
-          },
+    var email_chart = new Chart(emails, {
+      type: "pie",
+      data: {
+        labels: ["Inactive Addresses", "Active Addresses"],
+        datasets: [
+        {
+          data: email_stats,
+          backgroundColor: ["#C1DFF0", "#88CCF1"]
+        }
+        ]
+      },
 
-          options:{
-            legend:{
-              position: "bottom"
-            }
-          }
-        });
-      </script>
-  </body>
+      options:{
+        legend:{
+          position: "bottom"
+        }
+      }
+    });
+  </script>
+</body>
 </html>
