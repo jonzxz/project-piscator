@@ -59,6 +59,9 @@ class User(UserMixin, db.Model):
     def get_reset_token(self) -> int:
         return self.reset_token
 
+    def delete_reset_token(self):
+        self.reset_token = None
+
     @login.user_loader
     def load_user(id: int):
         return User.query.get(int(id))

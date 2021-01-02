@@ -10,7 +10,8 @@ from app.forms.LoginForm import LoginForm
 from app.forms.AddEmailForm import AddEmailForm
 from app.forms.ContactForm import ContactForm
 from app.forms.AccountSettingsForm import AccountSettingsForm
-from app.forms.ResetPasswordForm import ResetPasswordForm
+from app.forms.ResetPasswordRequestForm import ResetPasswordRequestForm
+from app.forms.UpdatePasswordForm import UpdatePasswordForm
 
 ## Models
 from app.models.User import User
@@ -91,7 +92,7 @@ def login():
     if form.validate_on_submit():
         user = get_user_by_name(form.username.data)
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash('Invalid username or password', 'error')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         user.set_last_logged_in(datetime.now())
@@ -550,5 +551,44 @@ def contact_form_reset():
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
-    form = ResetPasswordForm()
+    form = ResetPasswordRequestForm()
+
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+
+    if form.validate_on_submit():
+        user = get_user_by_name(form.username.data)
+        email = get_email_address_by_address(form.email_address.data)
+
+        if (user and email) and user.get_id() == email.get_user_id():
+            user.generate_reset_token()
+            db.session.commit()
+            logger.info("User Token: %s", user.get_reset_token())
+            session["reset_user_id"] = user.get_id()
+            return redirect(url_for('reset_change_password'))
+        else:
+            flash('Invalid username or email address!')
+            redirect(url_for('reset'))
     return render_template('reset.html', form=form)
+
+@app.route('/reset/change_password', methods=['GET', 'POST'])
+def reset_change_password():
+    form = UpdatePasswordForm()
+    user = get_user_by_id(session["reset_user_id"])
+
+    if form.validate_on_submit():
+        token_received = form.token.data
+        new_password = form.new_password.data
+        logger.info("Update password form submitted")
+        logger.info("User token: %s -- Token Received: %s", user.get_reset_token(), token_received)
+        if user.get_reset_token() == token_received:
+            logger.info("Token verified..")
+            user.set_password(new_password)
+            user.delete_reset_token()
+            db.session.commit()
+            flash('Password successfully changed!', 'success')
+            session.pop('reset_user_id', None)
+            return redirect(url_for('login'))
+        else:
+            flash('Invalid token!')
+    return render_template('update_password.html', form=form)
