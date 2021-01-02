@@ -135,10 +135,63 @@ def admin():
         email_inactive = all_emails.filter(EmailAddress.active==False).count()
         logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
         , email_active, email_inactive)
-        # email_stats = [email_active, email_inactive]
         email_stats = [email_inactive, email_active]
         # -- Email statistics END
-        return render_template('admin/index.html', user_stats = user_stats, email_stats = email_stats)
+
+        # -- Phishing Emails Overview START
+        all_time_detected = db.session.query(PhishingEmail) \
+        .filter(PhishingEmail.receiver_id==EmailAddress.email_id)
+
+        today_detected = all_time_detected \
+        .filter((cast(PhishingEmail.created_at, Date) == date.today()))
+
+        weekly_detected = all_time_detected \
+        .filter(PhishingEmail.created_at_week == datetime.now().isocalendar()[1])
+
+        # Likewise for month, same as week
+        monthly_detected = all_time_detected \
+        .filter(PhishingEmail.created_at_month == datetime.now().month \
+        , PhishingEmail.created_at_year == datetime.now().year)
+
+        statistics = {
+            'user_stats' : [users_active, users_inactive],
+            'email_stats' : [email_active, email_inactive],
+            'all_time' : all_time_detected.count(),
+            'monthly' : monthly_detected.count(),
+            'weekly' : weekly_detected.count(),
+            'today' : today_detected.count()
+        }
+
+        monthly_stats = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0,
+            7: 0,
+            8: 0,
+            9: 0,
+            10: 0,
+            11: 0,
+            12: 0
+        }
+
+        month = func.date_trunc('month', func.cast(PhishingEmail.created_at, Date))
+
+        # Returns a list of PE owned by cur_user's all email addresses that was detected
+        # in the current year
+        mails_detected_yearly = db.session.query(PhishingEmail) \
+        .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+        , PhishingEmail.created_at_year == datetime.now().year) \
+        .order_by(month).all() # Order_by not needed but might be faster for dict traversals??
+
+        for pe in mails_detected_yearly:
+            monthly_stats[pe.get_created_month()] = monthly_stats.get(pe.get_created_month(), 0)+1
+        monthly_stats = list(monthly_stats.values())
+        # -- Phishing Emails Overview END
+        return render_template('admin/index.html', statistics = statistics \
+        , monthly_stats = monthly_stats)
     else:
         logger.warn("Normal user accessing admin, redirecting to dashboard")
         return redirect(url_for('dashboard'))
