@@ -22,6 +22,11 @@
                 <div class="h3">Reset Password</div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+                <span class="text-center">Enter your username and any email address that is registered with the account.</span>
+            </div>
+        </div>
 
         <div class="row justify-content-center">
             <form action="" method="post" novalidate>
@@ -35,12 +40,12 @@
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="reset">
-                            {{ form.email_address(class='form-control text-center') }}
+                            {{ form.email_address(size=33, class='form-control text-center') }}
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                    <div class="col-md-12 d-flex justify-content-center animated fadeIn mt-2">
                         <div class="reset">
                             {{ form.submit(class='main-btn w-100') }}
                         </div>

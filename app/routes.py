@@ -585,6 +585,7 @@ def reset_change_password():
         logger.info("User token: %s -- Token Received: %s", user.get_reset_token(), token_received)
         if user.get_reset_token() == token_received:
             logger.info("Token verified..")
+            logger.info("Setting new user password and deleting reset token.")
             user.set_password(new_password)
             user.delete_reset_token()
             db.session.commit()
