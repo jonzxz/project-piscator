@@ -78,7 +78,7 @@ ALTER SEQUENCE public.email_address_email_id_seq OWNED BY public.email_address.e
 
 CREATE TABLE public.phishing_email (
     mail_id integer NOT NULL,
-    sender_address character varying(30) NOT NULL,
+    sender_address character varying(255) NOT NULL,
     content text NOT NULL,
     created_at timestamp without time zone,
     receiver_id integer NOT NULL,
@@ -121,7 +121,8 @@ CREATE TABLE public."user" (
     created_at timestamp without time zone,
     is_active boolean NOT NULL,
     is_admin boolean,
-    last_logged_in timestamp without time zone
+    last_logged_in timestamp without time zone,
+    reset_token numeric(6,0)
 );
 
 
@@ -175,7 +176,7 @@ ALTER TABLE ONLY public."user" ALTER COLUMN user_id SET DEFAULT nextval('public.
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-923836e9b856
+f0af26458f68
 \.
 
 
@@ -184,7 +185,7 @@ COPY public.alembic_version (version_num) FROM stdin;
 --
 
 COPY public.email_address (email_id, email_address, created_at, user_id, active, email_password, last_mailbox_size, last_updated, phishing_mail_detected) FROM stdin;
-1	piscator.fisherman@gmail.com	2020-12-25 15:11:24.443306	2	t	gAAAAABf5ZCcp847rRQIs2YstFZ2eXztMp-mG8DI1kLSoThTeasyEmXnm2qEM_-8JH9m9MQNsDXy-1ZYNqyfOZCEWdERvIjX4e3yEwNnN1V8z3RKnGR1iS4=	\N	2020-12-25 15:13:56.861286	1
+36	piscator.fisherman@gmail.com	2021-01-02 02:15:32.025546	2	t	gAAAAABf72bE64huG05brrVao-wOWOqNSEJxSWW9rmlHfFIs-WXywA1gtIKs0g9698RfbUZtCyLCbwSpCQGL44dnOelZAm2lkW21XVW9yIkp4SUZGd501I4=	\N	2021-01-02 10:54:12.11023	0
 \.
 
 
@@ -193,7 +194,6 @@ COPY public.email_address (email_id, email_address, created_at, user_id, active,
 --
 
 COPY public.phishing_email (mail_id, sender_address, content, created_at, receiver_id, subject) FROM stdin;
-1	jonathankerk@gmail.com	keywords: suspend verify username password update confirm user customer client restrict hold verify account login ssn social security nric label invoice post document postal calculations copy fedex statement financial dhl usps notification delivery ticket paypal bank <html> tag http://fake-website-qweabc.com http://www.fakewebtwo-qweabc.com https://fake-web-secure-qwebac.com contains ipurl http://192.168.1.1/abcabc/qweqwe/ contains js tag <script> contains form tag <form subdomains http://very.fake.website.quebec.com/ <div dir="ltr">keywords: suspend verify username password update confirm user customer client restrict hold verify account login ssn social security nric label invoice post document postal calculations copy fedex statement financial dhl usps notification delivery ticket paypal bank<br><div><br></div><div>&lt;html&gt; tag</div><div><br></div><div><a href="http://fake-website-qweabc.com">http://fake-website-qweabc.com</a></div><div><a href="http://www.fakewebtwo-qweabc.com">http://www.fakewebtwo-qweabc.com</a></div><div><a href="https://fake-web-secure-qwebac.com">https://fake-web-secure-qwebac.com</a></div><div><br></div><div>contains ipurl</div><div><a href="http://192.168.1.1/abcabc/qweqwe/">http://192.168.1.1/abcabc/qweqwe/</a></div><div><br></div><div>contains js tag</div><div>&lt;script&gt;</div><div><br></div><div>contains form tag</div><div>&lt;form</div><div><br></div><div>subdomains</div><div><a href="http://very.fake.website.quebec.com/">http://very.fake.website.quebec.com/</a></div></div>	2020-12-25 15:12:04.737458	1	TestPhishing: suspend verify username password update confirm user\r\n customer client restrict hold verify account login ssn social security nric\r\n label invoice post document postal
 \.
 
 
@@ -201,9 +201,9 @@ COPY public.phishing_email (mail_id, sender_address, content, created_at, receiv
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."user" (user_id, username, password, created_at, is_active, is_admin, last_logged_in) FROM stdin;
-1	admin	pbkdf2:sha256:150000$ICzY3n6B$ffa2af1992683263845e9acf851251afea8a158b04e6cbf2b6c8e4a459400759	2020-12-25 15:00:35.33375	t	t	2020-12-25 15:02:17.201351
-2	user	pbkdf2:sha256:150000$YhvcWZlI$678cc9868b47a8bc8cf0fd3c2982ec18553d4f3406176713353eada195d89f8a	2020-12-25 15:00:47.4858	t	f	2020-12-25 15:02:31.505859
+COPY public."user" (user_id, username, password, created_at, is_active, is_admin, last_logged_in, reset_token) FROM stdin;
+1	admin	pbkdf2:sha256:150000$ICzY3n6B$ffa2af1992683263845e9acf851251afea8a158b04e6cbf2b6c8e4a459400759	2020-12-25 15:00:35.33375	t	t	2021-01-02 14:20:57.870096	\N
+2	user	pbkdf2:sha256:150000$sKbIAPUb$264ba0c0af27909f32a0314d211bb6ec626d9053c55d0aa34268463bccf073aa	2020-12-25 15:00:47.4858	t	f	2021-01-02 23:05:29.657166	\N
 \.
 
 
@@ -211,21 +211,21 @@ COPY public."user" (user_id, username, password, created_at, is_active, is_admin
 -- Name: email_address_email_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.email_address_email_id_seq', 1, true);
+SELECT pg_catalog.setval('public.email_address_email_id_seq', 39, true);
 
 
 --
 -- Name: phishing_email_mail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.phishing_email_mail_id_seq', 1, true);
+SELECT pg_catalog.setval('public.phishing_email_mail_id_seq', 182, true);
 
 
 --
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.user_user_id_seq', 2, true);
+SELECT pg_catalog.setval('public.user_user_id_seq', 38, true);
 
 
 --
@@ -258,6 +258,14 @@ ALTER TABLE ONLY public.phishing_email
 
 ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: user user_reset_token_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."user"
+    ADD CONSTRAINT user_reset_token_key UNIQUE (reset_token);
 
 
 --
