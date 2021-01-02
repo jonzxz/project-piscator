@@ -35,11 +35,17 @@
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="reset">
+                            {{ form.email_address(class='form-control text-center') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                        <div class="reset">
                             {{ form.submit(class='main-btn w-100') }}
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                       {% if form.errors %}
