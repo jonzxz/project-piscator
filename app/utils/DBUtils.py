@@ -23,7 +23,9 @@ def get_owner_id_from_email_id(mail_id):
             .first() \
             .get_user_id()
 
+# Scheduled task to remove tokens
 def purge_user_tokens():
+    logger.info("Routine task: purging all user tokens..")
     users = db.session.query(User).filter(User.reset_token != None).all()
     if users:
         for user in users:

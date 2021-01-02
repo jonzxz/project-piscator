@@ -36,3 +36,16 @@ class Config(object):
     MAIL_USE_TSL = False
     MAIL_USE_SSL = True
     MAIL_SUPRRESS_SEND = False
+
+    # Scheduled Tasks
+    JOBS = [
+        {
+            'id' : 'job1',
+            'func' : 'app.utils.DBUtils:purge_user_tokens',
+            'trigger' : 'interval',
+            'hours' : 1
+            # 'seconds' : 10
+        }
+    ]
+
+    SCHEDULER_API_ENABLED = True
