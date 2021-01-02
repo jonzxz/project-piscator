@@ -52,3 +52,14 @@ def send_phish_check_notice(destination, phishing_mails):
         msg.body += phish_mail.__repr__() + '\n\n'
     mailer.send(msg)
     logger.info("Phish check notice sent.")
+
+def send_password_token(destination, username, token):
+    logger.info("Entering send_password_token")
+    msg = Message("You have recently requested a password reset for your account on Project Piscator." \
+    , recipients=[destination])
+
+    msg.body = "Hi {}, you have recently requested a password reset for your account on Project Piscator.\n".format(username)
+    msg.body += "The token generated for your password reset is {}. This token will be valid for 1 hour(s).\n".format(token)
+    msg.body += "If you did not request for this password reset, please contact the administrative team immediately.\n"
+    mailer.send(msg)
+    logger.info("Password reset token email sent")

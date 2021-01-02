@@ -63,7 +63,6 @@ from app import routes
 # Add all new models here
 from app.models import User, EmailAddress, PhishingEmail
 
-
 from app.views import views
 
 # Admin instance

@@ -27,6 +27,7 @@ from app.utils.EmailUtils import test_mailbox_conn
 from app.utils.EmailUtils import send_contact_us_email
 from app.utils.EmailUtils import get_imap_svr
 from app.utils.EmailUtils import send_phish_check_notice
+from app.utils.EmailUtils import send_password_token
 from app.utils.DBUtils import get_user_by_id
 from app.utils.DBUtils import get_user_by_name
 from app.utils.DBUtils import get_email_address_by_address
@@ -563,8 +564,9 @@ def reset():
         if (user and email) and user.get_id() == email.get_user_id():
             user.generate_reset_token()
             db.session.commit()
-            logger.info("User Token: %s", user.get_reset_token())
+            logger.info("Generated User Token: %s", user.get_reset_token())
             session["reset_user_id"] = user.get_id()
+            send_password_token(email.get_email_address(), user.get_username(), user.get_reset_token())
             return redirect(url_for('reset_change_password'))
         else:
             flash('Invalid username or email address!')
