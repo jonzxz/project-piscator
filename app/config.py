@@ -24,7 +24,7 @@ class Config(object):
     # Configures ReCAPTCHA and Contact Us
     # If TESTING = True, ReCAPTCHA will be inactive and Flask-Mail Contact us will NOT work
     # If TESTING = False, ReCAPTCHA will be active and Flask-Mail Contact us will work
-    TESTING=os.environ.get('TESTING') or False
+    TESTING=os.environ.get('TESTING') or True
 
     # Flask-Mail Configs
     MAIL_CREDS = get_server_mail_cred()

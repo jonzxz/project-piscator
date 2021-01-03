@@ -577,6 +577,7 @@ def reset():
 def reset_change_password():
     form = UpdatePasswordForm()
     user = get_user_by_id(session["reset_user_id"])
+    logger.info("Entering password update page")
 
     if form.validate_on_submit():
         token_received = form.token.data
