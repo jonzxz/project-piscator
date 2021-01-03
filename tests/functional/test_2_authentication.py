@@ -39,6 +39,10 @@ def test_register(driver):
     driver.find_element_by_id('username').send_keys(USERNAME)
     driver.find_element_by_id('password').send_keys(PASSWORD)
     driver.find_element_by_id('confirm_password').send_keys(CONF_PASSWORD)
+    # wait_active_box = WebDriverWait(driver, 3)
+    # wait_active_box.until(EC.visibility_of_element_located((By.ID, 'is_active')))
+    checkbox = driver.find_element_by_css_selector("#agreement")
+    driver.execute_script("arguments[0].click();", checkbox)
     driver.find_element_by_id('submit').click()
     # Assert user is redirected to dashboard
     assert driver.current_url.split(sep='/')[-1] == 'dashboard'
