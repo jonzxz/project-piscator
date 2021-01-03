@@ -50,6 +50,11 @@
             {{ form.confirm_password(size=33, class='form-control text-center') }}
           </div>
         </div>
+        <div class="row mt-2 mb-2 justify-content-center">
+          <div class="col-xs-6 purple-border justify-content-center ml-5">
+            {{ form.agreement() }} When creating a new account, you agree to our <a href="{{ url_for('tos') }}">terms of services</a> and <a href="{{ url_for('privacy') }}"> privacy policy</a>.
+          </div>
+        </div>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             {% for message in messages %}
@@ -62,6 +67,11 @@
 
         {% if form.errors %}
           {% for error in form.confirm_password.errors %}
+          <div class="row mt-2 mb-2 justify-content-center">
+            <div class="alert alert-danger">{{ error }}</div>
+          </div>
+          {% endfor %}
+          {% for error in form.agreement.errors %}
           <div class="row mt-2 mb-2 justify-content-center">
             <div class="alert alert-danger">{{ error }}</div>
           </div>

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm, RecaptchaField
 from app.models import User
-from wtforms import FormField, StringField, PasswordField, SubmitField
+from wtforms import FormField, StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, ValidationError, EqualTo
 
 class RegistrationForm(FlaskForm):
@@ -10,6 +10,7 @@ class RegistrationForm(FlaskForm):
 	confirm_password = PasswordField('Confirm Password', render_kw={"placeholder": "Confirm Password"},
 		validators=[DataRequired(),
 					EqualTo('password', message='Password must match!')])
+	agreement = BooleanField('Agreement', validators=[DataRequired(message='You must agree to the terms and policies to register!')])
 	recaptcha = RecaptchaField()
 	submit = SubmitField('Register')
 
