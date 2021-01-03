@@ -116,8 +116,8 @@ def test_model_olden_phish(model, test_data_dir, start, end):
     print("Accuracy: {}".format((phish/count)*100))
 
 def main():
-    MODERN_HAM_PATH = '../../Mailboxes/Hams/Yannis_Mailbox/'
-    MODERN_PHISH_PATH = '../../Mailboxes/Phish/ModernPhish1/'
+    MODERN_HAM_PATH = '../../Mailboxes/Hams/ModernHam2/'
+    MODERN_PHISH_PATH = '../../Mailboxes/Phish/ModernPhish2/'
     OLDEN_HAM_PATH = '../../Mailboxes/enron_mail_20150507/maildir/badeer-r/all_documents/'
     OLDEN_PHISH_PATH = '../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/'
     SINGLE_TEST_FILE = '../../Mailboxes/Hams/Jonathan_Mailbox/1.eml'
@@ -125,8 +125,8 @@ def main():
     # test_model_olden_phish(model, OLDEN_PHISH_PATH, 1301, 1601)
     # test_model_olden_ham(model, OLDEN_HAM_PATH, 1, 300)
     # test_model(model, '../../Mailboxes/Yannis_Mailbox/', 1, 134)
-    # test_model_modern_phish(model, MODERN_PHISH_PATH, 1, 81)
-    # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 134)
+    # test_model_modern_phish(model, MODERN_PHISH_PATH, 1, 56)
+    # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 222)
     # test_model_single(model, SINGLE_TEST_FILE)
     serialize_model(model)
 
