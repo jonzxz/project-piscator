@@ -3,6 +3,7 @@ from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from app import login
+from random import randint
 
 # Defines the model for User class
 class User(UserMixin, db.Model):
@@ -14,6 +15,7 @@ class User(UserMixin, db.Model):
     last_logged_in = db.Column(db.DateTime)
     is_admin = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    reset_token = db.Column(db.Numeric(6, 0), unique=True, nullable=True)
 
     # FK
     # emails = db.relationship('EmailAddress', backref='owner', lazy='dynamic')
@@ -50,6 +52,15 @@ class User(UserMixin, db.Model):
 
     def get_last_logged_in(self) -> datetime:
         return self.last_logged_in
+
+    def generate_reset_token(self):
+        self.reset_token = randint(100000, 999999)
+
+    def get_reset_token(self) -> int:
+        return self.reset_token
+
+    def delete_reset_token(self):
+        self.reset_token = None
 
     @login.user_loader
     def load_user(id: int):

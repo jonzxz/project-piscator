@@ -4,8 +4,10 @@ from app.config import Config
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_admin import Admin
+from flask_apscheduler import APScheduler
 import logging
 import warnings
+import os
 
 # Random Forest Model
 from app.machine_learning.utils import load_model
@@ -59,10 +61,15 @@ logger.addHandler(file_handler)
 from flask_mail import Mail
 mailer = Mail(app)
 
+# Scheduled Tasks runner
+if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+	scheduler = APScheduler()
+	scheduler.init_app(app)
+	scheduler.start()
+
 from app import routes
 # Add all new models here
 from app.models import User, EmailAddress, PhishingEmail
-
 
 from app.views import views
 
