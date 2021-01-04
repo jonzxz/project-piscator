@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+<script>
+  $( function() {
+    $( document ).tooltip();
+  } );
+  </script>
 
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login_reg_style.css') }}">
@@ -22,11 +27,6 @@
                 <div class="h3">Reset Password</div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
-                <span class="text-center">Enter your username and any email address that is registered with the account.</span>
-            </div>
-        </div>
 
         <div class="row justify-content-center">
             <form action="" method="post" novalidate>
@@ -41,6 +41,7 @@
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="reset">
                             {{ form.email_address(size=33, class='form-control text-center') }}
+                            <p class="text-center"><a href="#" data-toggle="tooltip" title="'Email Address' can be any that is registered with the account (make sure you have access to this email!).">What is 'Email Address'?</a></p>
                         </div>
                     </div>
                 </div>
@@ -52,7 +53,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12 d-flex justify-content-center animated fadeIn">
+                    <div class="col-md-12 d-flex justify-content-center animated fadeIn pt-2">
                       {% if form.errors %}
                         {% for error in form.username.errors %}
                           <div class="alert alert-danger">{{ error }}</div>
@@ -68,6 +69,11 @@
                     </div>
                 </div>
             </form>
+        </div>
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
+                <p>Remember your password? <a href="{{ url_for('login') }}"><u>Return to Login.</u></a></p>
+            </div>
         </div>
     </div>
     <div id="particles-2" class="particles"></div>
