@@ -118,3 +118,11 @@ def test_assert_enable_user(driver):
     TEST_ENABLE_USER = 'disableme'
     updated_user = db.session.query(User).filter(User.username == TEST_ENABLE_USER).first()
     assert updated_user.get_active_status() == True
+
+    # Logout back to index
+    wait_logout = WebDriverWait(driver, 5)
+    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[5]')))
+    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[5]').click()
+
+    # Assert redirected to index
+    assert driver.current_url.split(sep='/')[-1] == 'index'
