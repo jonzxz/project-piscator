@@ -22,7 +22,7 @@ def update_new_password(client, db, new_password, token):
     follow_redirects=True
     )
 
-def test_reset_password(client, db):
+def test_request_reset_password(client, db):
     # Creates a new user
     TEST_RESET_USER = 'resetmyaccount'
     TEST_RESET_PASSWORD = 'password'
@@ -45,17 +45,17 @@ def test_reset_password(client, db):
     # Assert token is generated
     assert (db.session.query(User).filter(User.username == TEST_RESET_USER).first()).get_reset_token()
 
-def test_reset2(client, db):
+def test_update_password(client, db):
     TEST_RESET_USER = 'resetmyaccount'
     NEW_PASSWORD = 'pa$$w0rd'
     USER_ENTITY = db.session.query(User).filter(User.username == TEST_RESET_USER).first()
     TOKEN_VALUE = USER_ENTITY.get_reset_token()
-    print("TOKEN_VALUE_TYPE: {}".format(type(TOKEN_VALUE)))
 
-    print("USER_ENTITY: {} -- TOKEN_VALUE: {}".format(USER_ENTITY, TOKEN_VALUE))
+    # Creates a session variable for id to be passed in to route
     with client.session_transaction() as sess:
         sess['reset_user_id'] = USER_ENTITY.get_id()
 
+    # Sends a post request to change_password with retrieved token
     r = client.post(
     '/reset/change_password', data={
     'token' : TOKEN_VALUE,

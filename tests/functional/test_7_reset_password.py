@@ -55,7 +55,6 @@ def test_update_password(driver):
 
     # Retrieves token value from db and submits into the field with new password
     USER_TOKEN = str(USER_UPDATED.get_reset_token())
-    print("USER_TOKEN: {}".format(USER_TOKEN))
     wait_submit_reset_btn = WebDriverWait(driver, 5)
     wait_submit_reset_btn.until(EC.visibility_of_element_located((By.ID, 'submit')))
     driver.find_element_by_id('token').send_keys(USER_TOKEN)
