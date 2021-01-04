@@ -51,7 +51,7 @@ class AdminUserView(AdminBaseView):
 		'user_id' : 'ID',
 		'created_at' : 'Created At',
 		'last_logged_in' : 'Last Logged In',
-		'is_admin' : 'Admin',
+		'is_admin' : 'Administrator',
 		'is_active' : 'Active'
 	}
 
