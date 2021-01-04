@@ -6,11 +6,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from .test_2_authentication import login, logout
 
 # Flows from test_4_user disable_account
-# Disabled user is redirected to homepage so test for admin starts afresh
+# Disabled user is stays at login page, .get to go back to homepage
 # Test logging in to admin account and redirection to admin dashboard
 def test_admin_login(driver):
     ADMIN_USER = 'admin'
     PASSWORD = 'password'
+    driver.get('localhost:5000')
     # Enter credentials
     login(driver, ADMIN_USER, PASSWORD)
     # Assert user is redirected to admin dashboard

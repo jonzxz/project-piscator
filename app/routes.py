@@ -92,6 +92,11 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = get_user_by_name(form.username.data)
+
+        if user.get_active_status() == False:
+            flash('Account is disabled, contact support!', 'error')
+            return redirect(url_for('login'))
+
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'error')
             return redirect(url_for('login'))
@@ -613,6 +618,10 @@ def reset():
     if form.validate_on_submit():
         user = get_user_by_name(form.username.data)
         email = get_email_address_by_address(form.email_address.data)
+
+        if user.get_active_status() == False:
+            flash('Account is disabled, contact support for assistance!')
+            return redirect(url_for('reset'))
 
         if (user and email) and user.get_id() == email.get_user_id():
             user.generate_reset_token()
