@@ -2,11 +2,11 @@
 
 <!--
 ==============================================================================
-This HTML file is the component for the Navbar on the left for admin dashboard
-It only contains the Navbar and will have to be included in other admin pages
-This component includes 'base.html' to inherit the fonts and libraries
-
-IT IS STILL A WORK IN PROGRESS BECAUSE IT IS COPY PASTED FROM USER DASHBOARD
+This HTML file is the custom base for admin portal. The page includes the navbar
+on the left, and the block content of this page is meant for statistics only.
+This page is also included in all other admin_base_.. files to include the navbar
+for the pages.
+This page is extended by admin index and included by all other admin pages.
 ==============================================================================
 -->
 <html class="no-js" lang="en">
@@ -40,6 +40,12 @@ IT IS STILL A WORK IN PROGRESS BECAUSE IT IS COPY PASTED FROM USER DASHBOARD
 					</a>
 				</div>
 			</div>
+			<div class="col-12 col-md-10">
+				<div class="container-fluid ml-5 pl-5 pt-5">
+					{% block content %}{% endblock %}
+				</div>
+			</div>
+			<div class="col-12 col-md-1"></div>
 		</div>
 	</body>
 </html>

@@ -2,6 +2,24 @@ body {
 	font-family: "Lato", sans-serif;
 }
 
+.first {
+	width: 35%;
+	float:left;
+	height: 420px;
+}
+
+.second {
+	width: 35%;
+	float:left;
+	height: 420px;
+}
+
+.third {
+	width: 30%;
+	float:left;
+	height: 420px;
+ }
+
 .loginuser{
 	font-size: 20px;
 	margin-bottom: 30px;

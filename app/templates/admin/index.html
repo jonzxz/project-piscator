@@ -5,92 +5,209 @@ to get the side navbar. This page should contain statistics system-wide, similar
 to the user dashboard (but that only shows for that particular user)
 ===============================================================================
 -->
-{% include 'admin/admin_menu.html' %}
-<html class="no-js" lang="en">
-  <body>
-    <div class="w-75 mx-auto pl-5 pt-5">
-      <div class="mx-auto pl-5 pt-2">
+{% extends 'admin/admin_base.html' %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dash_style.css') }}">
+{% block content %}
+<div class="main-container mt-4">
+  <div class="container ml-5">
+    <div class="row">
+      <div class="col-12">
         <span class="h2 pb-5">Administrator Dashboard</span>
       </div>
-      <div class="row">
-        <div class="mx-auto col-lg-4">
-          <div class="card card-chart">
-            <div class="card-header bg-info text-white">
-              <h5 class="card-category">Users</h5>
-            </div>
-            <div class="card-body">
-              <div class="chart-area">
-                <canvas id="user_chart" width="300" height="200"></canvas>
-              </div>
-            </div>
+    </div>
+    <div class="first">
+      <div class="col-md-12">
+        <div class="card card-chart">
+          <div class="card-header bg-info text-white">
+            <h5 class="card-category">Users</h5>
           </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="card card-chart">
-            <div class="card-header bg-primary text-white">
-              <h5 class="card-category">Email Addresses</h5>
-            </div>
-            <div class="card-body">
-              <div class="chart-area">
-                <canvas id="email_chart" width="300" height="200"></canvas>
-              </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="user_chart" width="400" height="400"></canvas>
             </div>
           </div>
         </div>
       </div>
     </div>
-      <!-- should be moved into base -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-      <script>
-        var users = document.getElementById("user_chart");
-        var emails = document.getElementById("email_chart");
+    <div class="second">
+      <div class="col-md-12">
+        <div class="card card-chart">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-category">Email Addresses</h5>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="email_chart" width="400" height="400"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="third">
+      <div class="col-md-10">
+        <div class="card bg-c-today">
+          <div class="card-body">
+            <div class="text-white">Today Detection</div>
+            <div id="today-detected" class="text-white"></div>
+            <div class="col-auto">
+              <i class="fas fa-eye bg-c-blue"></i>
+            </div>
+            <div class="card-footer bg-c-today">
+              <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="col-md-10">
+        <div class="card bg-c-all">
+          <div class="card-body">
+            <div class="text-white">All Time Detection</div>
+            <div id="all-time-detected" class="text-white"></div>
+            <div class="col-auto">
+              <i class="fas fa-bullseye bg-c-green"></i>
+            </div>
+            <div class="card-footer bg-c-all">
+              <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header bg-transparent">
+            <div class="row align-items-center">
+              <div class="col">
+                <h6 class="text-uppercase text-muted ls-1 mb-1">Monthly Overview</h6>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-area">
+              <canvas id="overview" class="chart-canvas" width="1000" height="400"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <!--values (y-axis) to be updated here//-->
-        var users_stats = {{ user_stats }}
-        var email_stats = {{ email_stats }}
-        // var users_stats = [9, 12, 21, 0, 15];
+<script>
+  // -- Chart Context START
+  var ctx = document.getElementById("overview");
+  var users = document.getElementById("user_chart");
+  var emails = document.getElementById("email_chart");
 
-        <!--values (x-axis) to be updated here//-->
-        var dates = ["08Nov20", "30Dec20", "02Jan21", "15Jan21", "21Mar21"];
-        var months = ["Nov20", "Dec20", "Jan21", "Feb21", "Mar21"]
+  // -- Chart Context END
 
-        var user_chart = new Chart(users, {
-          type: "pie",
-          data: {
-            labels: ["Inactive Users", "Active Users"],
-            datasets: [
-              {
-                data: users_stats,
-                backgroundColor: ["#95D9DA", "#6DD6DA"],
-              }
-            ]
-          },
+  // -- Statistic values START
+  var dates = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var users_stats = {{ statistics['user_stats'] }}
+  var email_stats = {{ statistics['email_stats'] }}
+  var monthly_stats = {{ monthly_stats }}
 
-          options:{
-            legend:{
-              position: "bottom"
-            }
-          }
-        });
+  // Card values
+  var all_time_detected = {{ statistics['all_time'] }}
+  var today_detected = {{ statistics['today'] }}
+  // -- Statistic values END
 
-        var email_chart = new Chart(emails, {
-          type: "pie",
-          data: {
-            labels: ["Inactive Addresses", "Active Addresses"],
-            datasets: [
-              {
-                data: email_stats,
-                backgroundColor: ["#C1DFF0", "#88CCF1"]
-              }
-            ]
-          },
+  // -- Card values START
+  // All Time detection
+  document.getElementById("all-time-detected").innerHTML = all_time_detected;
 
-          options:{
-            legend:{
-              position: "bottom"
-            }
-          }
-        });
-      </script>
-  </body>
-</html>
+  // Today detection
+  document.getElementById("today-detected").innerHTML = today_detected;
+
+  // -- Pie Charts START
+  var user_chart = new Chart(users, {
+    type: "pie",
+    data: {
+      labels: ["Inactive Users", "Active Users"],
+      datasets: [
+      {
+        data: users_stats,
+        backgroundColor: ["#95D9DA", "#6DD6DA"],
+      }
+      ]
+    },
+    options:{
+      legend:{
+        position: "bottom"
+      }
+    }
+  });
+
+  var email_chart = new Chart(emails, {
+    type: "pie",
+    data: {
+      labels: ["Inactive Addresses", "Active Addresses"],
+      datasets: [
+      {
+        data: email_stats,
+        backgroundColor: ["#C1DFF0", "#88CCF1"]
+      }
+      ]
+    },
+    options:{
+      legend:{
+        position: "bottom"
+      }
+    }
+  });
+  // -- Pie Charts END
+
+  // -- Bar Chart START
+  var overview = new Chart(ctx, {
+    type: "bar",
+    options: {
+      legend: {
+        display: false
+      }
+    },
+    data: {
+      labels: dates,
+      datasets: [
+      {
+        data: monthly_stats,
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor:  [
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(255,99,132,1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 2,
+        barThickness: 6,
+        maxBarThickness: 8,
+        minBarLength: 4,
+      }
+      ],
+    }
+  });
+  // -- Bar Chart END
+</script>
+{% endblock %}
