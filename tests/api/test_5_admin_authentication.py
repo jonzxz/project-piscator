@@ -8,11 +8,11 @@ def test_valid_login(client):
     PASSWORD = 'password'
     response = login(client, USERNAME, PASSWORD)
     assert response.status_code == 200
-    assert b'Admin Dashboard' in response.data
+    assert b'Administrator Dashboard' in response.data
 
 def test_invalid_login(client):
     USERNAME = 'INVALIDADMIN'
     PASSWORD = 'NOTpassword'
     response = login(client, USERNAME, PASSWORD)
     assert response.status_code == 200
-    assert not b'Admin Dashboard' in response.data
+    assert not b'Administrator Dashboard' in response.data

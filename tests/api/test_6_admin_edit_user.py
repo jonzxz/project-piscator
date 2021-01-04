@@ -19,7 +19,7 @@ def test_edit_user(client, db):
     PASSWORD = 'password'
     login_response = login(client, USERNAME, PASSWORD)
     assert login_response.status_code == 200
-    assert b'Admin Dashboard' in login_response.data
+    assert b'Administrator Dashboard' in login_response.data
 
     # Retrieves newly created user - gets ID, username and assert current status is ACTIVE
     user_to_disable = db.session.query(User).filter(User.username == TEST_DISABLE_USER).first()

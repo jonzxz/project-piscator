@@ -6,7 +6,8 @@ def register(client, username, password, confirm_password):
     '/register', data={
     'username' : username,
     'password' : password,
-    'confirm_password' : confirm_password
+    'confirm_password' : confirm_password,
+    'agreement' : True
     },
     follow_redirects=True
     )
