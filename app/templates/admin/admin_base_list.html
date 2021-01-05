@@ -32,6 +32,7 @@
     {{ lib.form_css() }}
 {% endblock %}
 
+{% block body %}
 {% block page_body %}
 <div class="w-75 mx-auto pl-5 pt-5">
     <div class="pt-3 container{% if config.get('FLASK_ADMIN_FLUID_LAYOUT', False) %}-fluid{% endif %}">
@@ -42,7 +43,6 @@
         {# store the jinja2 context for form_rules rendering logic #}
         {% set render_ctx = h.resolve_ctx() %}
 
-        {% block body %}
             {% block model_menu_bar %}
               <div class="pl-5 pt-2">
                 <ul class="nav nav-tabs">
@@ -96,8 +96,10 @@
           {% endblock %}
 
             {% if filters %}
+            <div class="pl-5">
                 {{ model_layout.filter_form() }}
                 <div class="clearfix"></div>
+                </div>
             {% endif %}
 
             {% block model_list_table %}
