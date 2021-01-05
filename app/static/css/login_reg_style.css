@@ -7,11 +7,16 @@ body {
   background: -moz-linear-gradient(180deg, #1dd0e7, #1970c2);
   background: -ms-linear-gradient(180deg, #1dd0e7, #1970c2);
   background: -o-linear-gradient(180deg, #1dd0e7, #1970c2);
-  background: linear-gradient(180deg, #1dd0e7, #1970c2);
+  /* background: linear-gradient(180deg, #1dd0e7, #1970c2); */
 }
 
-.container {
+.sub-container {
   height:100%;
+  margin: 10%;
+  margin-left: 39%;
+  position: relative;
+  padding: 10px;
+  background-color: #f9f9f9;
 }
 
 .round-radius {
