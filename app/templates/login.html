@@ -1,49 +1,32 @@
 {% extends "base.html" %}
-
 {% block content %}
+{% include "navbar.html" %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login_reg_style.css') }}">
 <div class="main-container">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12 justify-content-center">
-                <div class="logo mt-3 w-100 animated fadeInDown d-flex justify-content-center" style="margin-left:10%">
-                    <!-- play cheat margin to make text centered-->
-                    <a href="{{ url_for('index') }}">
-                        <img src="{{ url_for('static', filename='icons/logo_word.svg') }}" alt='Logo' width=70%>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container w-25 p-3 mb-4 round-radius" style="background-color: #f9f9f9">
+    <div class="sub-container w-25 p-3 mb-4 round-radius">
         <div class="row">
             <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
                 <div class="h3">Login</div>
             </div>
         </div>
-
         <div class="row justify-content-center">
             <form action="" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <div class="row mt-2 mb-2 justify-content-center">
-                    <div class="col-xs-6 purple-border">
+                    <div class="col-md-12">
                         {{ form.username(size=33, class='form-control text-center') }}
                     </div>
                 </div>
-
                 <div class="row mt-2 mb-2 justify-content-center">
-                    <div class="col-xs-6 purple-border">
+                    <div class="col-md-12">
                         {{ form.password(size=33, class='form-control text-center')}}
                     </div>
                 </div>
-
                 <div class="row mt-2 mb-2 justify-content-center">
-                    <div class="col-xs-6 purple-border">
+                    <div class="col-xs-6">
                         {{ form.remember_me() }} {{ form.remember_me.label }}
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="login">
@@ -51,7 +34,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row mt-2 mb-2">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="login-existing">
@@ -59,7 +41,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -75,16 +56,23 @@
                         {% endwith %}
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
                         <p>New here? <a href="{{ url_for('register') }}"><u>Sign up with us!</u></a></p>
                     </div>
                 </div>
-
             </form>
         </div>
     </div>
     <div id="particles-2" class="particles"></div>
 </div>
+
+<!-- JQuery to replace hrefs in navbar to index#<section> -->
+<script>
+    $("#home-nav").attr("href", "{{url_for('index') }}");
+    $("#feature-nav").attr("href", "{{url_for('index') }}#features");
+    $("#about-nav").attr("href", "{{url_for('index') }}#about");
+    $("#facts-nav").attr("href", "{{url_for('index') }}#facts");
+    $("#footer-nav").attr("href", "{{url_for('index') }}#footer");
+</script>
 {% endblock %}
