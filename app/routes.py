@@ -93,13 +93,14 @@ def login():
     if form.validate_on_submit():
         user = get_user_by_name(form.username.data)
 
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password', 'error')
+            return redirect(url_for('login'))
+            
         if user.get_active_status() == False:
             flash('Account is disabled, contact support!', 'error')
             return redirect(url_for('login'))
 
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password', 'error')
-            return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         user.set_last_logged_in(datetime.now())
         db.session.commit()
