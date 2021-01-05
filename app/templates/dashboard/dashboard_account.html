@@ -41,39 +41,44 @@
       </div>
     </div>
   </div>
-
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for message in messages %}
-        <div class="row mt-2 mb-2 justify-content-center">
-          {% if 'Successful' in message or 'Enabled' in message%}
-            <div class="alert alert-success"> {{ message }} </div>
-          {%else%}
-            <div class="alert alert-danger"> {{ message }} </div>
-          {% endif %}
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-  {% if form.errors %}
-    {% for error in form.current_password.errors %}
-      <div class="row mt-2 mb-2 justify-content-center">
-        <div class="alert alert-danger">{{ error }}</div>
-      </div>
-    {% endfor %}
-    {% for error in form.confirm_new_password.errors %}
-      <div class="row mt-2 mb-2 justify-content-center">
-        <div class="alert alert-danger">{{ error }}</div>
-      </div>
-    {% endfor %}
-  {% endif %}
-  <hr>
   <div class="row">
     <div class="col-3"></div>
-    <div class="col-2"><p>{{ form.submit(class_='main-btn btn btn-secondary btn-block') }}</p></div>
+    <div class="col-2"><p class="text-right">{{ form.submit(class_='main-btn btn btn-secondary btn-block') }}</p></div>
     <div class="col-2"><a href="{{ url_for('dashboard') }}" class = "main-btn btn btn-default btn-block">Cancel</a></div>
     <div class="col-5"></div>
   </div>
 </form>
+
+
+<hr>
+
+<div class="row">
+{% with messages = get_flashed_messages() %}
+<div class="col-3"></div>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="col-4">
+        {% if 'Successful' in message or 'Enabled' in message%}
+          <div class="alert alert-success"> <p class="text-center">{{ message }}</p> </div>
+        {%else%}
+          <div class="alert alert-danger"> <p class="text-center">{{ message }}</p> </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% if form.errors %}
+  {% for error in form.current_password.errors %}
+    <div class="col-4">
+      <div class="alert alert-danger"><p class="text-center">{{ error }}</p></div>
+    </div>
+  {% endfor %}
+  {% for error in form.confirm_new_password.errors %}
+    <div class="col-4">
+      <div class="alert alert-danger"><p class="text-center">{{ error }}</p></div>
+    </div>
+  {% endfor %}
+{% endif %}
+<div class="col-4"></div>
 </div>
 {% endblock %}
