@@ -451,6 +451,7 @@ def dash_account():
 @app.route('/dashboard/emails/phish/<mid>')
 def check_phish(mid):
     phishing_mails = []
+    today_date = datetime.today().strftime('%d-%m-%Y')
 
     # Retrieves the email address instance
     logger.info("Click-to-check entered..")
@@ -554,7 +555,7 @@ def check_phish(mid):
         return redirect(url_for('dash_email'))
 
     # return redirect(url_for('dashboard'))
-    return render_template('dashboard/detection_results.html', phishing_mails = phishing_mails)
+    return render_template('dashboard/detection_results.html', phishing_mails = phishing_mails, today_date = today_date)
 
 @app.route('/dashboard/emails/activation/<mid>')
 def mail_activation(mid):
