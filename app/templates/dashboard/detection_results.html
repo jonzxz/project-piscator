@@ -1,31 +1,41 @@
-{% extends "base.html" %}
-
+{% extends "dashboard/dashboard_base.html" %}
 {% block content %}
-<span class="h1">Successfully checked mailbox...</span>
-<a href="{{ url_for('dash_email')}}">Click to go back to dashboard</a>
+<script>
+  $(document).ready(function(){
+    $('#detectionTable').DataTable( {
 
+    } );
+  });
+</script>
+<style>
+  th.dt-center, td.dt-center { text-align: center; }
+</style>
+<h2>Detection Results</h2>
+<h5>Date Checked: {{ data['check_time'] }}</h5>
+<h5>Mails Detected/Checked: {{ data['detection_count'] }} / {{ data['total_count'] }}</h5>
 <div class="card mt-5">
   <div class="card-body">
-    {% if phishing_emails is not none %}
-    <table class="table table-dark">
+    {% if phishing_mails|length > 0 %}
+    <table id="detectionTable" class="table table-striped table-bordered">
       <thead>
         <tr>
-          <th scope="col">Sender</th>
-          <th scope="col">Date</th>
-          <th scope="col">Subject</th>
+          <th scope="col" class="text-center">Sender</th>
+          <th scope="col" class="text-center">Subject</th>
+          <th scope="col" class="text-center">Sent Date</th>
         </tr>
       </thead>
       <tbody>
         {% for mail in phishing_mails %}
         <tr>
-          <td>{{ mail.get_sender() }}</td>
-          <td>{{ mail.get_date() }}</td>
-          <td>{{ mail.get_subject() }}</td>
+          <td align="center">{{ mail.get_sender() }}</td>
+          <td align="center">{{ mail.get_subject() }}</td>
+          <td align="center">{{ mail.get_date().strftime('%d-%m-%Y, %H:%M:%S') }}</td>
         </tr>
         {% endfor %}
+      </tbody>
     </table>
     {% else %}
-    <h1>No new phishing emails detected!</h1>
+    <h4>No new phishing emails detected!</h4>
     {% endif %}
   </div>
 </div>
