@@ -7,36 +7,34 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript"  src="http://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
 <script>
-$(document).ready(function(){
+  $(document).ready(function(){
     $('#detectionTable').DataTable( {
 
     } );
-});
+  });
 </script>
 <style>
   th.dt-center, td.dt-center { text-align: center; }
 </style>
-<!--<span class="h1">Successfully checked mailbox...</span>-->
-<!--<a href="{{ url_for('dash_email')}}">Click to go back to dashboard</a>-->
 <h2>Detection Results</h2>
 <h5>Date Checked: {{ today_date }}</h5>
 <div class="card mt-5">
   <div class="card-body">
-    {% if phishing_emails|length > 0 %}
+    {% if phishing_mails|length > 0 %}
     <table id="detectionTable" class="table table-striped table-bordered">
       <thead>
         <tr>
           <th scope="col" class="text-center">Sender</th>
           <th scope="col" class="text-center">Subject</th>
-          <th scope="col" class="text-center">Detection Date</th>
+          <th scope="col" class="text-center">Sent Date</th>
         </tr>
       </thead>
       <tbody>
         {% for mail in phishing_mails %}
         <tr>
-          <td align="center">{{ mail.get_sender_address() }}</td>
+          <td align="center">{{ mail.get_sender() }}</td>
           <td align="center">{{ mail.get_subject() }}</td>
-          <td align="center">{{ mail.get_detected_on() }}</td>
+          <td align="center">{{ mail.get_date() }}</td>
         </tr>
         {% endfor %}
       </tbody>
