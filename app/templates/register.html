@@ -1,20 +1,9 @@
 {% extends "base.html" %}
-
 {% block content %}
+{% include "navbar.html" %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login_reg_style.css') }}">
 <div class="main-container">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-12 justify-content-center">
-        <div class="logo mt-3 w-100 animated fadeInDown d-flex justify-content-center" style="margin-left:10%"> <!-- play cheat margin to make text centered-->
-          <a href="{{ url_for('index') }}">
-            <img src="{{ url_for('static', filename='icons/logo_word.svg') }}" alt='Logo' width=70%>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="container w-25 p-4 mb-5 round-radius" style="background-color: #f9f9f9">
+  <div class="sub-container w-25 p-4 mb-5 round-radius">
     <div class="row">
       <div class="col-md-12 d-flex justify-content-center animated fadeIn">
         <div class="login-existing">
@@ -28,8 +17,8 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
-        <div class="h3">Create a New Account</div>
+      <div class="col-md-12 d-flex justify-content-center mb-2 animated fadeIn">
+        <div class="h4">Create a New Account</div>
       </div>
     </div>
     <div class="row justify-content-center">
@@ -78,7 +67,9 @@
         </div>
         <div class="row mt-2 mb-2 justify-content-center">
           <div class="col-9 purple-border justify-content-center">
-            {{ form.agreement() }} When creating a new account, you agree to our <a href="{{ url_for('tos') }}">terms of services</a> and <a href="{{ url_for('privacy') }}"> privacy policy</a>.
+            {{ form.agreement() }} When creating a new account, you agree to our
+            <a href="{{ url_for('tos') }}">terms of services</a> and
+            <a href="{{ url_for('privacy') }}"> privacy policy</a>.
           </div>
         </div>
         <div class="row justify-content-center mt-2 mb-2">
@@ -90,5 +81,13 @@
   <div id="particles-2" class="particles"></div>
 </div>
 
-
+<!-- JQuery to replace hrefs in navbar to index#<section> -->
+<script>
+    $("#home-nav").attr("href", "{{url_for('index') }}");
+    $("#feature-nav").attr("href", "{{url_for('index') }}#features");
+    $("#about-nav").attr("href", "{{url_for('index') }}#about");
+    $("#facts-nav").attr("href", "{{url_for('index') }}#facts");
+    $("#footer-nav").attr("href", "{{url_for('index') }}#footer");
+    $('a[name="login"]').remove();
+</script>
 {% endblock %}
