@@ -1,11 +1,5 @@
 {% extends "dashboard/dashboard_base.html" %}
-
-
-
 {% block content %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script type="text/javascript"  src="http://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
 <script>
   $(document).ready(function(){
     $('#detectionTable').DataTable( {
@@ -17,7 +11,8 @@
   th.dt-center, td.dt-center { text-align: center; }
 </style>
 <h2>Detection Results</h2>
-<h5>Date Checked: {{ today_date }}</h5>
+<h5>Date Checked: {{ data['check_time'] }}</h5>
+<h5>Mails Detected/Checked: {{ data['detection_count'] }} / {{ data['total_count'] }}</h5>
 <div class="card mt-5">
   <div class="card-body">
     {% if phishing_mails|length > 0 %}
@@ -34,7 +29,7 @@
         <tr>
           <td align="center">{{ mail.get_sender() }}</td>
           <td align="center">{{ mail.get_subject() }}</td>
-          <td align="center">{{ mail.get_date() }}</td>
+          <td align="center">{{ mail.get_date().strftime('%d-%m-%Y, %H:%M:%S') }}</td>
         </tr>
         {% endfor %}
       </tbody>

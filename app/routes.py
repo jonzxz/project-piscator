@@ -454,7 +454,6 @@ def dash_account():
 @app.route('/dashboard/emails/phish/<mid>')
 def check_phish(mid):
     phishing_mails = []
-    today_date = datetime.today().strftime('%d-%m-%Y')
 
     # Retrieves the email address instance
     logger.info("Click-to-check entered..")
@@ -516,7 +515,12 @@ def check_phish(mid):
     # The purpose of Mail class is for easier display - the values are pulled from the
     # imap_tool's Mail item instead of our EmailData.
     # Inserts all phishing mails to the database
-    detection_count = 0
+    data = {
+        'total_count' : 0,
+        'detection_count' : 0,
+        'check_time' : datetime.now().strftime('%d-%m-%Y, %H:%M')
+    }
+
     for msg in all_mails:
         try:
             sender = msg.from_
@@ -529,7 +533,7 @@ def check_phish(mid):
 
         if not sender == mailaddr.get_email_address() or not sender == 'piscator.fisherman@gmail.com':
             # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
-
+            data['total_count']+=1
             mail_item = EmailData(msg.subject, sender, msg.attachments, (msg.text + msg.html), msg.headers)
             mail_item.generate_features()
             result = model.predict(mail_item.repr_in_arr())
@@ -550,7 +554,7 @@ def check_phish(mid):
 
                 if not mail_exist:
                     phishing_mails.append(Mail(sender, msg.date, msg.subject))
-                    detection_count+=1
+                    data['detection_count']+=1
                     detected_mail = PhishingEmail( \
                     sender_address = sender, \
                     subject = msg.subject, \
@@ -560,14 +564,15 @@ def check_phish(mid):
                     )
                     db.session.add(detected_mail)
 
-    mailaddr.set_phishing_mail_detected(detection_count)
+    mailaddr.set_phishing_mail_detected(data['detection_count'])
     db.session.commit()
     logger.info("Finished checking mails.. logging out")
     mailbox.logout()
     send_phish_check_notice(mailaddr.get_email_address(), phishing_mails)
 
     # return redirect(url_for('dashboard'))
-    return render_template('dashboard/detection_results.html', phishing_mails = phishing_mails, today_date = today_date)
+    return render_template('dashboard/detection_results.html', \
+    phishing_mails = phishing_mails, data=data)
 
 @app.route('/dashboard/emails/activation/<mid>')
 def mail_activation(mid):

@@ -1,11 +1,5 @@
 {% extends "dashboard/dashboard_base.html" %}
-
-
-
 {% block content %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script type="text/javascript"  src="http://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
 <script>
   $(document).ready(function(){
     $('#detectionTable').DataTable( {
@@ -34,7 +28,7 @@
         <tr>
           <td align="center">{{ mail.get_sender_address() }}</td>
           <td align="center">{{ mail.get_subject() }}</td>
-          <td align="center">{{ mail.get_detected_on().strftime('%Y-%m-%d') }}</td>
+          <td align="center">{{ mail.get_detected_on().strftime('%d-%m-%Y') }}</td>
         </tr>
         {% endfor %}
       </tbody>
