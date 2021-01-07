@@ -8,6 +8,7 @@ from flask import render_template, request, flash, redirect, url_for, session
 from app.forms.RegistrationForm import RegistrationForm
 from app.forms.LoginForm import LoginForm
 from app.forms.AddEmailForm import AddEmailForm
+from app.forms.ChangeEmailPasswordForm import ChangeEmailPasswordForm
 from app.forms.ContactForm import ContactForm
 from app.forms.AccountSettingsForm import AccountSettingsForm
 from app.forms.ResetPasswordRequestForm import ResetPasswordRequestForm
@@ -335,6 +336,27 @@ def dash_email():
     current_user = current_user.username, form = form,
     user_emails = existing_addresses)
     ## -- Default Dashboard Loading END --
+
+    ## -- Change the Email Password START --
+    form = ChangeEmailPasswordForm()
+    email_addr = form.email_address.data
+    email_address = get_email_address_by_address(email_addr)
+
+    logger.info("Entering password change")
+    if email_address is not None:
+        if not form.new_password.data or not form.confirm_new_password.data:
+            logger.info("Either password fields are empty, redirecting.")
+            flash('Please enter a new password to change passwords or select disable account to disable your account.')
+            return redirect(url_for('mail_form_reset'))
+        elif form.new_password.data == form.confirm_new_password.data:
+            logger.info("Password changed for %s", user.get_username())
+            email_address.set_password(form.new_password.data)
+            flash('Password Successfully Changed!')
+        else:
+            logger.info("Mismatched passwords submited, redirecting.")
+            flash('Passwords does not match!')
+            return redirect(url_for('mail_form_reset'))
+    ## -- Change the Email Password END --
 
 @app.route('/dashboard/account', methods=['GET', 'POST'])
 def dash_account():
