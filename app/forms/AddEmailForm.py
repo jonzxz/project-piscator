@@ -6,4 +6,4 @@ from wtforms.validators import DataRequired, Email
 class AddEmailForm(FlaskForm):
     email_address = EmailField('Email Address', validators=[DataRequired(), Email()])
     password = PasswordField('Email Address Password', validators=[DataRequired()])
-    submit = SubmitField('Add Email')
+    add_mail_submit = SubmitField('Add Email')

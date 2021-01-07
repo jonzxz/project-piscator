@@ -33,7 +33,7 @@
           <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
         {% endif %}
         <td class="text-center"> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.get_email_id() }});"></a></td>
-        <td class="text-center"> <a class="lni lni-pencil" data-toggle="modal" data-target="#changePasswordModal"></a></td>
+        <td class="text-center"> <a class="lni lni-pencil"  name="update-{{ email.email_address }}" data-toggle="modal" data-target="#changePasswordModal"></a></td>
         <td class="text-center"> <a class="lni lni-power-switch" id="{{ email.email_id }}" name="activate-{{ email.email_address}}" href="#" onclick="activate({{ email.get_email_id() }});"></a></td>
       </tr>
       {% endfor %}
@@ -65,24 +65,24 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="" method="post" novalidate>
-          {{ form.hidden_tag() }}
+        <form action="{{ url_for('add_email') }}" method="post" novalidate>
+          {{ add_email_form.hidden_tag() }}
           <div class="modal-body">
             <div class="p-2">
-              {{ form.email_address.label}}
-              {{ form.email_address(class='form-control') }}
+              {{ add_email_form.email_address.label}}
+              {{ add_email_form.email_address(class='form-control') }}
             </div>
-            {% for error in form.email_address.errors %}
+            {% for error in add_email_form.email_address.errors %}
             <span> {{ error }} </span>
             {% endfor %}
             <div class="p-2">
-              {{ form.password.label }}
-              {{ form.password(class='form-control') }}
+              {{ add_email_form.password.label }}
+              {{ add_email_form.password(class='form-control') }}
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="main-btn" data-dismiss="modal">Close</button>
-            {{ form.submit(class='main-btn') }}
+            {{ add_email_form.add_mail_submit(class='main-btn') }}
           </div>
         </form>
       </div>
@@ -98,24 +98,24 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="" method="post" novalidate>
-          {{ form.hidden_tag() }}
+        <form action="{{ url_for('update_email_password') }}" method="post" novalidate>
+          {{ change_email_password_form.hidden_tag() }}
           <div class="modal-body">
             <div class="p-2">
-              {{ form.email_address.label }}
-              <input class="form-control" type="text" id="subdomaintwo" value="" disabled />
+              {{ change_email_password_form.email_address.label }}
+              <input class="form-control" type="text" id="update_pass_email_field" value="" disabled />
             </div>
-            {% for error in form.email_address.errors %}
+            {% for error in change_email_password_form.email_address.errors %}
             <span> {{ error }} </span>
             {% endfor %}
             <div class="p-2">
-              {{ form.password.label }}
-              {{ form.password(class='form-control') }}
+              {{ change_email_password_form.new_password.label }}
+              {{ change_email_password_form.new_password(class='form-control') }}
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="main-btn" data-dismiss="modal">Close</button>
-            {{ form.submit(class='main-btn') }}
+            {{ change_email_password_form.change_email_password_submit(class='main-btn') }}
           </div>
         </form>
       </div>
@@ -138,11 +138,14 @@
       window.location.href = "emails/history/" + mail_id
     }
 
-    function(){
-      var mail_address = $(this).data('get_email_address');
-      $(".modal-body #subdomaintwo").val( mail_address );
-      $("#changePasswordModal").modal('show');
+    $("#changePasswordModal").on('show.bs.modal', function(e) {
+      $("#update_pass_email_field").val();
     });
+
+    // function(){
+    //   var mail_address = $(this).data('get_email_address');
+    //   // $("#changePasswordModal").modal('show');
+    // });
 
   </script>
 

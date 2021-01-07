@@ -295,12 +295,25 @@ def dash_email():
     if current_user.is_anonymous:
         logger.warning("User is anonymous, redirecting to index")
         return redirect(url_for('index'))
-    form = AddEmailForm()
+
+    add_email_form = AddEmailForm()
+    change_email_password_form = ChangeEmailPasswordForm()
+    existing_addresses = get_existing_addresses_by_user_id(current_user.user_id)
+    return render_template('dashboard/dashboard_emails.html',
+    current_user = current_user.username, add_email_form = add_email_form, \
+    change_email_password_form = change_email_password_form, user_emails = existing_addresses)
+    ## -- Default Dashboard Loading END --
+
+@app.route('/dashboard/add_email', methods=['POST'])
+def add_email():
+    add_email_form = AddEmailForm()
+    change_email_password_form = ChangeEmailPasswordForm()
+    existing_addresses = get_existing_addresses_by_user_id(current_user.user_id)
 
     ## --- Add Email Form submission START ---
-    if form.validate_on_submit():
-        email_addr = form.email_address.data
-        password = form.password.data
+    if add_email_form.validate_on_submit():
+        email_addr = add_email_form.email_address.data
+        password = add_email_form.password.data
 
         # Checks if email already exist in database
         email_exist = get_email_address_by_address(email_addr)
@@ -314,8 +327,8 @@ def dash_email():
             # if test_mailbox_conn(email_addr, password):
             if True:
                 new_email = EmailAddress()
-                new_email.set_email_address(form.email_address.data)
-                new_email.set_email_password(form.password.data)
+                new_email.set_email_address(add_email_form.email_address.data)
+                new_email.set_email_password(add_email_form.password.data)
                 new_email.set_user_id(current_user.user_id)
                 new_email.set_created_at(datetime.now())
                 new_email.set_active_status(True)
@@ -330,33 +343,41 @@ def dash_email():
             return redirect(url_for('mail_form_reset'))
     ## -- Add Email Form submission END --
 
-    ## -- Default Dashboard Loading START --
+    return redirect(url_for('dash_email'))
+
+@app.route('/dashboard/update_email_password', methods=['POST'])
+def update_email_password():
+    logger.info("ENTERED START FUNC: UPDATE_EMAIL_PASS")
+    add_email_form = AddEmailForm()
+    change_email_password_form = ChangeEmailPasswordForm()
     existing_addresses = get_existing_addresses_by_user_id(current_user.user_id)
-    return render_template('dashboard/dashboard_emails.html',
-    current_user = current_user.username, form = form,
-    user_emails = existing_addresses)
-    ## -- Default Dashboard Loading END --
 
-    ## -- Change the Email Password START --
-    form = ChangeEmailPasswordForm()
-    email_addr = form.email_address.data
-    email_address = get_email_address_by_address(email_addr)
+    if change_email_password_form.is_submitted():
+        logger.info("Change email password form submitted.")
+        logger.info("PASSWORD SUBMITTED: %s", change_email_password_form.new_password.data)
+        logger.info("EMAIL ADDR RECEIVED: %s", change_email_password_form.email_address.data)
+        email_addr = change_email_password_form.email_address.data
+        email_address = get_email_address_by_address(email_addr)
 
-    logger.info("Entering password change")
-    if email_address is not None:
-        if not form.new_password.data or not form.confirm_new_password.data:
-            logger.info("Either password fields are empty, redirecting.")
-            flash('Please enter a new password to change passwords or select disable account to disable your account.')
-            return redirect(url_for('mail_form_reset'))
-        elif form.new_password.data == form.confirm_new_password.data:
-            logger.info("Password changed for %s", user.get_username())
-            email_address.set_password(form.new_password.data)
-            flash('Password Successfully Changed!')
-        else:
-            logger.info("Mismatched passwords submited, redirecting.")
-            flash('Passwords does not match!')
-            return redirect(url_for('mail_form_reset'))
-    ## -- Change the Email Password END --
+        logger.info("Entering password change")
+        # if email_address is not None:
+        #     if not change_email_password_form.new_password.data or \
+        #     not change_email_password_form.confirm_new_password.data:
+        #         logger.info("Either password fields are empty, redirecting.")
+        #         flash('Please enter a new password to change passwords or select disable account to disable your account.')
+        #         return redirect(url_for('mail_form_reset'))
+        #     elif change_email_password_form.new_password.data \
+        #     == change_email_password_form.confirm_new_password.data:
+        #         logger.info("Password changed for %s", user.get_username())
+        #         email_address.set_password(form.new_password.data)
+        #         flash('Password Successfully Changed!')
+        # else:
+        #         logger.info("Mismatched passwords submited, redirecting.")
+        #         flash('Passwords does not match!')
+        #         return redirect(url_for('mail_form_reset'))
+                ## -- Change the Email Password END --
+
+    return redirect(url_for('dash_email'))
 
 @app.route('/dashboard/account', methods=['GET', 'POST'])
 def dash_account():
