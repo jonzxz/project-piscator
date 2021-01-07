@@ -43,6 +43,9 @@ from imap_tools import MailBox, AND, OR
 from app.models.Mail import Mail
 from app.machine_learning.EmailData import EmailData
 
+# Email
+from email.errors import HeaderParseError
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
@@ -479,80 +482,89 @@ def check_phish(mid):
         logger.info("Attempting connection..")
         mailbox.login(mailaddr.get_email_address(), mailaddr.get_decrypted_email_password())
         logger.info("Connected to mailbox %s", mailaddr.get_email_address())
-
-        # Retrieves date last updated: converts datetime to date
-        last_updated = mailaddr.get_last_updated().date() if mailaddr.get_last_updated() else datetime.now().date()
-        # Updates last updated to current time
-        mailaddr.set_last_updated(datetime.now())
-        logger.info("Updating mailbox last updated from %s to %s",\
-         last_updated.strftime("%d-%m-%Y"), datetime.now())
-
-        # Selects mailbox to Inbox only
-        mailbox.folder.set("INBOX")
-        logger.info("Fetching mails..")
-
-        # Sets a check criteria so that
-        # only mails newer than last_updated and unread mails are checked
-        # check_criteria = AND(date_gte=last_updated, seen=False)
-
-        check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
-
-        # Fetch mails from mailbox based on criteria, does not "read" the mail
-        # and retrieves in bulk for faster performance at higher computing cost
-        all_mails = mailbox.fetch(check_criteria, reverse=True, mark_seen=False, bulk=True)
-        logger.info("Mails fetched..")
-
-        # Iterates through the mails that are not sent from the sender's address
-        # Creates a EmailData instance for each mail to generate features based on
-        # preprocessing logic, passes it into the model - if predict returns 1 it is a detected phish
-        # appends the detected mail into a list of Mail (phishing_mails)
-        # The purpose of Mail class is for easier display - the values are pulled from the
-        # imap_tool's Mail item instead of our EmailData.
-        # Inserts all phishing mails to the database
-        detection_count = 0
-        for msg in all_mails:
-            if not msg.from_ == mailaddr.get_email_address() or not msg.from_ == 'piscator.fisherman@gmail.com':
-                # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
-
-                mail_item = EmailData(msg.subject, msg.from_, msg.attachments, (msg.text + msg.html), msg.headers)
-                mail_item.generate_features()
-                result = model.predict(mail_item.repr_in_arr())
-                logger.info("Checking mail: %s -- Result: %s", mail_item.get_subject(), result)
-                if result == 1:
-                    logger.info("Phishing mail detected, subject: %s", msg.subject)
-
-                    # Checks that the detected mail item is not already in the database
-                    # This is to avoid duplicate rows of same item by
-                    # same receiver, same subject, sa me content.
-                    # If a user clicks on check multiple times in same day the detection
-                    # will continue to detect mails received after last_updated (inclusive of same day)
-                    # resulting in duplicate rows added to DB, so this is to mitigate that
-                    mail_exist = db.session.query(PhishingEmail).filter( \
-                    PhishingEmail.receiver_id == mailaddr.get_email_id(), \
-                    PhishingEmail.subject == msg.subject, \
-                    PhishingEmail.content == mail_item.get_content()).first()
-
-                    if not mail_exist:
-                        phishing_mails.append(Mail(msg.from_, msg.date, msg.subject))
-                        detection_count+=1
-                        detected_mail = PhishingEmail( \
-                        sender_address = msg.from_, \
-                        subject = msg.subject, \
-                        content = mail_item.get_content(), \
-                        created_at = datetime.now(), \
-                        receiver_id = mailaddr.get_email_id()
-                        )
-                        db.session.add(detected_mail)
-
-        mailaddr.set_phishing_mail_detected(detection_count)
-        db.session.commit()
-        logger.info("Finished checking mails.. logging out")
-        mailbox.logout()
-        send_phish_check_notice(mailaddr.get_email_address(), phishing_mails)
     except ConnectionRefusedError:
         logger.error("Unable to connect to mailbox for %s", mailaddr.get_email_address())
         flash("Unable to connect to mailbox!")
         return redirect(url_for('dash_email'))
+
+    # Retrieves date last updated: converts datetime to date
+    last_updated = mailaddr.get_last_updated().date() if mailaddr.get_last_updated() else datetime.now().date()
+    # Updates last updated to current time
+    mailaddr.set_last_updated(datetime.now())
+    logger.info("Updating mailbox last updated from %s to %s",\
+     last_updated.strftime("%d-%m-%Y"), datetime.now())
+
+    # Selects mailbox to Inbox only
+    mailbox.folder.set("INBOX")
+    logger.info("Fetching mails..")
+
+    # Sets a check criteria so that
+    # only mails newer than last_updated and unread mails are checked
+    # check_criteria = AND(date_gte=last_updated, seen=False)
+
+    check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
+
+    # Fetch mails from mailbox based on criteria, does not "read" the mail
+    # and retrieves in bulk for faster performance at higher computing cost
+    all_mails = mailbox.fetch(check_criteria, reverse=True, mark_seen=False, bulk=True)
+    logger.info("Mails fetched..")
+
+    # Iterates through the mails that are not sent from the sender's address
+    # Creates a EmailData instance for each mail to generate features based on
+    # preprocessing logic, passes it into the model - if predict returns 1 it is a detected phish
+    # appends the detected mail into a list of Mail (phishing_mails)
+    # The purpose of Mail class is for easier display - the values are pulled from the
+    # imap_tool's Mail item instead of our EmailData.
+    # Inserts all phishing mails to the database
+    detection_count = 0
+    for msg in all_mails:
+        try:
+            sender = msg.from_
+        except HeaderParseError:
+            # Exception happens when a msg.from_ is malformed resulting in
+            # unparseable values. Automatically assume phishing email and add to record.
+            # Denote Sender as 'INVALID_SENDER'
+            logger.error("HeaderParseError, unparseable msg.from_. Setting sender as INVALID_SENDER")
+            sender = 'INVALID_SENDER'
+
+        if not sender == mailaddr.get_email_address() or not sender == 'piscator.fisherman@gmail.com':
+            # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
+
+            mail_item = EmailData(msg.subject, sender, msg.attachments, (msg.text + msg.html), msg.headers)
+            mail_item.generate_features()
+            result = model.predict(mail_item.repr_in_arr())
+            logger.info("Checking mail: %s -- Result: %s", mail_item.get_subject(), result)
+            if result == 1:
+                logger.info("Phishing mail detected, subject: %s", msg.subject)
+
+                # Checks that the detected mail item is not already in the database
+                # This is to avoid duplicate rows of same item by
+                # same receiver, same subject, sa me content.
+                # If a user clicks on check multiple times in same day the detection
+                # will continue to detect mails received after last_updated (inclusive of same day)
+                # resulting in duplicate rows added to DB, so this is to mitigate that
+                mail_exist = db.session.query(PhishingEmail).filter( \
+                PhishingEmail.receiver_id == mailaddr.get_email_id(), \
+                PhishingEmail.subject == msg.subject, \
+                PhishingEmail.content == mail_item.get_content()).first()
+
+                if not mail_exist:
+                    phishing_mails.append(Mail(sender, msg.date, msg.subject))
+                    detection_count+=1
+                    detected_mail = PhishingEmail( \
+                    sender_address = sender, \
+                    subject = msg.subject, \
+                    content = mail_item.get_content(), \
+                    created_at = datetime.now(), \
+                    receiver_id = mailaddr.get_email_id()
+                    )
+                    db.session.add(detected_mail)
+
+    mailaddr.set_phishing_mail_detected(detection_count)
+    db.session.commit()
+    logger.info("Finished checking mails.. logging out")
+    mailbox.logout()
+    send_phish_check_notice(mailaddr.get_email_address(), phishing_mails)
 
     # return redirect(url_for('dashboard'))
     return render_template('dashboard/detection_results.html', phishing_mails = phishing_mails, today_date = today_date)
