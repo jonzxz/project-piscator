@@ -74,5 +74,6 @@
     $("#about-nav").attr("href", "{{url_for('index') }}#about");
     $("#facts-nav").attr("href", "{{url_for('index') }}#facts");
     $("#footer-nav").attr("href", "{{url_for('index') }}#footer");
+    $('a[name="login"]').remove();
 </script>
 {% endblock %}
