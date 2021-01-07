@@ -29,8 +29,8 @@ def test_request_reset_password(driver):
 
     # Click forget your password? button
     wait_forget_btn = WebDriverWait(driver, 5)
-    wait_forget_btn.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[2]/div[2]/form/div[5]/div/div/a')))
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div[2]/form/div[5]/div/div/a').click()
+    wait_forget_btn.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[3]/div[1]/div[2]/form/div[5]/div/div/a')))
+    driver.find_element(By.XPATH, '/html/body/div[3]/div[1]/div[2]/form/div[5]/div/div/a').click()
 
     # Assert redirected to reset page
     assert driver.current_url.split(sep='/')[-1] == 'reset'
