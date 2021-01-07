@@ -139,6 +139,7 @@ class AdminEmailView(AdminBaseView):
 
 	create_modal = True
 	edit_modal = True
+	column_filters = ['user_id']
 
 	list_template = 'admin/admin_base_list.html'
 	create_template = 'admin/admin_base_create.html'
