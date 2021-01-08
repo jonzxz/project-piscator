@@ -360,22 +360,22 @@ def update_email_password():
         email_address = get_email_address_by_address(email_addr)
 
         logger.info("Entering password change")
-        # if email_address is not None:
-        #     if not change_email_password_form.new_password.data or \
-        #     not change_email_password_form.confirm_new_password.data:
-        #         logger.info("Either password fields are empty, redirecting.")
-        #         flash('Please enter a new password to change passwords or select disable account to disable your account.')
-        #         return redirect(url_for('mail_form_reset'))
-        #     elif change_email_password_form.new_password.data \
-        #     == change_email_password_form.confirm_new_password.data:
-        #         logger.info("Password changed for %s", user.get_username())
-        #         email_address.set_password(form.new_password.data)
-        #         flash('Password Successfully Changed!')
-        # else:
-        #         logger.info("Mismatched passwords submited, redirecting.")
-        #         flash('Passwords does not match!')
-        #         return redirect(url_for('mail_form_reset'))
-                ## -- Change the Email Password END --
+        if email_address is not None:
+            if not change_email_password_form.new_password.data or \
+            not change_email_password_form.confirm_new_password.data:
+                logger.info("Either password fields are empty, redirecting.")
+                flash('Please enter a new password to change passwords or select disable account to disable your account.')
+                return redirect(url_for('mail_form_reset'))
+            elif change_email_password_form.new_password.data \
+            == change_email_password_form.confirm_new_password.data:
+                logger.info("Password changed for %s", user.get_username())
+                email_address.set_password(form.new_password.data)
+                flash('Password Successfully Changed!')
+        else:
+                logger.info("Mismatched passwords submited, redirecting.")
+                flash('Passwords does not match!')
+                return redirect(url_for('mail_form_reset'))
+                # -- Change the Email Password END --
 
     return redirect(url_for('dash_email'))
 
