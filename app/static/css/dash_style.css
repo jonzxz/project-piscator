@@ -2,11 +2,6 @@ body {
 	font-family: "Lato", sans-serif;
 }
 
-span {
-	font-family: "Lato", sans-serif;
-	font-weight: bold;
-}
-
 .first {
 	width: 35%;
 	float:left;
@@ -38,28 +33,46 @@ span {
     margin-left: 240px;
 }
 
-
 .bg-c-email{
-	background-image: linear-gradient( 135deg, #0396FF 10%, #ABDCFF 100%);
-	font-size: 25px;
-	font-weight: bold;
-}
-
-.bg-c-all-detection{
-	background-image: linear-gradient( 135deg, #3C8CE7 10%, #00EAFF 100%);
+	background-image: linear-gradient( 135deg, #ABDCFF 10%, #70b1f0 100%);
 	font-size: 20px;
 	font-weight: bold;
 }
 
-.bg-c-detection{
-	background-image: linear-gradient( 135deg, #3C8CE7 10%, #00EAFF 100%);
+.bg-c-today{
+	/* background-color:#b9dcf2; */
+	background-color:#F44336;
+	font-family: system-ui;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.bg-c-weekly{
+	background-color:#FF9800;
+	/* background-color:#b9dcf2; */
+	font-family: system-ui;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.bg-c-monthly{
+	background-color:#2196F3;
+	/* background-color:#b9dcf2; */
+	font-family: system-ui;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.bg-c-all{
+	background-color: #4CAF50;
+	/* background-color:#b9dcf2; */
+	font-family: system-ui;
 	font-size: 20px;
 	font-weight: bold;
 }
 
 .bg-bar-chart{
-	background-image: linear-gradient( 135deg, #32CCBC  10%, #90F7EC 100%);
-	/* background-image: linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%); */
+	background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
 	font-size: 20px;
 	font-weight: bold;
 }
