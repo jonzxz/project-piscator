@@ -33,7 +33,7 @@
           <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
         {% endif %}
         <td class="text-center"> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.get_email_id() }});"></a></td>
-        <td class="text-center"> <a class="lni lni-pencil"  name="update-{{ email.email_address }}" data-toggle="modal" data-target="#changePasswordModal"></a></td>
+        <td class="text-center"> <a class="lni lni-pencil" name="update-{{ email.email_address }}" data-toggle="modal" data-target="#changePasswordModal"></a></td>
         <td class="text-center"> <a class="lni lni-power-switch" id="{{ email.email_id }}" name="activate-{{ email.email_address}}" href="#" onclick="activate({{ email.get_email_id() }});"></a></td>
       </tr>
       {% endfor %}
@@ -138,9 +138,30 @@
       window.location.href = "emails/history/" + mail_id
     }
 
-    $("#changePasswordModal").on('show.bs.modal', function(e) {
-      $("#update_pass_email_field").val();
+    // $(function(){
+    //     var tr = ele.target.parentNode.parentNode;
+    //     // var mail = tr.cells[0].textContent;
+    //     var mail = $(this).parents().prev().text();
+    //     $("#update_pass_email_field").val(mail);
+    //     $('#changePasswordModal').modal(show);
+    //   });
+    // });
+
+    $(document).ready(function(){
+      $(".lni-pencil").click(function(){ // Click to only happen on lni-pencil links
+        var tr = ele.target.parentNode.parentNode;
+        var mail = tr.cells[0].textContent;
+        $("#update_pass_email_field").val($(this).data(mail));
+        $('#changePasswordModal').modal('show');
+      });
     });
+
+    // $("#changePasswordModal").on('show.bs.modal', function(e) {
+    //   var tr = ele.target.parentNode.parentNode;
+    //   // var mail = tr.cells[0].textContent;
+    //   var mail = $(this).parents().prev().text();
+    //   $("#update_pass_email_field").val(mail);
+    // });
 
     // function(){
     //   var mail_address = $(this).data('get_email_address');
