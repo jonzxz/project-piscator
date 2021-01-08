@@ -3,7 +3,8 @@
 <script>
   $(document).ready(function(){
     $('#detectionTable').DataTable( {
-
+      "order": [[ 2, "desc" ]],
+      "columnDefs" : [{"targets":2, "type":"date-eu"}]
     } );
   });
 </script>
