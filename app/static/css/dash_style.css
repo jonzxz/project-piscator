@@ -2,6 +2,11 @@ body {
 	font-family: "Lato", sans-serif;
 }
 
+span {
+	font-family: "Lato", sans-serif;
+	font-weight: bold;
+}
+
 .first {
 	width: 35%;
 	float:left;
@@ -28,36 +33,39 @@ body {
 	font-weight: bold;
 }
 
-.bg-c-today{
-	background-color:#b9dcf2;
-	font-family: system-ui;
+.tab {
+    display: inline-block;
+    margin-left: 240px;
+}
+
+
+.bg-c-email{
+	background-image: linear-gradient( 135deg, #0396FF 10%, #ABDCFF 100%);
+	font-size: 25px;
+	font-weight: bold;
+}
+
+.bg-c-all-detection{
+	background-image: linear-gradient( 135deg, #3C8CE7 10%, #00EAFF 100%);
 	font-size: 20px;
 	font-weight: bold;
 }
 
-.bg-c-weekly{
-	background-color:#96c6ea;
-	font-family: system-ui;
+.bg-c-detection{
+	background-image: linear-gradient( 135deg, #3C8CE7 10%, #00EAFF 100%);
 	font-size: 20px;
 	font-weight: bold;
 }
 
-.bg-c-monthly{
-	background-color:#9fccfa;
-	font-family: system-ui;
-	font-size: 20px;
-	font-weight: bold;
-}
-
-.bg-c-all{
-	background-color: #70b1f0;
-	font-family: system-ui;
+.bg-bar-chart{
+	background-image: linear-gradient( 135deg, #32CCBC  10%, #90F7EC 100%);
+	/* background-image: linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%); */
 	font-size: 20px;
 	font-weight: bold;
 }
 
 .sidepanel  {
-	width: 250px;
+	width: 260px;
 	position: fixed;
 	z-index: 1;
 	height: 100%;
