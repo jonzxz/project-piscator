@@ -354,26 +354,26 @@ def update_email_password():
 
     if change_email_password_form.is_submitted():
         logger.info("Change email password form submitted.")
-        logger.info("PASSWORD SUBMITTED: %s", change_email_password_form.new_password.data)
         logger.info("EMAIL ADDR RECEIVED: %s", change_email_password_form.email_address.data)
         email_addr = change_email_password_form.email_address.data
         email_address = get_email_address_by_address(email_addr)
 
         logger.info("Entering password change")
-        if email_address is not None:
-            if not change_email_password_form.new_password.data or \
-            not change_email_password_form.confirm_new_password.data:
-                logger.info("Either password fields are empty, redirecting.")
-                flash('Please enter a new password to change passwords or select disable account to disable your account.')
+        if email_address is not None and email_address.get_active_status():
+            if change_email_password_form.new_password.data:
+                if test_mailbox_conn(email_addr, change_email_password_form.new_password.data):
+                    flash('Password successfully updated!')
+                    email_address.set_email_password(change_email_password_form.new_password.data)
+                    db.session.commit()
+                else:
+                    flash('Unable to connect to mailbox with new password!')
+            else:
+                logger.info("Password entered is empty.")
+                flash('Password entered for update password is empty.')
                 return redirect(url_for('mail_form_reset'))
-            elif change_email_password_form.new_password.data \
-            == change_email_password_form.confirm_new_password.data:
-                logger.info("Password changed for %s", user.get_username())
-                email_address.set_password(form.new_password.data)
-                flash('Password Successfully Changed!')
         else:
-                logger.info("Mismatched passwords submited, redirecting.")
-                flash('Passwords does not match!')
+                logger.info("Email address is inactive or None.")
+                flash('Email address is inactive or does not exist')
                 return redirect(url_for('mail_form_reset'))
                 # -- Change the Email Password END --
 

@@ -99,11 +99,11 @@
           </button>
         </div>
         <form action="{{ url_for('update_email_password') }}" method="post" novalidate>
-          {{ change_email_password_form.hidden_tag() }}
+          {{ change_email_password_form.csrf_token(id = "unique_id") }}
           <div class="modal-body">
             <div class="p-2">
               {{ change_email_password_form.email_address.label }}
-              <input class="form-control" type="text" id="update_pass_email_field" value="" disabled />
+              {{ change_email_password_form.email_address(class='form-control', id='update_pass_email_field', value='', readonly='readonly') }}
             </div>
             {% for error in change_email_password_form.email_address.errors %}
             <span> {{ error }} </span>
@@ -138,35 +138,15 @@
       window.location.href = "emails/history/" + mail_id
     }
 
-    // $(function(){
-    //     var tr = ele.target.parentNode.parentNode;
-    //     // var mail = tr.cells[0].textContent;
-    //     var mail = $(this).parents().prev().text();
-    //     $("#update_pass_email_field").val(mail);
-    //     $('#changePasswordModal').modal(show);
-    //   });
-    // });
-
     $(document).ready(function(){
-      $(".lni-pencil").click(function(){ // Click to only happen on lni-pencil links
+      $(".lni-pencil").click(function(ele){ // Click to only happen on lni-pencil links
         var tr = ele.target.parentNode.parentNode;
         var mail = tr.cells[0].textContent;
-        $("#update_pass_email_field").val($(this).data(mail));
         $('#changePasswordModal').modal('show');
+        $("#update_pass_email_field").attr('value', mail);
+        $("#update_pass_email_field").attr('data', mail);
       });
     });
-
-    // $("#changePasswordModal").on('show.bs.modal', function(e) {
-    //   var tr = ele.target.parentNode.parentNode;
-    //   // var mail = tr.cells[0].textContent;
-    //   var mail = $(this).parents().prev().text();
-    //   $("#update_pass_email_field").val(mail);
-    // });
-
-    // function(){
-    //   var mail_address = $(this).data('get_email_address');
-    //   // $("#changePasswordModal").modal('show');
-    // });
 
   </script>
 
