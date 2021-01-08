@@ -15,70 +15,70 @@
         </div>
       </div>
     </div>
-    <div class="col-md-6">
-      <div class="card proj-progress-card">
-        <div class="card-body bg-c-email text-white pl-3">Inactive Email Addresses
-          <div id="email-inactive" class="text-white"></div>
-          <progress id="inactive-progress-bar" value="0" max="0"></progress>
-        </div>
-      </div>
-    </div>
   </div>
   <br>
   <div class="row">
     <div class="col-md-3">
-      <div class="card bg-c-detection">
+      <div class="card bg-c-today">
         <div class="card-body">
-          <div class="text-white pl-3">Today Detection</div>
+          <div class="text-white">Today Detection</div>
           <div class="row align-items-center">
             <div class="col-8">
-          <div class="text-white pl-3" style="font-size:30px;">
-            <i class="lni lni-envelope"></i>
+              <div class="text-white">
+                <i class="lni lni-envelope"></i>
+              </div>
             </div>
+            <div id="today-detected" class="col-4 text-right text-white" style="font-size:30px;">
             </div>
-            <div id="today-detected" class="col-4 text-right text-white" style="font-size:35px;">
-            </div>
-            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="card bg-c-detection">
+      <div class="card bg-c-weekly">
         <div class="card-body">
-          <div class="text-white pl-3" style="font-size:30px;">
-            <i class="lni lni-envelope"><span id="weekly-detected" class="text-white pl-3"></span></i>
-          <div class="text-white" style="font-size:20px;">Weekly Detection</div>
-          </div>
-      </div>
-    </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card bg-c-all-detection">
-        <div class="card-body">
+          <div class="text-white">Weekly Detection</div>
           <div class="row align-items-center">
-          <div class="col-8">
-            <div class="text-white pl-3">Monthly Detection</div>
-            <div id="monthly-detected" class="text-white pl-3" style="font-size:35px;"></div>
+            <div class="col-8">
+              <div class="text-white">
+                <i class="lni lni-envelope"></i>
+              </div>
+            </div>
+            <div id="weekly-detected" class="col-4 text-right text-white" style="font-size:30px;">
+            </div>
           </div>
-          <div class="col-4 text-right">
-            <p class="text-white pr-3"><i class="lni lni-envelope lni-32"></i></p>
-          </div>
+      </div>
+    </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-c-monthly">
+        <div class="card-body">
+          <div class="text-white">Montly Detection</div>
+          <div class="row align-items-center">
+            <div class="col-8">
+              <div class="text-white">
+                <i class="lni lni-envelope"></i>
+              </div>
+            </div>
+            <div id="monthly-detected" class="col-4 text-right text-white" style="font-size:30px;">
+            </div>
           </div>
           </div>
         </div>
     </div>
     <div class="col-md-3">
-      <div class="card bg-c-all-detection">
+      <div class="card bg-c-all">
        <div class="card-body">
+         <div class="text-white">All Time Detection</div>
          <div class="row align-items-center">
-           <div class="col-2">
-           <p class="text-white pl-3"><i class="lni lni-envelope lni-32"></i></p>
+           <div class="col-8">
+             <div class="text-white">
+               <i class="lni lni-envelope"></i>
+             </div>
            </div>
-           <div class="col-10 text-right">
-             <div id="all-time-detected" class="text-white pl-3" style="font-size:35px;"></div>
-             <div class="text-white pl-3">All Time Detection</div>
-          </div>
-          </div>
+           <div id="all-time-detected" class="col-4 text-right text-white" style="font-size:30px;">
+           </div>
+         </div>
         </div>
       </div>
     </div>
@@ -157,7 +157,6 @@
   // Card values
   // Active Email Addresses display
   var email_active = {{ statistics['email_active'] }}
-  var email_inactive = {{ statistics['email_inactive'] }}
   var email_stats =  {{ statistics['email_stats'] }}
   var all_time_detected = {{ statistics['all_time'] }}
   var monthly_detected = {{ statistics['monthly'] }}
@@ -168,10 +167,6 @@
   document.getElementById("email-active").innerHTML = email_active;
   document.getElementById("active-progress-bar").value = email_active;
   document.getElementById("active-progress-bar").max = email_stats;
-
-  document.getElementById("email-inactive").innerHTML = email_inactive;
-  document.getElementById("inactive-progress-bar").value = email_inactive;
-  document.getElementById("inactive-progress-bar").max = email_stats;
 
   // All Time detection
   document.getElementById("all-time-detected").innerHTML = all_time_detected;
