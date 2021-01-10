@@ -14,6 +14,12 @@ def get_email_address_by_address(mail_address):
 def get_email_address_by_email_id(mail_id):
     return db.session.query(EmailAddress).filter(EmailAddress.email_id == mail_id).first()
 
+def get_email_id_by_mail_address(mail_address):
+    return db.session.query(EmailAddress) \
+            .filter(EmailAddress.email_address == mail_address) \
+            .first() \
+            .get_email_id()
+
 def get_existing_addresses_by_user_id(id):
     return db.session.query(EmailAddress).filter(EmailAddress.user_id == id).all()
 
