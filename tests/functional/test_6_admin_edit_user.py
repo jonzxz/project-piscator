@@ -33,8 +33,8 @@ def test_admin_disable_user(driver):
 
     # Clicks on 'Users' in admin navbar
     wait_user_btn = WebDriverWait(driver, 3)
-    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[2]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[2]').click()
+    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[2]')))
+    driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[2]').click()
 
     # Searches for edit (a pencil in 1st column) by href where it's url is href_link
     # and click to enter edit page for the particular user
@@ -81,8 +81,8 @@ def test_enable_user(driver):
 
     # Clicks on 'Users' in admin navbar
     wait_user_btn = WebDriverWait(driver, 3)
-    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[2]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[2]').click()
+    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[2]')))
+    driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[2]').click()
 
     # Searches for edit (a pencil in 1st column) by href where it's url is href_link
     # and click to enter edit page for the particular user
@@ -121,8 +121,8 @@ def test_assert_enable_user(driver):
 
     # Logout back to index
     wait_logout = WebDriverWait(driver, 5)
-    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[5]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[5]').click()
+    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[5]')))
+    driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[5]').click()
 
     # Assert redirected to index
     assert driver.current_url.split(sep='/')[-1] == 'index'

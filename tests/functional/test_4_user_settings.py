@@ -17,8 +17,8 @@ def test_change_password(driver):
 
     # Wait for account settings button to appear and click
     wait_acc_set_btn = WebDriverWait(driver, 3)
-    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[4]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[4]').click()
+    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[4]')))
+    driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[4]').click()
     # Assert redirected to /account page
     assert driver.current_url.split(sep='/')[-1] == 'account'
 
@@ -48,8 +48,8 @@ def test_disable_account(driver):
 
     # Wait for account settings button to appear
     wait_acc_set_btn = WebDriverWait(driver, 3)
-    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[4]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[4]').click()
+    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[4]')))
+    driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[4]').click()
     # Assert redirected to /account page
     assert driver.current_url.split(sep='/')[-1] == 'account'
 

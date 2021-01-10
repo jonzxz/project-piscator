@@ -18,8 +18,8 @@ def test_add_email(driver):
 
     # Wait for subscription button to appear and click
     wait_subscription = WebDriverWait(driver, 3)
-    wait_subscription.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[3]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[3]').click()
+    wait_subscription.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[3]')))
+    driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[3]').click()
     # Assert redirected to /emails page
     assert driver.current_url.split(sep='/')[-1] == 'emails'
 
@@ -36,6 +36,10 @@ def test_add_email(driver):
     driver.find_element_by_id('submit').click()
     assert EMAIL_ADDR in driver.page_source
 
+# Flows after test_add_email
+# Clicks on "Clean Mailbox" to enter a phishing check
+# Assert page redirected to Detection Results
+# Goes back to Subscriptions page
 def test_check_email(driver):
     MAIL_CREDS = get_server_mail_cred()
     EMAIL_ADDR = MAIL_CREDS[0]
@@ -46,16 +50,19 @@ def test_check_email(driver):
     wait_email_entry.until(EC.visibility_of_element_located((By.NAME, 'clean-{}'.format(EMAIL_ADDR))))
     driver.find_element_by_name('clean-{}'.format(EMAIL_ADDR)).click()
     assert driver.current_url.split(sep='/')[-2] == 'phish'
-    print(driver.current_url)
     assert 'Detection Results' in driver.page_source
 
     # Wait for subscription button to appear and click
     wait_subscription = WebDriverWait(driver, 3)
-    wait_subscription.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[3]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[3]').click()
+    wait_subscription.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[3]')))
+    driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[3]').click()
     # Assert redirected to /emails page
     assert driver.current_url.split(sep='/')[-1] == 'emails'
 
+# Flows after test_check_email
+# Clicks on "Detection History" to view all history
+# Assert page redirected to Detection History
+# Goes back to Subscriptions page
 def test_detection_history(driver):
     MAIL_CREDS = get_server_mail_cred()
     EMAIL_ADDR = MAIL_CREDS[0]
@@ -69,8 +76,8 @@ def test_detection_history(driver):
 
     # Wait for subscription button to appear and click
     wait_subscription = WebDriverWait(driver, 3)
-    wait_subscription.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[3]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[3]').click()
+    wait_subscription.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[3]')))
+    driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[3]').click()
     # Assert redirected to /emails page
     assert driver.current_url.split(sep='/')[-1] == 'emails'
 
