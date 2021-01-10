@@ -1,23 +1,20 @@
 {% extends "dashboard/dashboard_base.html" %}
-
 {% block content %}
-<div class="container ml-5">
+<div class="container ml-5 col-lg-12 col-md-12 col-xs-12">
   <div class="row">
     <div class="col-12">
       <span class="h2 pb-5">Dashboard</span>
     </div>
   </div>
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-6">
       <div class="card proj-progress-card">
-        <div class="card-body">
-          <h6>Active Email Addresses</h6>
-          <p id="emailactive"></p>
-          <progress id="progress_bar" value="0" max="0"></progress>
+        <div class="card-body bg-c-email text-white">Active Email Addresses
+          <div id="email-active" class="text-white"></div>
+          <progress id="active-progress-bar" value="0" max="0"></progress>
         </div>
       </div>
     </div>
-    <div class="col-9"></div>
   </div>
   <br>
   <div class="row">
@@ -25,53 +22,63 @@
       <div class="card bg-c-today">
         <div class="card-body">
           <div class="text-white">Today Detection</div>
-          <div id="today-detected" class="text-white"></div>
-          <div class="col-auto">
-            <i class="fas fa-eye bg-c-blue"></i>
-          </div>
-          <div class="card-footer bg-c-today">
-            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
+          <div class="row align-items-center">
+            <div class="col-8">
+              <div class="text-white">
+                <i class="lni lni-envelope"></i>
+              </div>
+            </div>
+            <div id="today-detected" class="col-4 text-right text-white" style="font-size:30px;">
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="col-md-3">
       <div class="card bg-c-weekly">
-        <div class="card-body text-info">
+        <div class="card-body">
           <div class="text-white">Weekly Detection</div>
-          <div id="weekly-detected" class="text-white"></div>
-          <i class="fas fa-bullseye bg-c-green"></i>
-          <div class="card-footer bg-c-weekly">
-            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
+          <div class="row align-items-center">
+            <div class="col-8">
+              <div class="text-white">
+                <i class="lni lni-envelope"></i>
+              </div>
+            </div>
+            <div id="weekly-detected" class="col-4 text-right text-white" style="font-size:30px;">
+            </div>
           </div>
-        </div>
       </div>
+    </div>
     </div>
     <div class="col-md-3">
       <div class="card bg-c-monthly">
         <div class="card-body">
-          <div class="text-white">Monthly Detection</div>
-          <div id="monthly-detected" class="text-white"></div>
-          <div class="col-auto">
-            <i class="fas fa-bullseye bg-c-green"></i>
+          <div class="text-white">Montly Detection</div>
+          <div class="row align-items-center">
+            <div class="col-8">
+              <div class="text-white">
+                <i class="lni lni-envelope"></i>
+              </div>
+            </div>
+            <div id="monthly-detected" class="col-4 text-right text-white" style="font-size:30px;">
+            </div>
           </div>
-          <div class="card-footer bg-c-monthly">
-            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
           </div>
         </div>
-      </div>
     </div>
     <div class="col-md-3">
       <div class="card bg-c-all">
        <div class="card-body">
-          <div class="text-white">All Time Detection</div>
-          <div id="all-time-detected" class="text-white"></div>
-          <div class="col-auto">
-            <i class="fas fa-bullseye bg-c-green"></i>
-          </div>
-          <div class="card-footer bg-c-all">
-            <p class="text-white"><i class="lni lni-alarm-clock"></i> Updated</p>
-          </div>
+         <div class="text-white">All Time Detection</div>
+         <div class="row align-items-center">
+           <div class="col-8">
+             <div class="text-white">
+               <i class="lni lni-envelope"></i>
+             </div>
+           </div>
+           <div id="all-time-detected" class="col-4 text-right text-white" style="font-size:30px;">
+           </div>
+         </div>
         </div>
       </div>
     </div>
@@ -80,13 +87,7 @@
   <div class="row">
     <div class="col-md-12">
       <div class="card">
-        <div class="card-header bg-transparent">
-          <div class="row align-items-center">
-            <div class="col">
-              <h6 class="text-uppercase text-muted ls-1 mb-1">Monthly Overview</h6>
-            </div>
-          </div>
-        </div>
+        <div class="card-header bg-bar-chart text-uppercase text-white">Monthly Overview</div>
         <div class="card-body">
           <div class="chart-area">
             <canvas id="overview" class="chart-canvas" width="1000" height="400"></canvas>
@@ -163,9 +164,9 @@
   var today_detected = {{ statistics['today'] }}
 
 
-  document.getElementById("emailactive").innerHTML = email_active;
-  document.getElementById("progress_bar").value = email_active;
-  document.getElementById("progress_bar").max = email_stats;
+  document.getElementById("email-active").innerHTML = email_active;
+  document.getElementById("active-progress-bar").value = email_active;
+  document.getElementById("active-progress-bar").max = email_stats;
 
   // All Time detection
   document.getElementById("all-time-detected").innerHTML = all_time_detected;
