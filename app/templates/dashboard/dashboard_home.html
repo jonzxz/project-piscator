@@ -1,6 +1,7 @@
 {% extends "dashboard/dashboard_base.html" %}
 {% block content %}
 <div class="container ml-5 col-lg-12 col-md-12 col-xs-12">
+  <div class="">
   <div class="row">
     <div class="col-12">
       <span class="h2 pb-5">Dashboard</span>
@@ -86,9 +87,8 @@
   <br>
   <div class="row">
     <div class="col-md-12">
-      <div class="card">
-        <div class="card-header bg-bar-chart text-uppercase text-white">Monthly Overview</div>
-        <div class="card-body">
+      <div class="card text-uppercase">
+        <div class="card-body h5 pb-3">Monthly Overview</div>
           <div class="chart-area">
             <canvas id="overview" class="chart-canvas" width="1000" height="400"></canvas>
           </div>
