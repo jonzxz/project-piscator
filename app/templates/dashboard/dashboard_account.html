@@ -1,84 +1,81 @@
 {% extends "dashboard/dashboard_base.html" %}
 {% block content %}
-<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-<div class="w-90 mx-auto pl-5 pt-5">
-  <span class="h2 pt-2">Account Settings</span>
-  <hr style="background-color:white">
-<form action="" method="post" novalidate>
-  {{ form.hidden_tag() }}
-  <div class="row pb-3">
-    <div class="col-5"><p class="text-right">{{ form.username.label }}</p></div>
-    <div class="col-2"><input class="form-control" type="text" id="subdomaintwo" value="  {{ current_user }}" disabled /></div>
-  </div>
-  <div class="row pb-3">
-    <div class="col-5"><p class="text-right">{{ form.current_password.label }}</p></div>
-    <div class="col-2">{{ form.current_password(class_='form-control') }}</div>
-  </div>
-  <div class="row pb-3">
-    <div class="col-5"><p class="text-right">{{ form.new_password.label }}</p></div>
-    <div class="col-2">{{ form.new_password(class_='form-control') }}</div>
-  </div>
-  <div class="row pb-3">
-    <div class="col-5"><p class="text-right">{{ form.confirm_new_password.label }}</p></div>
-    <div class="col-2">{{ form.confirm_new_password(class_='form-control') }}</div>
-  </div>
-  <div class="row pb-3">
-    <div class="col-5"><p class="text-right">{{ form.disable_account.label }}</p></div>
-    <div class="col-2">
-      <div class="row mx-md-n3">
-        <div class="col pt-md-1">
-          <div class="custom-control custom-switch">
-            {% if status %}
-              <input type="checkbox" class="custom-control-input" id="disable_acc_switch" name='disable_account'>
-            {% else %}
-              <input type="checkbox" class="custom-control-input" id="disable_acc_switch" name='disable_account' checked>
-            {% endif %}
-            <label class="custom-control-label" for="disable_acc_switch"></label>
+<div class="container">
+  <div class="w-90 mx-auto pl-5 pt-5">
+    <span class="h2 pt-2">Account Settings</span>
+    <hr class="hr-dashboard-account">
+    <form action="" method="post" novalidate>
+      {{ form.hidden_tag() }}
+      <div class="row pb-3">
+        <div class="col-5 text-right">{{ form.username.label }}</div>
+        <div class="col-3"><input class="form-control" type="text" value="{{ current_user }}" disabled /></div>
+      </div>
+      <div class="row pb-3">
+        <div class="col-5 text-right">{{ form.current_password.label }}</div>
+        <div class="col-3">{{ form.current_password(class_='form-control') }}</div>
+      </div>
+      <div class="row pb-3">
+        <div class="col-5 text-right">{{ form.new_password.label }}</div>
+        <div class="col-3">{{ form.new_password(class_='form-control') }}</div>
+      </div>
+      <div class="row pb-3">
+        <div class="col-5 text-right">{{ form.confirm_new_password.label }}</div>
+        <div class="col-3">{{ form.confirm_new_password(class_='form-control') }}</div>
+      </div>
+      <div class="row pb-3">
+        <div class="col-5 text-right">{{ form.disable_account.label }}</div>
+        <div class="col-3">
+          <div class="row mx-md-n3">
+            <div class="col pt-md-1">
+              <div class="custom-control custom-switch">
+                {% if status %}
+                <input type="checkbox" class="custom-control-input" id="disable_acc_switch" name='disable_account'>
+                {% else %}
+                <input type="checkbox" class="custom-control-input" id="disable_acc_switch" name='disable_account' checked>
+                {% endif %}
+                <label class="custom-control-label" for="disable_acc_switch"></label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-3"></div>
-    <div class="col-2"><p class="text-right">{{ form.submit(class_='main-btn btn btn-secondary btn-block') }}</p></div>
-    <div class="col-2"><a href="{{ url_for('dashboard') }}" class = "main-btn btn btn-default btn-block">Cancel</a></div>
-    <div class="col-5"></div>
-  </div>
-</form>
-
-
-<hr>
-
-<div class="row">
-{% with messages = get_flashed_messages() %}
-<div class="col-3"></div>
-  {% if messages %}
-    {% for message in messages %}
+      <div class="row">
+        <div class="col-4"></div>
+        <div class="col-2">{{ form.submit(class='main-btn btn btn-secondary btn-block') }}</div>
+        <div class="col-2"><a href="{{ url_for('dashboard') }}" class="main-btn btn btn-default btn-block">Cancel</a></div>
+        <div class="col-4"></div>
+      </div>
+    </form>
+    <hr>
+    <div class="row">
+      {% with messages = get_flashed_messages() %}
+      <div class="col-3"></div>
+      {% if messages %}
+      {% for message in messages %}
       <div class="col-4">
         {% if 'Successful' in message or 'Enabled' in message%}
-          <div class="alert alert-success"> <p class="text-center">{{ message }}</p> </div>
+        <div class="alert alert-success"><p class="text-center">{{ message }}</p> </div>
         {%else%}
-          <div class="alert alert-danger"> <p class="text-center">{{ message }}</p> </div>
+        <div class="alert alert-danger"><p class="text-center">{{ message }}</p> </div>
         {% endif %}
       </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-{% if form.errors %}
-  {% for error in form.current_password.errors %}
-    <div class="col-4">
-      <div class="alert alert-danger"><p class="text-center">{{ error }}</p></div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      {% if form.errors %}
+      {% for error in form.current_password.errors %}
+      <div class="col-4">
+        <div class="alert alert-danger"><p class="text-center">{{ error }}</p></div>
+      </div>
+      {% endfor %}
+      {% for error in form.confirm_new_password.errors %}
+      <div class="col-4">
+        <div class="alert alert-danger"><p class="text-center">{{ error }}</p></div>
+      </div>
+      {% endfor %}
+      {% endif %}
+      <div class="col-4"></div>
     </div>
-  {% endfor %}
-  {% for error in form.confirm_new_password.errors %}
-    <div class="col-4">
-      <div class="alert alert-danger"><p class="text-center">{{ error }}</p></div>
-    </div>
-  {% endfor %}
-{% endif %}
-<div class="col-4"></div>
+  </div>
 </div>
 {% endblock %}

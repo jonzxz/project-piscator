@@ -1,5 +1,31 @@
 {% extends "dashboard/dashboard_base.html" %}
 {% block content %}
+<div class="container">
+  <div class="w-90 mx-auto pl-5 pt-5">
+    <span class="h2 pt-2">Detection History</span>
+    <div class="mt-3">
+      <table id="detectionTable" class="table table-hover">
+        <thead>
+          <tr class="tr-header">
+            <th class="text-center" scope="col">Sender</th>
+            <th class="text-center" scope="col">Subject</th>
+            <th class="text-center" scope="col">Detection Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mail in phishing_mails %}
+          <tr class="tr-bg">
+            <td>{{ mail.get_sender_address() }}</td>
+            <td>{{ mail.get_subject() }}</td>
+            <td class="text-center">{{ mail.get_detected_on().strftime('%d-%m-%Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <script>
   $(document).ready(function(){
     $('#detectionTable').DataTable( {
@@ -8,32 +34,8 @@
     } );
   });
 </script>
-<style>
-  #detectionTable {border-style: none;}
-</style>
+<!-- <style>
+#detectionTable {border-style: none;}
+</style> -->
 
-<!--<span class="h1">Showing detection history<span>-->
-<!--<a href="{{ url_for('dash_email')}}">Click to go back to dashboard</a>-->
-<div class="w-90 mx-auto pl-5 pt-5">
-<span class="h2 pt-2">Detection History</span>
-<div class="mt-3">
-  <table id="detectionTable" class="table table-hover">
-    <thead>
-      <tr style="color: #889B95">
-        <th scope="col">Sender</th>
-        <th scope="col">Subject</th>
-        <th class="text-center" scope="col">Detection Date</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for mail in phishing_mails %}
-      <tr>
-        <td>{{ mail.get_sender_address() }}</td>
-        <td>{{ mail.get_subject() }}</td>
-        <td class="text-center">{{ mail.get_detected_on().strftime('%d-%m-%Y') }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
 {% endblock %}

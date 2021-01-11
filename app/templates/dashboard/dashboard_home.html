@@ -9,8 +9,9 @@
   <div class="row">
     <div class="col-md-6">
       <div class="card proj-progress-card">
-        <div class="card-body bg-c-email text-white">Active Email Addresses
-          <div id="email-active" class="text-white"></div>
+        <div class="card-body bg-c-email">
+          Active Email Addresses
+          <div id="email-active"></div>
           <progress id="active-progress-bar" value="0" max="0"></progress>
         </div>
       </div>
@@ -21,14 +22,12 @@
     <div class="col-md-3">
       <div class="card bg-c-today">
         <div class="card-body">
-          <div class="text-white">Today Detection</div>
+          Today Detection
           <div class="row align-items-center">
             <div class="col-8">
-              <div class="text-white">
-                <i class="lni lni-envelope"></i>
-              </div>
+              <i class="lni lni-envelope"></i>
             </div>
-            <div id="today-detected" class="col-4 text-right text-white" style="font-size:30px;">
+            <div id="today-detected" class="col-4 text-right detection-num">
             </div>
           </div>
         </div>
@@ -37,48 +36,42 @@
     <div class="col-md-3">
       <div class="card bg-c-weekly">
         <div class="card-body">
-          <div class="text-white">Weekly Detection</div>
+          Weekly Detection
           <div class="row align-items-center">
             <div class="col-8">
-              <div class="text-white">
-                <i class="lni lni-envelope"></i>
-              </div>
+              <i class="lni lni-envelope"></i>
             </div>
-            <div id="weekly-detected" class="col-4 text-right text-white" style="font-size:30px;">
+            <div id="weekly-detected" class="col-4 text-right detection-num">
             </div>
           </div>
+        </div>
       </div>
-    </div>
     </div>
     <div class="col-md-3">
       <div class="card bg-c-monthly">
         <div class="card-body">
-          <div class="text-white">Montly Detection</div>
+          Montly Detection
           <div class="row align-items-center">
             <div class="col-8">
-              <div class="text-white">
-                <i class="lni lni-envelope"></i>
-              </div>
+              <i class="lni lni-envelope"></i>
             </div>
-            <div id="monthly-detected" class="col-4 text-right text-white" style="font-size:30px;">
+            <div id="monthly-detected" class="col-4 text-right detection-num">
             </div>
-          </div>
           </div>
         </div>
+      </div>
     </div>
     <div class="col-md-3">
       <div class="card bg-c-all">
-       <div class="card-body">
-         <div class="text-white">All Time Detection</div>
-         <div class="row align-items-center">
-           <div class="col-8">
-             <div class="text-white">
-               <i class="lni lni-envelope"></i>
-             </div>
-           </div>
-           <div id="all-time-detected" class="col-4 text-right text-white" style="font-size:30px;">
-           </div>
-         </div>
+        <div class="card-body">
+          All Time Detection
+          <div class="row align-items-center">
+            <div class="col-8">
+              <i class="lni lni-envelope"></i>
+            </div>
+            <div id="all-time-detected" class="col-4 text-right detection-num">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -86,12 +79,10 @@
   <br>
   <div class="row">
     <div class="col-md-12">
-      <div class="card">
-        <div class="card-header bg-bar-chart text-uppercase text-white">Monthly Overview</div>
-        <div class="card-body">
-          <div class="chart-area">
-            <canvas id="overview" class="chart-canvas" width="1000" height="400"></canvas>
-          </div>
+      <div class="card text-uppercase">
+        <div class="card-body h5 pb-3">Monthly Overview</div>
+        <div class="chart-area">
+          <canvas id="overview" class="chart-canvas" width="1000" height="400"></canvas>
         </div>
       </div>
     </div>
@@ -149,7 +140,7 @@
         maxBarThickness: 8,
         minBarLength: 4,
       }
-    ],
+      ],
     }
   });
   // -- Bar Chart END
