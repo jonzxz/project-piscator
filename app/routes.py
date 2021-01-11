@@ -100,7 +100,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'error')
             return redirect(url_for('login'))
-            
+
         if user.get_active_status() == False:
             flash('Account is disabled, contact support!', 'error')
             return redirect(url_for('login'))
@@ -366,18 +366,18 @@ def update_email_password():
         if email_address is not None and email_address.get_active_status():
             if change_email_password_form.new_password.data:
                 if test_mailbox_conn(email_addr, change_email_password_form.new_password.data):
-                    flash('Password successfully updated!')
+                    flash('Password successfully updated!', 'success')
                     email_address.set_email_password(change_email_password_form.new_password.data)
                     db.session.commit()
                 else:
-                    flash('Unable to connect to mailbox with new password!')
+                    flash('Unable to connect to mailbox with new password!', 'error')
             else:
                 logger.info("Password entered is empty.")
-                flash('Password entered for update password is empty.')
+                flash('Password entered for update password is empty.', 'error')
                 return redirect(url_for('mail_form_reset'))
         else:
                 logger.info("Email address is inactive or None.")
-                flash('Email address is inactive or does not exist')
+                flash('Email address is inactive or does not exist', 'error')
                 return redirect(url_for('mail_form_reset'))
                 # -- Change the Email Password END --
 
