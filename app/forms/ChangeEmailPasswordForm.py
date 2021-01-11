@@ -6,4 +6,4 @@ from wtforms.validators import DataRequired, Email
 class ChangeEmailPasswordForm(FlaskForm):
     email_address = EmailField('Email Address', validators=[DataRequired(), Email()])
     new_password = PasswordField('New Password: ', render_kw={"placeholder": "New Password"})
-    change_email_password_submit = SubmitField('Change')
+    change_email_password_submit = SubmitField('Update')
