@@ -28,6 +28,7 @@ from app.utils.EmailUtils import send_contact_us_email
 from app.utils.EmailUtils import get_imap_svr
 from app.utils.EmailUtils import send_phish_check_notice
 from app.utils.EmailUtils import send_password_token
+from app.utils.EmailUtils import check_valid_time
 from app.utils.DBUtils import get_user_by_id
 from app.utils.DBUtils import get_user_by_name
 from app.utils.DBUtils import get_email_address_by_address
@@ -99,7 +100,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password', 'error')
             return redirect(url_for('login'))
-            
+
         if user.get_active_status() == False:
             flash('Account is disabled, contact support!', 'error')
             return redirect(url_for('login'))
@@ -488,7 +489,7 @@ def check_phish(mid):
         return redirect(url_for('dash_email'))
 
     # Retrieves date last updated: converts datetime to date
-    last_updated = mailaddr.get_last_updated().date() if mailaddr.get_last_updated() else datetime.now().date()
+    last_updated = mailaddr.get_last_updated() if mailaddr.get_last_updated() else datetime.now()
     # Updates last updated to current time
     mailaddr.set_last_updated(datetime.now())
     logger.info("Updating mailbox last updated from %s to %s",\
@@ -507,6 +508,7 @@ def check_phish(mid):
     # Fetch mails from mailbox based on criteria, does not "read" the mail
     # and retrieves in bulk for faster performance at higher computing cost
     all_mails = mailbox.fetch(check_criteria, reverse=True, mark_seen=False, bulk=True)
+
     logger.info("Mails fetched..")
 
     # Iterates through the mails that are not sent from the sender's address
@@ -525,6 +527,10 @@ def check_phish(mid):
     for msg in all_mails:
         try:
             sender = msg.from_
+            if (check_valid_time(last_updated, msg.date)):
+                print("Last updated: {}".format(last_updated))
+                print(msg.subject)
+                print("Date of mail: {}".format(msg.date))
         except HeaderParseError:
             # Exception happens when a msg.from_ is malformed resulting in
             # unparseable values. Automatically assume phishing email and add to record.

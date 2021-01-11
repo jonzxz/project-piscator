@@ -63,3 +63,8 @@ def send_password_token(destination, username, token):
     msg.body += "If you did not request for this password reset, please contact the administrative team immediately.\n"
     mailer.send(msg)
     logger.info("Password reset token email sent")
+
+def check_valid_time(startHour,mailTime):
+    if int(mailTime.strftime("%H")) >= int(startHour.strftime("%H")):
+        return True
+    return False
