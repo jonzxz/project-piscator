@@ -19,7 +19,7 @@
         </thead>
         <tbody>
           {% for mail in phishing_mails %}
-          <tr>
+          <tr class="tr-bg">
             <td>{{ mail.get_sender() }}</td>
             <td>{{ mail.get_subject() }}</td>
             <td class="text-center">{{ mail.get_date().strftime('%d-%m-%Y, %H:%M:%S') }}</td>

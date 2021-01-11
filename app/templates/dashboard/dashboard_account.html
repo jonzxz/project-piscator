@@ -46,10 +46,7 @@
         <div class="col-4"></div>
       </div>
     </form>
-
-
     <hr>
-
     <div class="row">
       {% with messages = get_flashed_messages() %}
       <div class="col-3"></div>
@@ -57,9 +54,9 @@
       {% for message in messages %}
       <div class="col-4">
         {% if 'Successful' in message or 'Enabled' in message%}
-        <div class="alert alert-success"> <p class="text-center">{{ message }}</p> </div>
+        <div class="alert alert-success"><p class="text-center">{{ message }}</p> </div>
         {%else%}
-        <div class="alert alert-danger"> <p class="text-center">{{ message }}</p> </div>
+        <div class="alert alert-danger"><p class="text-center">{{ message }}</p> </div>
         {% endif %}
       </div>
       {% endfor %}
