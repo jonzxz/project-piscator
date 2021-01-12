@@ -10,8 +10,12 @@
     <div class="col-md-6">
       <div class="card proj-progress-card">
         <div class="card-body bg-c-email">
-          Active Email Addresses
-          <div id="email-active"></div>
+          <div class="row align-items-center">
+            <div class="col-8">Active Email Addresses</div>
+            <div class="col-4 text-right detection-num">
+              <div id="email-active"></div>
+            </div>
+          </div>
           <progress id="active-progress-bar" value="0" max="0"></progress>
         </div>
       </div>
@@ -22,7 +26,7 @@
     <div class="col-md-3">
       <div class="card bg-c-today">
         <div class="card-body">
-          Today Detection
+          Today's Detection
           <div class="row align-items-center">
             <div class="col-8">
               <i class="lni lni-envelope"></i>
@@ -50,7 +54,7 @@
     <div class="col-md-3">
       <div class="card bg-c-monthly">
         <div class="card-body">
-          Montly Detection
+          Monthly Detection
           <div class="row align-items-center">
             <div class="col-8">
               <i class="lni lni-envelope"></i>
@@ -82,7 +86,7 @@
       <div class="card text-uppercase">
         <div class="card-body h5 pb-3">Monthly Overview</div>
         <div class="chart-area">
-          <canvas id="overview" class="chart-canvas" width="1000" height="400"></canvas>
+          <canvas id="overview" class="chart-canvas" width="1000" height="300"></canvas>
         </div>
       </div>
     </div>

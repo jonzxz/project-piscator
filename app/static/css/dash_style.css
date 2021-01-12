@@ -7,6 +7,20 @@ body {
 	background-color: white;
 }
 
+progress {
+  border-radius: 7px;
+  width: 100%;
+  height: 22px;
+}
+progress::-webkit-progress-bar {
+  background-color: #70b1f0;
+  border-radius: 7px;
+}
+progress::-webkit-progress-value {
+	background-color: #FFFFFF;
+  border-radius: 7px;
+}
+
 .first {
 	width: 35%;
 	float:left;
@@ -25,13 +39,14 @@ body {
 	height: 420px;
  }
 
-.loginuser{
+.login-user{
 	font-size: 20px;
 	margin-bottom: 30px;
 	text-transform: uppercase;
 	text-align:center;
 	font-weight: bold;
 	color: white;
+	font-family: "Lato", sans-serif;
 }
 
 .tab {
@@ -97,7 +112,7 @@ body {
 	overflow-x: hidden;
 	transition: 0.5s;
 	padding-top: 60px;
-	background-image: linear-gradient(to right, #209cff 0%, #68e0cf 100%);
+	background-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
 	color: white;
 }
 
@@ -108,12 +123,12 @@ body {
 	color: #818181;
 	display: block;
 	transition: 0.3s;
-	background-image: linear-gradient(to right, #209cff 0%, #68e0cf 100%);
+	background-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
 	color: white;
 }
 
 .sidepanel a:hover {
-	color: #f1f1f1;
+	color: #84fab0;
 }
 
 .tr-header{
