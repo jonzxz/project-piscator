@@ -56,24 +56,24 @@
         </tbody>
       </table>
     </div>
-  <hr>
-  <!-- Button trigger modal -->
-  <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#addMailModal">
-    Add New Email
-  </button>
-  <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#instructionsModal">
-    Instructions
-  </button>
+    <hr>
+    <!-- Button trigger modal -->
+    <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#addMailModal">
+      Add New Email
+    </button>
+    <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#instructionsModal">
+      Instructions
+    </button>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      {% for category, message in messages %}
-        {% if category == 'success' %}
-          <span class="alert alert-success">{{ message }}</span>
-        {% elif category == 'error' %}
-          <span class="alert alert-danger">{{ message }}</span>
-        {% endif %}
-      {% endfor %}
+    {% for category, message in messages %}
+    {% if category == 'success' %}
+    <span class="alert alert-success">{{ message }}</span>
+    {% elif category == 'error' %}
+    <span class="alert alert-danger">{{ message }}</span>
+    {% endif %}
+    {% endfor %}
     {% endif %}
     {% endwith %}
 
@@ -111,25 +111,26 @@
       </div>
     </div>
 
-  <div class="modal fade" id="instructionsModal" tabindex="-1" role="dialog" aria-labelledby="instructionsModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id=instructionsModalLabel">Instructions</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+    <div class="modal fade" id="instructionsModal" tabindex="-1" role="dialog" aria-labelledby="instructionsModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id=instructionsModalLabel">Instructions</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
           <div class="modal-body">
             <div class="p-2">
-              <h3>Subscribe</h3>
-              <p>1. Select “Add New Email”</p>
-              <p>2.	Enter the email and its corresponding <b>application</b> password that you want subscribed to the service, and select “Add Email”</p>
-              <p>3.	Once successful, the new entry will be displayed</p>
+              <h4>Subscribe</h4>
+              <p><span class="tab">1. Select “Add New Email”</span></p>
+              <p><span class="tab">2.	Enter the email and its corresponding <b>application</b>
+                password that you want subscribed to the service, and select “Add Email”</span></p>
+              <p><span class="tab">3.	Once successful, the new entry will be displayed</span></p>
             </div>
             <div class="p-2">
               <h3>Scan for Phishing Emails</h3>
-              <p>1. From the “Clean Mailbox” column, select  <a class="lni lni-brush"></a>  (Note: The time taken may vary depending on the number of unchecked emails in the mailbox.)</p>
+              <p>1. From the “Clean Mailbox” column, select <a class="lni lni-brush"></a> (Note: The time taken may vary depending on the number of unchecked emails in the mailbox.)</p>
               <p>2.	Once successful, you will be redirected to “Detection Results” (Note: “Detection Results” shows the details (sender, subject title and date sent) of the phishing emails that were detected from only that scan.)</p>
             </div>
             <div class="p-2">
@@ -148,67 +149,67 @@
               <a href="#">Need help setting up an application password?</a>
             </div>
           </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="changePasswordLabel">Change Email Password</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="{{ url_for('update_email_password') }}" method="post" novalidate>
-          {{ change_email_password_form.csrf_token(id = "unique_id") }}
-          <div class="modal-body">
-            <div class="p-2">
-              {{ change_email_password_form.email_address.label }}
-              {{ change_email_password_form.email_address(class='form-control', id='update_pass_email_field', value='', readonly='readonly') }}
-            </div>
-            {% for error in change_email_password_form.email_address.errors %}
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="changePasswordLabel">Change Email Password</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form action="{{ url_for('update_email_password') }}" method="post" novalidate>
+            {{ change_email_password_form.csrf_token(id = "unique_id") }}
+            <div class="modal-body">
+              <div class="p-2">
+                {{ change_email_password_form.email_address.label }}
+                {{ change_email_password_form.email_address(class='form-control', id='update_pass_email_field', value='', readonly='readonly') }}
+              </div>
+              {% for error in change_email_password_form.email_address.errors %}
               <span> {{ error }} </span>
               {% endfor %}
               <div class="p-2">
                 {{ change_email_password_form.new_password.label }}
                 {{ change_email_password_form.new_password(class='form-control') }}
               </div>
-            <div class="modal-footer">
-              <button type="button" class="main-btn" data-dismiss="modal">Close</button>
-              {{ change_email_password_form.change_email_password_submit(class='main-btn') }}
-            </div>
-          </form>
+              <div class="modal-footer">
+                <button type="button" class="main-btn" data-dismiss="modal">Close</button>
+                {{ change_email_password_form.change_email_password_submit(class='main-btn') }}
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-  function phish(mail_id) {
-    var names = document.getElementById(mail_id).name;
-    let url = "emails/phish/" + mail_id;
-    window.location.href = url;
-  }
+  <script>
+    function phish(mail_id) {
+      var names = document.getElementById(mail_id).name;
+      let url = "emails/phish/" + mail_id;
+      window.location.href = url;
+    }
 
-  function activate(mail_id) {
-    window.location.href = "emails/activation/" + mail_id;
-  }
+    function activate(mail_id) {
+      window.location.href = "emails/activation/" + mail_id;
+    }
 
-  function history(mail_id) {
-    window.location.href = "emails/history/" + mail_id
-  }
+    function history(mail_id) {
+      window.location.href = "emails/history/" + mail_id
+    }
 
-  $(document).ready(function(){
-    $(".lni-pencil").click(function(ele){ // Click to only happen on lni-pencil links
-      var tr = ele.target.parentNode.parentNode;
-      var mail = tr.cells[0].textContent;
-      $('#changePasswordModal').modal('show');
-      $("#update_pass_email_field").attr('value', mail);
-      $("#update_pass_email_field").attr('data', mail);
+    $(document).ready(function(){
+      $(".lni-pencil").click(function(ele){ // Click to only happen on lni-pencil links
+        var tr = ele.target.parentNode.parentNode;
+        var mail = tr.cells[0].textContent;
+        $('#changePasswordModal').modal('show');
+        $("#update_pass_email_field").attr('value', mail);
+        $("#update_pass_email_field").attr('data', mail);
+      });
     });
-  });
-</script>
-{% endblock %}
+  </script>
+  {% endblock %}
