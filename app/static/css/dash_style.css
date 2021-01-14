@@ -44,23 +44,34 @@ progress::-webkit-progress-value {
 	font-size:30px;
 }
 
-.bg-c-today-admin{
-
-	background-color:#DA6666;
-	/*background-image: linear-gradient(120deg, #c2e9fb 0%, #a1c4fd 100%);*/
-	font-size: 20px;
-	font-weight: bold;
-	color: white;
-}
-
-.bg-c-all-admin{
-	background-color:#63D3D3;
+.bg-c-detection-admin{
+	/* background-color:#63D3D3; */
 	/* background-color: #00C0EF; */
 	/* background-color:#b9dcf2; */
 	/*background-image: linear-gradient(120deg, #accbee 0%, #e7f0fd 100%);*/
 	font-size: 20px;
-	font-weight: bold;
-	color: white;
+	height: 127px;
+	border-bottom-color: #DA6666;
+	border-bottom-width: thick;
+	/* font-weight: bold;
+	color: white; */
+}
+
+.bg-c-detect-admin{
+	/* background-color:#63D3D3; */
+	/* background-color: #00C0EF; */
+	/* background-color:#b9dcf2; */
+	/*background-image: linear-gradient(120deg, #accbee 0%, #e7f0fd 100%);*/
+	font-size: 20px;
+	height: 127px;
+	border-bottom-color: #63D3D3;
+	border-bottom-width: thick;
+	/* font-weight: bold;
+	color: white; */
+}
+
+.lni-color{
+	color :#9890e3;
 }
 
 .bg-c-email{
