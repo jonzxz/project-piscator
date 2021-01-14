@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 def train_model() -> RandomForestClassifier:
-    dataset = pd.read_csv('dsv6.csv', encoding = "ISO-8859-1")
+    dataset = pd.read_csv('dsv8.csv', encoding = "ISO-8859-1")
     # dataset = pd.read_csv('train.csv', encoding = "ISO-8859-1")
     dataset.columns = ['X1','X2','X3','X4', 'X5', 'X6', 'X7', 'X8', 'X9', 'X10', 'X11', 'X12', 'X13', 'X14', 'X15','Y']
     dataset.head()
@@ -117,7 +117,7 @@ def test_model_olden_phish(model, test_data_dir, start, end):
 
 def main():
     MODERN_HAM_PATH = '../../Mailboxes/Hams/ModernHam2/'
-    MODERN_PHISH_PATH = '../../Mailboxes/Phish/ModernPhish2/'
+    MODERN_PHISH_PATH = '../../Mailboxes/Phish/ModernPhish3/'
     OLDEN_HAM_PATH = '../../Mailboxes/enron_mail_20150507/maildir/badeer-r/all_documents/'
     OLDEN_PHISH_PATH = '../../Mailboxes/PhishingCorpus_Jose_Nazario/public_phishing/phishing3/'
     SINGLE_TEST_FILE = '../../Mailboxes/Hams/Jonathan_Mailbox/1.eml'
@@ -126,7 +126,7 @@ def main():
     # test_model_olden_ham(model, OLDEN_HAM_PATH, 1, 300)
     # test_model(model, '../../Mailboxes/Yannis_Mailbox/', 1, 134)
     # test_model_modern_phish(model, MODERN_PHISH_PATH, 1, 56)
-    # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 222)
+    # test_model_modern_ham(model, MODERN_HAM_PATH, 1, 238)
     # test_model_single(model, SINGLE_TEST_FILE)
     serialize_model(model)
 
