@@ -12,35 +12,35 @@ to the user dashboard (but that only shows for that particular user)
   <div class="container ml-5 col-lg-12 col-md-12 col-xs-12">
     <div class="row">
       <div class="col-12">
-        <span class="h2 pb-5">Administrator Dashboard</span>
+        <span class="h2 pb-4">Administrator Dashboard</span>
       </div>
     </div>
     <div class="row">
       <div class="col-md-4">
         <div class="card card-chart">
           <div class="card-body h5 pb-2">Users</div>
-            <div class="chart-area">
-              <canvas id="user_chart" width="109" height="45"></canvas>
-            </div>
+          <div class="chart-area pb-3">
+            <canvas id="user_chart" width="109" height="46" class="pr-3"></canvas>
           </div>
         </div>
+      </div>
       <div class="col-md-4">
         <div class="card card-chart">
           <div class="card-body h5 pb-2">Email Addresses</div>
-            <div class="chart-area">
-              <canvas id="email_chart" width="109" height="45"></canvas>
-            </div>
+          <div class="chart-area pb-3">
+            <canvas id="email_chart" width="109" height="46" class="pr-3 pl-3"></canvas>
           </div>
         </div>
+      </div>
       <div class="col-md-4">
         <div class="row">
           <div class="col-md-12">
-            <div class="card bg-c-today-admin">
+            <div class="card bg-c-detection-admin">
               <div class="card-body">
                 Today's Detection
-                <div class="row align-items-center">
+                <div class="row align-items-center pt-3">
                   <div class="col-4">
-                    <i class="lni lni-envelope lni-32"></i>
+                    <i class="lni lni-envelope lni-32 lni-color"></i>
                   </div>
                   <div id="today-detected" class="col-8 text-right detection-num">
                   </div>
@@ -52,12 +52,12 @@ to the user dashboard (but that only shows for that particular user)
         <br>
         <div class="row">
           <div class="col-md-12">
-            <div class="card bg-c-all-admin">
+            <div class="card bg-c-detect-admin">
               <div class="card-body">
                 All Time Detection
-                <div class="row align-items-center">
+                <div class="row align-items-center pt-3">
                   <div class="col-4">
-                    <i class="lni lni-envelope lni-32"></i>
+                    <i class="lni lni-envelope lni-32 lni-color"></i>
                   </div>
                   <div id="all-time-detected" class="col-8 text-right detection-num">
                   </div>
@@ -71,7 +71,7 @@ to the user dashboard (but that only shows for that particular user)
     <br>
     <div class="row">
       <div class="col-md-12">
-        <div class="card text-uppercase">
+        <div class="card">
           <div class="card-body h5 pb-3">Monthly Overview</div>
           <div class="chart-area">
             <canvas id="overview" class="chart-canvas" width="1000" height="300"></canvas>
@@ -112,27 +112,21 @@ to the user dashboard (but that only shows for that particular user)
     type: "pie",
     data: {
       indexLabelFontSize : 26,
-      labels: ["Inactive Users", "Active Users"],
+      labels: ["Active Users", "Inactive Users"],
       datasets: [
       {
         data: users_stats,
-        backgroundColor: ["#95D9DA", "#6DD6DA"],
+        backgroundColor: ["#6DD6DA", "#95D9DA"],
       }
       ]
     },
     options:{
-      legend:{
-        labels:{
-            fontsize: '20px',
-            fontcolor: 'rgb(255, 99, 132)'
-          },
-        position: "right"
-      },
-      plugins:{
-        labels:{
-          fontsize: 16,
-          padding: 15,
-          fontcolor: 'red'
+      responsive: true,
+      legend: {
+        display: true,
+        position: "right",
+        labels: {
+          fontSize: 14
         }
       }
     }
@@ -141,17 +135,20 @@ to the user dashboard (but that only shows for that particular user)
   var email_chart = new Chart(emails, {
     type: "pie",
     data: {
-      labels: ["Inactive Addresses", "Active Addresses"],
+      labels: ["Active Addresses", "Inactive Addresses"],
       datasets: [
       {
         data: email_stats,
-        backgroundColor: ["#C1DFF0", "#88CCF1"]
+        backgroundColor: ["#88CCF1", "#C1DFF0"]
       }
       ]
     },
     options:{
       legend:{
-        position: "right"
+        position: "right",
+        labels:{
+          fontSize: 14
+        }
       }
     }
   });
