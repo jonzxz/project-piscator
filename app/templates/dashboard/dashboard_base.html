@@ -8,9 +8,9 @@
 	<div class="row">
 		<div class="col-12 col-md-1">
 			<div id="user-panel" class="sidepanel">
-				<div class="loginuser">
+				<div class="login-user">
 					<img src="{{ url_for('static', filename='icons/logo.svg') }}" alt='Logo' width=40%>
-					<span>{{ session['username'] }}</span>
+					<p class="login-user">{{ session['username'] }}</p>
 				</div>
 				<a href="{{ url_for('index') }}" class="list-group-item list-group-item-action bg-light text-left lni lni-home pt-4 pb-4">
 					<span class="pl-2 poppins">Home</span>

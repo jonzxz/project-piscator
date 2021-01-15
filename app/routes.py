@@ -614,9 +614,14 @@ def check_phish(mid):
     mailbox.logout()
     send_phish_check_notice(mailaddr.get_email_address(), phishing_mails)
 
+    mailaddr = get_email_address_by_email_id(mid)
+    mail_address = mailaddr.get_email_address()
+    logger.info(mailaddr)
+    logger.info(mail_address)
+
     # return redirect(url_for('dashboard'))
     return render_template('dashboard/detection_results.html', \
-    phishing_mails = phishing_mails, data=data)
+    phishing_mails = phishing_mails, data=data, mail_address = mail_address)
 
 @app.route('/dashboard/emails/activation/<mid>')
 def mail_activation(mid):
@@ -643,9 +648,15 @@ def detection_history(mid):
         logger.warning("Anonymous or unauthorized user attempting activation of address ID {}!".format(mid))
         return redirect(url_for('index'))
 
+    mailaddr = get_email_address_by_email_id(mid)
+    mail_address = mailaddr.get_email_address()
+
     detection_history = db.session.query(PhishingEmail).filter(PhishingEmail.receiver_id == mid).all()
     logger.info(detection_history)
-    return render_template('dashboard/detection_history.html', phishing_mails = detection_history)
+    logger.info(mailaddr)
+    logger.info(mail_address)
+    return render_template('dashboard/detection_history.html', phishing_mails = detection_history \
+    , mail_address = mail_address)
 
 @app.route('/privacy')
 def privacy():
