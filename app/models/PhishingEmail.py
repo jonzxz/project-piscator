@@ -1,4 +1,7 @@
+## Application Objects
 from app import db
+
+## Utilities
 from datetime import datetime
 from sqlalchemy import extract
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -7,30 +10,35 @@ from sqlalchemy.ext.hybrid import hybrid_property
 class PhishingEmail(db.Model):
     __tablename__ = 'phishing_email'
     mail_id = db.Column(db.Integer, primary_key=True)
-    sender_address = db.Column(db.String(255), index=True, unique=False, nullable=False)
+    sender_address = db.Column(db.String(255), index=True, unique=False\
+    , nullable=False)
     subject = db.Column(db.Text, nullable=False, unique=False)
     content = db.Column(db.Text, nullable=False, unique=False)
     created_at = db.Column(db.DateTime, index=True,default=datetime.now)
 
     # FK
-    receiver_id = db.Column(db.Integer, db.ForeignKey('email_address.email_id'), index=True, unique=False, nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('email_address.email_id')\
+    , index=True, unique=False, nullable=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "From: {}\nSubject: {}".format(self.sender_address, self.subject)
-        # return "Received by: {} -- Month Created: {}".format(self.receiver_id, self.get_created_month())
 
-    def get_sender_address(self):
+    def get_sender_address(self) -> str:
         return self.sender_address
 
-    def get_subject(self):
+    def get_subject(self) -> str:
         return self.subject
 
-    def get_detected_on(self):
+    def get_detected_on(self) -> datetime:
         return self.created_at
 
-    def get_created_month(self):
+    def get_created_month(self) -> int:
         return self.created_at.month
 
+    """
+    Following hybrid properties are created to retrieve phishing emails detected
+    based on the time criteria for monthly overview in dashboard statistics
+    """
     @hybrid_property
     def created_at_year(self):
         return self.created_at.year
