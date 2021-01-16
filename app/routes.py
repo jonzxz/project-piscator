@@ -702,6 +702,10 @@ def reset():
         user = get_user_by_name(form.username.data)
         email = get_email_address_by_address(form.email_address.data)
 
+        if user is None:
+            flash('Account does not exist!')
+            return redirect(url_for('reset'))
+            
         if user.get_active_status() == False:
             flash('Account is disabled, contact support for assistance!')
             return redirect(url_for('reset'))
