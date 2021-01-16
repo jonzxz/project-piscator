@@ -202,8 +202,8 @@ COPY public.phishing_email (mail_id, sender_address, content, created_at, receiv
 --
 
 COPY public."user" (user_id, username, password, created_at, is_active, is_admin, last_logged_in, reset_token) FROM stdin;
-1	admin	pbkdf2:sha256:150000$SKuScFdI$15f7230738c1057f74812e162b143a2cfa0a4d20c21a0812e27c7da4131690bd	2021-01-17 00:10:08.608676	t	f	2021-01-17 00:10:08.608175	\N
 2	user	pbkdf2:sha256:150000$DyMwkytR$58f3cb52a4f9483f1df09435d57d8c69a385681f02680318023c61204da5aaa3	2021-01-17 00:10:21.395388	t	f	2021-01-17 00:10:21.394887	\N
+1	admin	pbkdf2:sha256:150000$SKuScFdI$15f7230738c1057f74812e162b143a2cfa0a4d20c21a0812e27c7da4131690bd	2021-01-17 00:10:08.608676	t	t	2021-01-17 00:10:08.608175	\N
 \.
 
 
