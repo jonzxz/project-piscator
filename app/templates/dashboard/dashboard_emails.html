@@ -8,11 +8,11 @@
         <thead>
           <tr class="tr-header">
             <th class="text-center" scope="col">Email</th>
-            <th class="text-center" scope="col">Phishing Emails Detected</th>
+            <th class="text-center" scope="col">Emails Detected / Checked</th>
             <th class="text-center" scope="col">Detection History</th>
             <th class="text-center" scope="col">Last Updated</th>
             <th class="text-center" scope="col">Active Status</th>
-            <th class="text-center" scope="col">Clean Mailbox</th>
+            <th class="text-center" scope="col">Scan Mailbox</th>
             <th class="text-center" scope="col">Change Password</th>
             <th class="text-center" scope="col">Activate</th>
           </tr>
@@ -21,7 +21,7 @@
           {% for email in user_emails %}
           <tr class="tr-bg">
             <td class="text-center">{{ email.get_email_address() }}</td>
-            <td class="text-center">{{ email.get_phishing_mail_detected() }}</td>
+            <td class="text-center">{{ email.get_phishing_mail_detected() }} / {{ email.get_total_mails_checked() }}</td>
             <td class="text-center"><a class="lni lni-keyword-research" id="history-{{ email.email_id }}"
               name="history-{{ email.email_address }}" href="#"
               onclick="history({{ email.get_email_id() }});"></a></td>

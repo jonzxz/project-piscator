@@ -576,6 +576,8 @@ def check_phish(mid):
         'check_time' : datetime.now().strftime('%d-%m-%Y, %H:%M')
     }
 
+    mail_check_count = 0
+
     for msg in all_mails:
         try:
             sender = msg.from_
@@ -589,6 +591,7 @@ def check_phish(mid):
         if not sender == mailaddr.get_email_address() or not sender == 'piscator.fisherman@gmail.com':
             # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
             data['total_count']+=1
+            mail_check_count +=1
             mail_item = EmailData(msg.subject, sender, msg.attachments, (msg.text + msg.html), msg.headers)
             mail_item.generate_features()
             result = model.predict(mail_item.repr_in_arr())
@@ -612,6 +615,7 @@ def check_phish(mid):
                     db.session.add(detected_mail)
 
     mailaddr.set_phishing_mail_detected(data['detection_count'])
+    mailaddr.set_total_mails_checked(mail_check_count)
     db.session.commit()
     logger.info("Finished checking mails.. logging out")
     mailbox.logout()

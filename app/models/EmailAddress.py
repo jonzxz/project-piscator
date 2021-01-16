@@ -57,11 +57,17 @@ class EmailAddress(db.Model):
     def get_mailbox_size(self) -> int:
         return self.last_mailbox_size
 
+    def get_phishing_mail_detected(self) -> int:
+        return self.phishing_mail_detected
+
     def set_phishing_mail_detected(self, num_phish_detected: int):
         self.phishing_mail_detected += num_phish_detected
 
-    def get_phishing_mail_detected(self) -> int:
-        return self.phishing_mail_detected
+    def get_total_mails_checked(self) -> int:
+        return self.total_mails_checked
+
+    def set_total_mails_checked(self, num_mails_checked: int) -> None:
+        self.total_mails_checked += num_mails_checked
 
     def get_active_status(self) -> bool:
         return self.active
@@ -83,7 +89,6 @@ class EmailAddress(db.Model):
 
     def get_last_updated(self) -> datetime:
         return self.last_updated
-
 
     def get_prettified_date(self) -> str:
         return self.get_last_updated().strftime('%d-%m-%Y %H:%M')

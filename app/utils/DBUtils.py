@@ -152,6 +152,7 @@ def check_all_mailboxes() -> None:
             logger.info("Mails fetched..")
 
             detection_count = 0
+            mail_check_count = 0
 
             for mail in all_mails:
                 try:
@@ -163,6 +164,9 @@ def check_all_mailboxes() -> None:
 
                 if not sender == mailaddr.get_email_address() \
                 or not sender == 'piscator.fisherman@gmail.com':
+
+                    mail_check_count+=1
+
                     mail_item = EmailData(mail.subject, sender, mail.attachments\
                     , (mail.text + mail.html), mail.headers)
                     mail_item.generate_features()
@@ -189,6 +193,7 @@ def check_all_mailboxes() -> None:
                             )
                             db.session.add(detected_mail)
             mailaddr.set_phishing_mail_detected(detection_count)
+            mailaddr.set_total_mails_checked(mail_check_count)
             logger.info("Finished checking mails.. logging out")
             mailbox.logout()
         db.session.commit()

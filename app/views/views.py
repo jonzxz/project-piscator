@@ -128,14 +128,15 @@ class AdminEmailView(AdminBaseView):
 	# PK displayed, selected columns relabelled and displayed
 	can_set_page_size = True
 	column_display_pk = True
-	column_list = ['email_id', 'email_address', 'owner_id', 'last_mailbox_size',\
-	 'phishing_mail_detected', 'created_at', 'last_updated', 'active']
+	column_list = ['email_id', 'email_address', 'owner_id',
+	 'phishing_mail_detected', 'total_mails_checked', 'created_at', 'last_updated'\
+	 , 'active']
 	column_labels = {
 		'email_id' : 'ID',
 		'email_address' : 'Email Address',
 		'owner_id' : 'Owner ID',
-		'last_mailbox_size' : 'Last Mailbox Size',
 		'phishing_mail_detected' : 'Detection Count',
+		'total_mails_checked' : 'Total Mails Checked',
 		'created_at' : 'Created At',
 		'last_updated' : 'Last Updated'
 	}
