@@ -597,7 +597,7 @@ def check_phish(mid):
                 logger.info("Phishing mail detected, subject: %s", msg.subject)
 
                 mail_exist = check_p_mail_exist(mailaddr.get_email_id()\
-                , mail.subject, mail_item.get_content())
+                , msg.subject, mail_item.get_content())
 
                 if not mail_exist:
                     phishing_mails.append(Mail(sender, msg.date, msg.subject))
