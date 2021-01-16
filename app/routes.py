@@ -36,6 +36,8 @@ from app.utils.DBUtils import get_email_address_by_email_id
 from app.utils.DBUtils import get_existing_addresses_by_user_id
 from app.utils.DBUtils import get_owner_id_from_email_id
 
+from app.utils.DBUtils import check_all_mailboxes
+
 ## Exceptions
 from sqlalchemy.exc import IntegrityError
 
@@ -50,6 +52,7 @@ from email.errors import HeaderParseError
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    check_all_mailboxes()
     active_users = db.session.query(User).filter(User.is_active == True).count()
     detected_today = db.session.query(PhishingEmail).filter((cast(PhishingEmail.created_at, Date) == date.today())).count()
     all_time_detected = db.session.query(PhishingEmail).count()
@@ -705,7 +708,7 @@ def reset():
         if user is None:
             flash('Account does not exist!')
             return redirect(url_for('reset'))
-            
+
         if user.get_active_status() == False:
             flash('Account is disabled, contact support for assistance!')
             return redirect(url_for('reset'))

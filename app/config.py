@@ -45,7 +45,14 @@ class Config(object):
             'trigger' : 'interval',
             'hours' : 1
             # 'seconds' : 10
+        },
+        {
+            'id' : 'job2',
+            'func' : 'app.utils.DBUtils:check_all_mailboxes',
+            'trigger' : 'interval',
+            'hours' : 24
         }
+
     ]
 
     SCHEDULER_API_ENABLED = True
