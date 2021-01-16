@@ -120,7 +120,9 @@ def send_daily_notice() -> None:
     .filter(EmailAddress.active == True).all()
 
     for mailbox in all_active_mailboxes:
-        logger.info("Checking through %s if any phishing emails detected today..", mailbox.get_email_address())
+        logger.info("Checking through %s if any phishing emails detected today.."\
+        , mailbox.get_email_address())
+
         phishing_mail_detected_today = db.session.query(PhishingEmail)\
         .filter(PhishingEmail.receiver_id == mailbox.get_email_id()\
         , (cast(PhishingEmail.created_at, Date)) == date.today()).all()
