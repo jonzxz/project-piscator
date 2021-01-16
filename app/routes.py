@@ -47,12 +47,9 @@ from app.machine_learning.EmailData import EmailData
 # Email
 from email.errors import HeaderParseError
 
-from app.utils.EmailUtils import send_daily_notice
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    send_daily_notice()
     active_users = db.session.query(User).filter(User.is_active == True).count()
     detected_today = db.session.query(PhishingEmail).filter((cast(PhishingEmail.created_at, Date) == date.today())).count()
     all_time_detected = db.session.query(PhishingEmail).count()
