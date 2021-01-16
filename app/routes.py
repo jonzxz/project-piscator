@@ -50,12 +50,22 @@ from email.errors import HeaderParseError
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    active_users = db.session.query(User).filter(User.is_active == True).count()
+    detected_today = db.session.query(PhishingEmail).filter((cast(PhishingEmail.created_at, Date) == date.today())).count()
+    all_time_detected = db.session.query(PhishingEmail).count()
+
+    statistics = {
+        'active_users' : active_users,
+        'detected_today' : detected_today,
+        'all_time_detected' : all_time_detected
+    }
+
     contact_form = ContactForm()
     if request.method == 'POST':
         logger.debug("Email received")
         send_contact_us_email(contact_form.email_address.data, contact_form.message.data)
         return redirect(url_for('contact_form_reset'))
-    return render_template('index.html', contact_form = contact_form)
+    return render_template('index.html', contact_form = contact_form, statistics=statistics)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

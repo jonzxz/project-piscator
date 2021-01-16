@@ -33,37 +33,6 @@
 
     <!--====== HEADER PART ENDS ======-->
 
-    <!--====== BRAMD PART START ======-->
-    <!-- script tag for block commenting -->
-<script>/*
-    <div class="brand-area pt-90">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="brand-logo d-flex align-items-center justify-content-center justify-content-md-between">
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
-                            <img src="{{ url_for('static', filename='images/brand-1.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1.5s" data-wow-delay="0.2s">
-                            <img src="{{ url_for('static', filename='images/brand-2.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1.5s" data-wow-delay="0.3s">
-                            <img src="{{ url_for('static', filename='images/brand-3.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1.5s" data-wow-delay="0.4s">
-                            <img src="{{ url_for('static', filename='images/brand-4.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1.5s" data-wow-delay="0.5s">
-                            <img src="{{ url_for('static', filename='images/brand-5.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                    </div> <!-- brand logo -->
-                </div>
-            </div>   <!-- row -->
-        </div> <!-- container -->
-    </div>*/
-</script>
-    <!--====== BRAMD PART ENDS ======-->
-
     <!--====== SERVICES PART START ======-->
 
     <section id="features" class="services-area pt-120">
@@ -255,7 +224,7 @@
                             <div class="col-4">
                                 <div class="single-counter counter-color-1 d-flex align-items-center justify-content-center">
                                     <div class="counter-items text-center">
-                                        <span class="count"><span class="counter">125</span>K</span>
+                                        <span class="count"><span class="counter" id="active-users"></span></span>
                                         <p class="text">Active Users</p>
                                     </div>
                                 </div> <!-- single counter -->
@@ -263,7 +232,7 @@
                             <div class="col-4">
                                 <div class="single-counter counter-color-2 d-flex align-items-center justify-content-center">
                                     <div class="counter-items text-center">
-                                        <span class="count"><span class="counter">87</span>K</span>
+                                        <span class="count"><span class="counter" id="detected-today"></span></span>
                                         <p class="text">Detected Today</p>
                                     </div>
                                 </div> <!-- single counter -->
@@ -271,7 +240,7 @@
                             <div class="col-4">
                                 <div class="single-counter counter-color-3 d-flex align-items-center justify-content-center">
                                     <div class="counter-items text-center">
-                                        <span class="count"><span class="counter">123123</span></span>
+                                        <span class="count"><span class="counter" id ="all-time"></span></span>
                                         <p class="text">Phishing Mails Detected</p>
                                     </div>
                                 </div> <!-- single counter -->
@@ -395,17 +364,33 @@
 
     <!--====== PART START ======-->
 
-<!--
-    <section class="">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-"></div>
-            </div>
-        </div>
-    </section> -->
-
-
     <!--====== PART ENDS ======-->
+    <script>
+        $(document).ready(function() {
+            var active_users = {{ statistics['active_users'] }};
+            var detected_today = {{ statistics['detected_today'] }};
+            var all_time_detected = {{ statistics['all_time_detected'] }};
+
+            if (active_users >= 1000) {
+                active_users = Math.floor(active_users / 1000);
+                $("#active-users").parent().append('K');
+            }
+
+            if (detected_today >= 1000) {
+                detected_today = Math.floor(detected_today / 1000);
+                $("#detected-today").parent().append('K');
+            }
+
+            if (all_time_detected >= 1000) {
+                all_time_detected = Math.floor(all_time_detected /1000);
+                $("#all-time").parent().append('K');
+            }
+
+            $("#active-users").text(active_users);
+            $("#detected-today").text(detected_today);
+            $("#all-time").text(all_time_detected);
+        })
+    </script>
 
 
 {% endblock %}
