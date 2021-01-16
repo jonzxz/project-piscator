@@ -58,7 +58,7 @@ class AdminUserView(AdminBaseView):
 	create_modal = True
 	edit_modal = True
 	# column_searchable_list = ['username', 'user_id']
-	column_filters = ['user_id']
+	column_filters = ['user_id', 'username']
 
 	## Custom View template
 	list_template = 'admin/admin_base_list.html'
