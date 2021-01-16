@@ -16,7 +16,7 @@ def test_request_reset_password(driver):
 
     # enables back the user from DB first
     user = db.session.query(User).filter(User.username == USERNAME).first()
-    user.update_active_status(True)
+    user.set_active_status(True)
     db.session.commit()
 
     # Assert user successfully enabled via database access

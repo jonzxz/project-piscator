@@ -18,7 +18,7 @@ def change_user_settings(client, username, current_password, new_password, conf_
 def enable_account(client, db):
     USERNAME = 'testuser123'
     user = get_user_by_name(USERNAME)
-    user.update_active_status(True)
+    user.set_active_status(True)
     db.session.commit()
 
 def test_valid_change_password(client, db):

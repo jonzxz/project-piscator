@@ -126,11 +126,11 @@ class AdminEmailView(AdminBaseView):
 	# PK displayed, selected columns relabelled and displayed
 	can_set_page_size = True
 	column_display_pk = True
-	column_list = ['email_id', 'email_address', 'user_id', 'last_mailbox_size', 'phishing_mail_detected', 'created_at', 'last_updated', 'active']
+	column_list = ['email_id', 'email_address', 'owner_id', 'last_mailbox_size', 'phishing_mail_detected', 'created_at', 'last_updated', 'active']
 	column_labels = {
 		'email_id' : 'ID',
 		'email_address' : 'Email Address',
-		'user_id' : 'Owner ID',
+		'owner_id' : 'Owner ID',
 		'last_mailbox_size' : 'Last Mailbox Size',
 		'phishing_mail_detected' : 'Detection Count',
 		'created_at' : 'Created At',
@@ -139,13 +139,13 @@ class AdminEmailView(AdminBaseView):
 
 	create_modal = True
 	edit_modal = True
-	column_filters = ['user_id']
+	column_filters = ['owner_id']
 
 	list_template = 'admin/admin_base_list.html'
 	create_template = 'admin/admin_base_create.html'
 	edit_template = 'admin/admin_base_edit.html'
 	# Sortable columns
-	columns_sortable_list = ['email_id', 'user_id', 'phishing_mail_detected', 'created_at', 'last_updated']
+	columns_sortable_list = ['email_id', 'owner_id', 'phishing_mail_detected', 'created_at', 'last_updated']
 
 	### Create / Edit form rules
 	# Additional fields not in column_list

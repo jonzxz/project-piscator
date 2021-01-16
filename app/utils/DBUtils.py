@@ -64,7 +64,7 @@ Function to retrieve list of EmailAddress based on User ID
 """
 def get_existing_addresses_by_user_id(id: int) -> List[EmailAddress]:
     return db.session.query(EmailAddress)\
-            .filter(EmailAddress.user_id == id)\
+            .filter(EmailAddress.owner_id == id)\
             .all()
 
 """
@@ -74,7 +74,7 @@ def get_owner_id_from_email_id(mail_id: int) -> int:
     return db.session.query(EmailAddress) \
             .filter(EmailAddress.email_id == mail_id) \
             .first() \
-            .get_user_id()
+            .get_owner_id()
 
 """
 Function to check if detected mail item is not already in the database

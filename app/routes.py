@@ -35,6 +35,7 @@ from app.utils.DBUtils import get_email_address_by_address
 from app.utils.DBUtils import get_email_address_by_email_id
 from app.utils.DBUtils import get_existing_addresses_by_user_id
 from app.utils.DBUtils import get_owner_id_from_email_id
+from app.utils.DBUtils import check_p_mail_exist
 
 ## Exceptions
 from sqlalchemy.exc import IntegrityError
@@ -230,7 +231,7 @@ def dashboard():
     logger.info("User logging in, redirecting to users portal")
 
     # -- Email Address Status Count START
-    all_emails = db.session.query(EmailAddress).filter(EmailAddress.user_id==current_user.user_id)
+    all_emails = db.session.query(EmailAddress).filter(EmailAddress.owner_id==current_user.user_id)
     email_active = all_emails.filter(EmailAddress.active==True).count()
     email_inactive = all_emails.filter(EmailAddress.active==False).count()
     logger.info("Active Email Address: %s -- Inactive Email Address: %s" \
@@ -241,7 +242,7 @@ def dashboard():
     # -- Phishing Emails Overview START
     all_time_detected = db.session.query(PhishingEmail) \
     .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
-    , EmailAddress.user_id==current_user.user_id)
+    , EmailAddress.owner_id==current_user.user_id)
 
     today_detected = all_time_detected \
     .filter((cast(PhishingEmail.created_at, Date) == date.today()))
@@ -290,7 +291,7 @@ def dashboard():
     # in the current year
     mails_detected_yearly = db.session.query(PhishingEmail) \
     .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
-    , EmailAddress.user_id==current_user.user_id \
+    , EmailAddress.owner_id==current_user.user_id \
     , PhishingEmail.created_at_year == datetime.now().year) \
     .order_by(month).all() # Order_by not needed but might be faster for dict traversals??
 
@@ -343,7 +344,7 @@ def add_email():
                 new_email = EmailAddress()
                 new_email.set_email_address(add_email_form.email_address.data)
                 new_email.set_email_password(add_email_form.password.data)
-                new_email.set_user_id(current_user.user_id)
+                new_email.set_owner_id(current_user.user_id)
                 new_email.set_created_at(datetime.now())
                 new_email.set_active_status(True)
                 db.session.add(new_email)
@@ -461,7 +462,7 @@ def dash_account():
                 if disable_account == "on":
                     #to change is_active state to False -> disable account
                     #to disable account
-                    user.update_active_status(False)
+                    user.set_active_status(False)
                     logger.info("Setting %s account status to disabled", user.get_username())
                     logger.info("Sleeping for 3 seconds before logging out user")
                     # Sets all email addresses for user to disabled
@@ -475,7 +476,7 @@ def dash_account():
                 elif disable_account is None:
                     #to change is_active state to True -> enable account
                     #to disable account
-                    user.update_active_status(True)
+                    user.set_active_status(True)
                     logger.info("Setting %s account status to enabled", user.get_username())
 
                     flash('Account is Enabled!')
@@ -595,16 +596,8 @@ def check_phish(mid):
             if result == 1:
                 logger.info("Phishing mail detected, subject: %s", msg.subject)
 
-                # Checks that the detected mail item is not already in the database
-                # This is to avoid duplicate rows of same item by
-                # same receiver, same subject, sa me content.
-                # If a user clicks on check multiple times in same day the detection
-                # will continue to detect mails received after last_updated (inclusive of same day)
-                # resulting in duplicate rows added to DB, so this is to mitigate that
-                mail_exist = db.session.query(PhishingEmail).filter( \
-                PhishingEmail.receiver_id == mailaddr.get_email_id(), \
-                PhishingEmail.subject == msg.subject, \
-                PhishingEmail.content == mail_item.get_content()).first()
+                mail_exist = check_p_mail_exist(mailaddr.get_email_id()\
+                , mail.subject, mail_item.get_content())
 
                 if not mail_exist:
                     phishing_mails.append(Mail(sender, msg.date, msg.subject))
@@ -710,7 +703,7 @@ def reset():
             flash('Account is disabled, contact support for assistance!')
             return redirect(url_for('reset'))
 
-        if (user and email) and user.get_id() == email.get_user_id():
+        if (user and email) and user.get_id() == email.get_owner_id():
             user.generate_reset_token()
             db.session.commit()
             logger.info("Generated User Token: %s", user.get_reset_token())
