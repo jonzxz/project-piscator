@@ -1,10 +1,14 @@
 ## Email libraries
-from app import logger, mailer
+from app import logger, mailer, db
 from imap_tools import MailBox
 import imaplib
 from app.utils.Constants import *
 from datetime import datetime
 from flask_mail import Message
+from sqlalchemy import Date, cast
+from datetime import datetime, date
+from app.models.EmailAddress import EmailAddress
+from app.models.PhishingEmail import PhishingEmail
 
 def test_mailbox_conn(email_addr, password):
     try:
@@ -63,3 +67,23 @@ def send_password_token(destination, username, token):
     msg.body += "If you did not request for this password reset, please contact the administrative team immediately.\n"
     mailer.send(msg)
     logger.info("Password reset token email sent")
+
+def send_daily_notice():
+    logger.info("Routine task: sending daily notice to all active mailboxes")
+
+    all_active_mailboxes = db.session.query(EmailAddress).filter(EmailAddress.active == True).all()
+    for mailbox in all_active_mailboxes:
+        logger.info("Checking through %s if any phishing emails detected today..", mailbox.get_email_address())
+        phishing_mail_detected_today = db.session.query(PhishingEmail).filter(PhishingEmail.receiver_id == mailbox.get_email_id(), (cast(PhishingEmail.created_at, Date)) == date.today()).all()
+        if phishing_mail_detected_today:
+            logger.info("Populating message content with mails detected today [%s] for %s..", date.today().strftime('%d/%m/%y'), mailbox.get_email_address())
+            msg = Message("Piscator: Daily Update on your mailbox {}".format(mailbox.get_email_address()) \
+            , recipients =[mailbox.get_email_address()])
+
+            msg.body = "Hi, this is your daily update from Project Piscator.\n\n We have detected the following possible phishing emails in your inbox:\n\n"
+            for mail_detected in phishing_mail_detected_today:
+                msg.body += mail_detected.__repr__() + '\n\n'
+            mailer.send(msg)
+            logger.info("Daily notice email sent for %s", mailbox.get_email_address())
+        else:
+            logger.info("No phishing emails detected today [%s] for %s", date.today().strftime('%d/%m/%y'), mailbox.get_email_address())

@@ -48,7 +48,7 @@ def purge_user_tokens():
 
 # Scheduled task to automate phishing check
 def check_all_mailboxes():
-    logger.info("Routine task: checking all subscribed mailboxes..")
+    logger.info("Routine task: checking all active mailboxes..")
     all_active_mailboxes = db.session.query(EmailAddress).filter(EmailAddress.active == True).all()
 
     if all_active_mailboxes:

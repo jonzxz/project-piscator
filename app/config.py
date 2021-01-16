@@ -49,8 +49,16 @@ class Config(object):
         {
             'id' : 'job2',
             'func' : 'app.utils.DBUtils:check_all_mailboxes',
-            'trigger' : 'interval',
-            'hours' : 24
+            'trigger' : 'cron',
+            'day' : 1
+            # 'trigger' : interval,
+            # 'hours' : 24
+        },
+        {
+            'id' : 'job3',
+            'func' : 'app.utils.EmailUtils:send_daily_notice',
+            'trigger' : 'cron',
+            'day' : 1
         }
 
     ]

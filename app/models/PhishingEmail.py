@@ -16,8 +16,8 @@ class PhishingEmail(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('email_address.email_id'), index=True, unique=False, nullable=False)
 
     def __repr__(self):
-        # return "Phishing Mail from: {} -- Received by: {} -- Month Created: {}".format(self.sender_address, self.receiver_id, self.get_created_month())
-        return "Received by: {} -- Month Created: {}".format(self.receiver_id, self.get_created_month())
+        return "From: {}\nSubject: {}".format(self.sender_address, self.subject)
+        # return "Received by: {} -- Month Created: {}".format(self.receiver_id, self.get_created_month())
 
     def get_sender_address(self):
         return self.sender_address
