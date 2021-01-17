@@ -3,10 +3,8 @@
 {% block content %}
 
     <!--====== HEADER PART START ======-->
-
     <header class="header-area">
         {% include "navbar.html" %}
-
         <div id="home" class="header-hero bg_cover" style="background-image: url({{ url_for('static', filename='images/banner-bg.svg') }}">
             <div class="container">
                 <div class="row justify-content-center">
@@ -30,11 +28,9 @@
             <div id="particles-1" class="particles"></div>
         </div> <!-- header hero -->
     </header>
-
     <!--====== HEADER PART ENDS ======-->
 
     <!--====== SERVICES PART START ======-->
-
     <section id="features" class="services-area pt-120">
         <div class="container">
             <div class="row justify-content-center">
@@ -91,11 +87,9 @@
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
-
     <!--====== SERVICES PART ENDS ======-->
 
     <!--====== ABOUT PART START ======-->
-
     <section id="about" class="about-area pt-70">
         <div class="container">
             <div class="row">
@@ -124,11 +118,9 @@
             <img src="{{ url_for('static', filename='images/about-shape-1.svg') }}" alt="shape">
         </div>
     </section>
-
     <!--====== ABOUT PART ENDS ======-->
 
     <!--====== ABOUT PART START ======-->
-
     <section class="about-area pt-70">
         <div class="about-shape-2">
             <img src="{{ url_for('static', filename='images/about-shape-2.svg') }}" alt="shape">
@@ -156,7 +148,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
-
     <!--====== ABOUT PART ENDS ======-->
 
     <!--====== VIDEO COUNTER PART START ======-->
@@ -195,12 +186,9 @@
             <img src="{{ url_for('static', filename='images/about-shape-1.svg') }}" alt="shape">
         </div>
     </section>
-
     <!--====== VIDEO COUNTER PART ENDS ======-->
 
-
     <!--====== FACTS PART STARTS ======-->
-
     <section id="facts" class="about-area pt-70">
         <div class="container">
             <div class="row">
@@ -254,7 +242,6 @@
     <!--====== FACTS PART ENDS ======-->
 
     <!--====== FOOTER PART START ======-->
-
     <footer id="footer" class="footer-area pt-120">
         <div class="container">
 
@@ -267,16 +254,12 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="subscribe-form mt-50">
-                            <!-- implement Flask-Mail here -->
                             <form action="" method="post" novalidate>
                                 {{ contact_form.email_address(placeholder='Your email') }}
-                                <!-- <input type="text" placeholder="Your email"> -->
                                 <div class="purple-border mt-2">
                                     {{ contact_form.message(class='form-control', placeholder='Enter your question', rows='3') }}
-                                    <!-- <textarea class="form-control" rows="3" placeholder="Enter your question"></textarea> -->
                                 </div>
                                 {{ contact_form.submit(class='main-btn mt-2') }}
-                                <!-- <button class="main-btn">Talk to us</button> -->
                             </form>
                             <p class="blockquote-footer"> Currently disabled</p>
                         </div>
@@ -296,12 +279,6 @@
                                 Vexels - Logo Resources<br>
                                 Canva - Vector Resources<br>
                             </p>
-                            <!-- <ul class="social">
-                                <li><a href="#"><i class="lni lni-facebook-filled"></i></a></li>
-                                <li><a href="#"><i class="lni lni-twitter-filled"></i></a></li>
-                                <li><a href="#"><i class="lni lni-instagram-filled"></i></a></li>
-                                <li><a href="#"><i class="lni lni-linkedin-original"></i></a></li>
-                            </ul> -->
                         </div> <!-- footer about -->
                     </div>
                     <div class="col-lg-5 col-md-7 col-sm-7">
@@ -321,8 +298,8 @@
                                     <h4 class="title">Resources</h4>
                                 </div>
                                 <ul class="link">
-                                    <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li> <!-- To be done, url_for(privacy)-->
-                                    <li><a href="{{ url_for('tos') }}">Terms of Service</a></li> <!-- To be done, url_for(terms_service) -->
+                                    <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+                                    <li><a href="{{ url_for('tos') }}">Terms of Service</a></li>
                                 </ul>
                             </div> <!-- footer wrapper -->
                         </div> <!-- footer link -->
@@ -353,18 +330,13 @@
         </div> <!-- container -->
         <div id="particles-2"></div>
     </footer>
-
     <!--====== FOOTER PART ENDS ======-->
 
-    <!--====== BACK TOP TOP PART START ======-->
-
+    <!--====== BACK TO TOP PART START ======-->
     <a href="#" class="back-to-top"><i class="lni lni-chevron-up"></i></a>
+    <!--====== BACK TO TOP PART ENDS ======-->
 
-    <!--====== BACK TOP TOP PART ENDS ======-->
-
-    <!--====== PART START ======-->
-
-    <!--====== PART ENDS ======-->
+    <!--====== STATISTICS SCRIPT START =====-->
     <script>
         $(document).ready(function() {
             var active_users = {{ statistics['active_users'] }};
@@ -391,6 +363,7 @@
             $("#all-time").text(all_time_detected);
         })
     </script>
+    <!--====== STATISTICS SCRIPT END =====-->
 
 
 {% endblock %}

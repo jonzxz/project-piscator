@@ -116,10 +116,12 @@ to the user dashboard (but that only shows for that particular user)
 
   // -- Card values START
   // All Time detection
-  document.getElementById("all-time-detected").innerHTML = all_time_detected;
+  $("#all-time-detected").text(all_time_detected);
+  // document.getElementById("all-time-detected").innerHTML = all_time_detected;
 
   // Today detection
-  document.getElementById("today-detected").innerHTML = today_detected;
+  // document.getElementById("today-detected").innerHTML = today_detected;
+  $("#today-detected").text(today_detected);
 
   // -- Pie Charts START
   var user_chart = new Chart(users, {

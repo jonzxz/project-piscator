@@ -150,7 +150,6 @@
   // -- Bar Chart END
 
   // Card values
-  // Active Email Addresses display
   var email_active = {{ statistics['email_active'] }}
   var email_stats =  {{ statistics['email_stats'] }}
   var all_time_detected = {{ statistics['all_time'] }}
@@ -158,22 +157,18 @@
   var weekly_detected = {{ statistics['weekly'] }}
   var today_detected = {{ statistics['today'] }}
 
-
-  document.getElementById("email-active").innerHTML = email_active;
-  document.getElementById("active-progress-bar").value = email_active;
-  document.getElementById("active-progress-bar").max = email_stats;
+  $("#email-active").text(email_active);
+  $("#active-progress-bar").attr('value', email_active);
+  $("#active-progress-bar").attr('max', email_stats);
 
   // All Time detection
-  document.getElementById("all-time-detected").innerHTML = all_time_detected;
-
+  $("#all-time-detected").text(all_time_detected);
   // Today detection
-  document.getElementById("today-detected").innerHTML = today_detected;
-
+  $("#today-detected").text(today_detected);
   // Weekly detection
-  document.getElementById("weekly-detected").innerHTML = weekly_detected;
-
+  $("#weekly-detected").text(weekly_detected);
   // Monthly detection
-  document.getElementById("monthly-detected").innerHTML = monthly_detected;
+  $("#monthly-detected").text(monthly_detected);
 
   // Monthly Overview
 

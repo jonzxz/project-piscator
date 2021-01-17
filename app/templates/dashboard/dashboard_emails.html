@@ -21,7 +21,10 @@
           {% for email in user_emails %}
           <tr class="tr-bg">
             <td class="text-center">{{ email.get_email_address() }}</td>
-            <td class="text-center">{{ email.get_phishing_mail_detected() }} / {{ email.get_total_mails_checked() }}</td>
+            <td class="text-center">
+              {{ email.get_phishing_mail_detected() }} /
+              {{ email.get_total_mails_checked() }}
+            </td>
             <td class="text-center"><a class="lni lni-keyword-research" id="history-{{ email.email_id }}"
               name="history-{{ email.email_address }}" href="#"
               onclick="history({{ email.get_email_id() }});"></a></td>
@@ -76,7 +79,8 @@
       {% endwith %}
 
       <!-- Modal -->
-      <div class="modal fade" id="addMailModal" tabindex="-1" role="dialog" aria-labelledby="addMailModalLabel" aria-hidden="true">
+      <div class="modal fade" id="addMailModal" tabindex="-1" role="dialog"
+      aria-labelledby="addMailModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
