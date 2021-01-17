@@ -1,5 +1,4 @@
 from app import app, db, logger, model
-
 ## Plugins
 from flask_login import current_user, login_user, logout_user
 from flask import render_template, request, flash, redirect, url_for, session
@@ -64,7 +63,7 @@ def index():
         logger.info("Contact Us Form sent")
         send_contact_us_email(contact_form.email_address.data\
         , contact_form.message.data)
-        return redirect(url_for('contact_form_reset'))
+        return redirect(url_for('index'))
     return render_template('index.html', contact_form = contact_form\
     , statistics=statistics)
 
@@ -94,7 +93,7 @@ def register():
                 flash("Username already taken!")
                 logger.error("Username already taken")
                 logger.warning("Registration failed, user not registered")
-                return redirect(url_for("reg_form_reset"))
+                return redirect(url_for("register"))
 
     return render_template('register.html', form=form)
 
@@ -345,15 +344,6 @@ def dash_account():
                     # Sets all email addresses for user to disabled
                     disable_emails_by_user_id(user.get_id())
                     flash('Account is Disabled!')
-                # This block does nothing for now, disabled users cannot log in
-                elif disable_account is None:
-                    #to change is_active state to True -> enable account
-                    #to disable account
-                    user.set_active_status(True)
-                    logger.info("Setting %s account status to enabled"\
-                    , user.get_username())
-
-                    flash('Account is Enabled!')
             else:
                 flash('Invalid \'Current Password\'!')
                 logger.info("User %s entered invalid current password"\
@@ -390,14 +380,16 @@ def check_phish(mid):
 
     owner_id = get_owner_id_from_email_id(mid)
     if current_user.is_anonymous or not owner_id == current_user.get_id() :
-        logger.warning("Anonymous or unauthorized user attempting phish check of address ID {}!".format(mid))
+        logger.warning("Anonymous or unauthorized user attempting"\
+        " phish check of address ID {}!".format(mid))
         return redirect(url_for('index'))
 
     mailaddr = get_email_address_by_email_id(mid)
 
     # Redirects back to page if selected email is inactive
     if mailaddr.get_active_status() == False:
-        logger.warning("Redirecting.. User selected inactive email address %s", mailaddr.get_email_address())
+        logger.warning("Redirecting.. User selected inactive email address %s"\
+        , mailaddr.get_email_address())
         flash("Email is inactive!")
         return redirect(url_for('dash_email'))
 
@@ -409,7 +401,8 @@ def check_phish(mid):
         logger.info("Retrieving IMAP server: %s", imap_svr)
         mailbox = MailBox(imap_svr)
         logger.info("Attempting connection..")
-        mailbox.login(mailaddr.get_email_address(), mailaddr.get_decrypted_email_password())
+        mailbox.login(mailaddr.get_email_address()\
+        , mailaddr.get_decrypted_email_password())
         logger.info("Connected to mailbox %s", mailaddr.get_email_address())
     except ConnectionRefusedError:
         logger.error("Unable to connect to mailbox for %s", mailaddr.get_email_address())
@@ -417,7 +410,8 @@ def check_phish(mid):
         return redirect(url_for('dash_email'))
 
     # Retrieves date last updated: converts datetime to date
-    last_updated = mailaddr.get_last_updated().date() if mailaddr.get_last_updated() else datetime.now().date()
+    last_updated = mailaddr.get_last_updated().date() \
+    if mailaddr.get_last_updated() else datetime.now().date()
     # Updates last updated to current time
     mailaddr.set_last_updated(datetime.now())
     logger.info("Updating mailbox last updated from %s to %s",\
@@ -463,11 +457,12 @@ def check_phish(mid):
             logger.error("HeaderParseError, unparseable msg.from_. Setting sender as INVALID_SENDER")
             sender = 'INVALID_SENDER'
 
-        if not sender == mailaddr.get_email_address() or not sender == 'piscator.fisherman@gmail.com':
-            # logger.info("Checking mail subject: %s -- date sent: %s", msg.subject, (msg.date).strftime("%d-%m-%Y"))
+        if not sender == mailaddr.get_email_address() or \
+        not sender == 'piscator.fisherman@gmail.com':
             data['total_count']+=1
             mail_check_count +=1
-            mail_item = EmailData(msg.subject, sender, msg.attachments, (msg.text + msg.html), msg.headers)
+            mail_item = EmailData(msg.subject, sender, msg.attachments\
+            , (msg.text + msg.html), msg.headers)
             mail_item.generate_features()
             result = model.predict(mail_item.repr_in_arr())
             logger.info("Checking mail: %s -- Result: %s", mail_item.get_subject(), result)
@@ -509,8 +504,9 @@ def check_phish(mid):
 def mail_activation(mid):
     owner_id = get_owner_id_from_email_id(mid)
 
-    if current_user.is_anonymous or not owner_id == current_user.get_id() : # or CU ID is not owner of MID
-        logger.warning("Anonymous or unauthorized user attempting activation of address ID {}!".format(mid))
+    if current_user.is_anonymous or not owner_id == current_user.get_id() :
+        logger.warning("Anonymous or unauthorized user "\
+        "attempting activation of address ID {}!".format(mid))
         return redirect(url_for('index'))
 
     logger.info("Entering function to enable/disable email..")
@@ -526,19 +522,21 @@ def mail_activation(mid):
 def detection_history(mid):
     owner_id = get_owner_id_from_email_id(mid)
 
-    if current_user.is_anonymous or not owner_id == current_user.get_id() : # or CU ID is not owner of MID
-        logger.warning("Anonymous or unauthorized user attempting activation of address ID {}!".format(mid))
+    if current_user.is_anonymous or not owner_id == current_user.get_id() :
+        logger.warning("Anonymous or unauthorized user attempting "\
+        "activation of address ID {}!".format(mid))
         return redirect(url_for('index'))
 
     mailaddr = get_email_address_by_email_id(mid)
     mail_address = mailaddr.get_email_address()
 
-    detection_history = db.session.query(PhishingEmail).filter(PhishingEmail.receiver_id == mid).all()
+    detection_history = db.session.query(PhishingEmail)\
+    .filter(PhishingEmail.receiver_id == mid).all()
     logger.info(detection_history)
     logger.info(mailaddr)
     logger.info(mail_address)
-    return render_template('dashboard/detection_history.html', phishing_mails = detection_history \
-    , mail_address = mail_address)
+    return render_template('dashboard/detection_history.html'\
+    , phishing_mails = detection_history, mail_address = mail_address)
 
 @app.route('/privacy')
 def privacy():
@@ -547,21 +545,6 @@ def privacy():
 @app.route('/terms')
 def tos():
     return render_template('termofService.html')
-
-# Reroute functions to prevent form resubmission on refresh
-@app.route('/mail_form_reset', methods=['GET'])
-def mail_form_reset():
-    logger.info("Entering function to reset form submission")
-    return redirect(url_for('dash_email'))
-
-@app.route('/reg_form_reset', methods=['GET'])
-def reg_form_reset():
-    logger.info("Entering function to reset form submission")
-    return redirect(url_for('register'))
-
-@app.route('/contact_form_reset', methods=['GET'])
-def contact_form_reset():
-    return redirect(url_for('index'))
 
 @app.route('/reset', methods=['GET', 'POST'])
 def reset():
@@ -587,7 +570,8 @@ def reset():
             db.session.commit()
             logger.info("Generated User Token: %s", user.get_reset_token())
             session["reset_user_id"] = user.get_id()
-            send_password_token(email.get_email_address(), user.get_username(), user.get_reset_token())
+            send_password_token(email.get_email_address()\
+            , user.get_username(), user.get_reset_token())
             return redirect(url_for('reset_change_password'))
         else:
             flash('Invalid username or email address!')
@@ -604,7 +588,8 @@ def reset_change_password():
         token_received = form.token.data
         new_password = form.new_password.data
         logger.info("Update password form submitted")
-        logger.info("User token: %s -- Token Received: %s", user.get_reset_token(), token_received)
+        logger.info("User token: %s -- Token Received: %s"\
+        , user.get_reset_token(), token_received)
         if user.get_reset_token() == token_received:
             logger.info("Token verified..")
             logger.info("Setting new user password and deleting reset token.")
