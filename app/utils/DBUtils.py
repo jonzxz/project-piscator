@@ -1,6 +1,9 @@
 ## Application objects
 from app import db, logger, model
 
+## Plugins
+from flask_login import current_user
+
 ## Models
 from app.models.User import User
 from app.models.EmailAddress import EmailAddress
@@ -18,9 +21,10 @@ from imap_tools import MailBox, AND, OR
 
 # Date utilities
 from datetime import datetime, date
+from sqlalchemy import Date, cast, func, extract
 
 ## Typehints
-from typing import List
+from typing import List, Dict
 
 """
 Function to retrieve User based on id
@@ -76,6 +80,179 @@ def get_owner_id_from_email_id(mail_id: int) -> int:
             .first() \
             .get_owner_id()
 
+"""
+Function to retrieve active users, detection today and all time detection as a
+Dictionary, meant for landing page statistics
+"""
+def get_homepage_stats() -> Dict:
+    active_users = db.session.query(User).filter(User.is_active == True).count()
+    detected_today = db.session.query(PhishingEmail)\
+    .filter((cast(PhishingEmail.created_at, Date) == date.today())).count()
+    all_time_detected = db.session.query(PhishingEmail).count()
+
+    statistics = {
+        'active_users' : active_users,
+        'detected_today' : detected_today,
+        'all_time_detected' : all_time_detected
+    }
+
+    return statistics
+
+"""
+Function to retrieve card and chart data for Administrator Dashboard as a
+Dictionary. Does not include Monthly Overview chart
+"""
+def get_admin_dashboard_stats() -> Dict:
+    # -- User statistics START
+    all_users = db.session.query(User)
+    users_active = all_users.filter(User.is_active==True).count()
+    users_inactive = all_users.filter(User.is_active==False).count()
+    user_stats = [users_inactive, users_active]
+    # -- User statistics END
+
+    # -- Email statistics START
+    all_emails = db.session.query(EmailAddress)
+    email_active = all_emails.filter(EmailAddress.active==True).count()
+    email_inactive = all_emails.filter(EmailAddress.active==False).count()
+    email_stats = [email_inactive, email_active]
+    # -- Email statistics END
+
+    # -- Phishing Emails Overview START
+    all_time_detected = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id)
+
+    today_detected = all_time_detected \
+    .filter((cast(PhishingEmail.created_at, Date) == date.today()))
+
+    weekly_detected = all_time_detected \
+    .filter(PhishingEmail.created_at_week == datetime.now().isocalendar()[1])
+
+    # Likewise for month, same as week
+    monthly_detected = all_time_detected \
+    .filter(PhishingEmail.created_at_month == datetime.now().month \
+    , PhishingEmail.created_at_year == datetime.now().year)
+
+    statistics = {
+        'user_stats' : [users_active, users_inactive],
+        'email_stats' : [email_active, email_inactive],
+        'all_time' : all_time_detected.count(),
+        'monthly' : monthly_detected.count(),
+        'weekly' : weekly_detected.count(),
+        'today' : today_detected.count()
+    }
+    return statistics
+
+
+def get_user_dashboard_stats() -> Dict:
+    # -- Email Address Status Count START
+    all_emails = db.session.query(EmailAddress)\
+    .filter(EmailAddress.owner_id==current_user.user_id)
+    email_active = all_emails.filter(EmailAddress.active==True).count()
+    email_inactive = all_emails.filter(EmailAddress.active==False).count()
+    email_stats = all_emails.count()
+    # -- Email Address Status count END
+
+    # -- Phishing Emails Overview START
+    all_time_detected = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.owner_id==current_user.user_id)
+
+    today_detected = all_time_detected \
+    .filter((cast(PhishingEmail.created_at, Date) == date.today()))
+
+    weekly_detected = all_time_detected \
+    .filter(PhishingEmail.created_at_week == datetime.now().isocalendar()[1])
+
+    monthly_detected = all_time_detected \
+    .filter(PhishingEmail.created_at_month == datetime.now().month \
+    , PhishingEmail.created_at_year == datetime.now().year)
+
+    statistics = {
+        'all_time' : all_time_detected.count(),
+        'today' : today_detected.count(),
+        'weekly' : weekly_detected.count(),
+        'monthly' : monthly_detected.count(),
+        'email_active' : email_active,
+        'email_inactive' : email_inactive,
+        'email_stats' : email_stats,
+    }
+
+    return statistics
+
+def get_user_monthly_overview() -> List:
+    monthly_stats = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
+        8: 0,
+        9: 0,
+        10: 0,
+        11: 0,
+        12: 0
+    }
+
+    month = func.date_trunc('month', func.cast(PhishingEmail.created_at, Date))
+
+    # Returns a list of PE owned by cur_user's all email addresses that was detected
+    # in the current year
+    mails_detected_yearly = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , EmailAddress.owner_id==current_user.user_id \
+    , PhishingEmail.created_at_year == datetime.now().year) \
+    .order_by(month).all()
+
+    for pe in mails_detected_yearly:
+        monthly_stats[pe.get_created_month()] = monthly_stats\
+        .get(pe.get_created_month(), 0)+1
+    monthly_stats = list(monthly_stats.values())
+    # -- Phishing Emails Overview END
+
+    return monthly_stats
+
+"""
+Function to retrieve monthly statistics for Administrator Dashboard as a List
+"""
+def get_admin_monthly_overview() -> List:
+    monthly_stats = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
+        8: 0,
+        9: 0,
+        10: 0,
+        11: 0,
+        12: 0
+    }
+
+    month = func.date_trunc('month', func.cast(PhishingEmail.created_at, Date))
+
+    # Returns a list of PE in all email addresses that was detected
+    # in the current year
+    mails_detected_yearly = db.session.query(PhishingEmail) \
+    .filter(PhishingEmail.receiver_id==EmailAddress.email_id \
+    , PhishingEmail.created_at_year == datetime.now().year) \
+    .order_by(month).all()
+
+    for pe in mails_detected_yearly:
+        monthly_stats[pe.get_created_month()] = monthly_stats\
+        .get(pe.get_created_month(), 0)+1
+    monthly_stats = list(monthly_stats.values())
+    return monthly_stats
+
+
+def disable_emails_by_user_id(id):
+    user_emails = get_existing_addresses_by_user_id(user.user_id)
+    for email in user_emails:
+        logger.info("Disabling %s", email)
+        email.set_active_status(False)
 """
 Function to check if detected mail item is not already in the database
 Returns a boolean as result
