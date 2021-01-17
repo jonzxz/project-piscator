@@ -249,7 +249,7 @@ def get_admin_monthly_overview() -> List:
 
 
 def disable_emails_by_user_id(id):
-    user_emails = get_existing_addresses_by_user_id(user.user_id)
+    user_emails = get_existing_addresses_by_user_id(id)
     for email in user_emails:
         logger.info("Disabling %s", email)
         email.set_active_status(False)

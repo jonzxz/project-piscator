@@ -4,6 +4,7 @@ from test_3_add_email import add_mail
 from app.models.User import User
 from app import db
 from app.utils.DBUtils import get_user_by_name
+from app.utils.FileUtils import get_server_mail_cred
 
 def request_reset_password(client, db, username, email_address):
     return client.post(
@@ -35,8 +36,9 @@ def test_request_reset_password(client, db):
 
     # Logs in to user and add an email address and log out
     login(client, TEST_RESET_USER, TEST_RESET_PASSWORD)
-    TEST_EMAIL_ADDRESS = 'testmail789@mymail.com'
-    TEST_EMAIL_PASSWORD = 'password'
+    MAIL_CREDS = get_server_mail_cred()
+    TEST_EMAIL_ADDRESS = MAIL_CREDS[2]
+    TEST_EMAIL_PASSWORD = MAIL_CREDS[3]
     add_mail(client, TEST_EMAIL_ADDRESS, TEST_EMAIL_PASSWORD)
     logout(client)
 

@@ -164,7 +164,9 @@
                 </button>
               </div>
               <form action="{{ url_for('update_email_password') }}" method="post" novalidate>
+                {% if 'csrf_token' in change_email_password_form %}
                 {{ change_email_password_form.csrf_token(id = "unique_id") }}
+                {% endif %}
                 <div class="modal-body">
                   <div class="p-2">
                     {{ change_email_password_form.email_address.label }}
