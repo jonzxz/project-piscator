@@ -19,8 +19,7 @@ from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
 
 ## Datetime
-from datetime import datetime, date, timedelta
-from sqlalchemy import Date, cast, func, extract
+from datetime import datetime, date
 
 ## Utils
 from app.utils.EmailUtils import test_mailbox_conn
