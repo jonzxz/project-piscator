@@ -35,12 +35,16 @@
               {% endif %}
               {% if email.get_active_status() %}
               <td class="text-center" name="status-{{ email.email_address }}">Active</td>
-              {% else %}
-              <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
-              {% endif %}
               <td class="text-center"><a class="lni lni-brush" id="{{ email.email_id }}"
                 name="clean-{{ email.email_address }}" href="#"
                 onclick="phish({{ email.get_email_id() }});"></a></td>
+              {% else %}
+              <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
+              <td class="text-center"><span class="lni lni-brush" disabled></span></td>
+              {% endif %}
+              <!-- <td class="text-center"><a class="lni lni-brush" id="{{ email.email_id }}"
+                name="clean-{{ email.email_address }}" href="#"
+                onclick="phish({{ email.get_email_id() }});"></a></td> -->
               <td class="text-center">
                 <a class="lni lni-pencil" name="update-{{ email.email_address }}"
                 data-toggle="modal" data-target="#changePasswordModal"></a>
