@@ -601,3 +601,7 @@ def reset_change_password():
         else:
             flash('Invalid token!')
     return render_template('update_password.html', form=form)
+
+@app.errorhandler(404)
+def handler_404(e):
+    return render_template('404.html')
