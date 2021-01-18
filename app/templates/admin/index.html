@@ -165,6 +165,13 @@ to the user dashboard (but that only shows for that particular user)
     options: {
       legend: {
         display: false
+      },
+      scales: {
+        yAxes: [{
+            ticks: {
+                beginAtZero: true
+            }
+        }]
       }
     },
     data: {
