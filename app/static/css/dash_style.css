@@ -7,6 +7,10 @@ body {
 	background-color: white;
 }
 
+.modal-dialog-instructionsModal{
+	max-width: 650px;
+}
+
 progress {
   border-radius: 7px;
   width: 100%;
