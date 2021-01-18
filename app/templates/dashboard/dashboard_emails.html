@@ -38,11 +38,9 @@
               {% else %}
               <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
               {% endif %}
-              <td class="text-center">
-                <a class="lni lni-brush" id="{{ email.email_id }}"
+              <td class="text-center"><a class="lni lni-brush" id="{{ email.email_id }}"
                 name="clean-{{ email.email_address }}" href="#"
-                onclick="phish({{ email.get_email_id() }});"></a>
-              </td>
+                onclick="phish({{ email.get_email_id() }});"></a></td>
               <td class="text-center">
                 <a class="lni lni-pencil" name="update-{{ email.email_address }}"
                 data-toggle="modal" data-target="#changePasswordModal"></a>
@@ -114,7 +112,7 @@
       </div>
 
       <div class="modal fade" id="instructionsModal" tabindex="-1" role="dialog" aria-labelledby="instructionsModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-instructionsModal" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id=instructionsModalLabel">Instructions</h5>
@@ -132,22 +130,27 @@
                 </div>
                 <div class="p-2">
                   <h4>Scan for Phishing Emails</h4>
-                  <p>1. From the “Clean Mailbox” column, select <a class="lni lni-brush"></a> (Note: The time taken may vary depending on the number of unchecked emails in the mailbox.)</p>
-                  <p>2.	Once successful, you will be redirected to “Detection Results” (Note: “Detection Results” shows the details (sender, subject title and date sent) of the phishing emails that were detected from only that scan.)</p>
+                  <p><span class="tab">1. From the “Clean Mailbox” column, select
+                    <a class="lni lni-brush"></a> (Note: The time taken may vary
+                    depending on the number of unchecked emails in the mailbox.)</span></p>
+                  <p><span class="tab">2.	Once successful, you will be redirected to “Detection Results”
+                    (Note: “Detection Results” shows the details (sender, subject title and date sent)
+                    of the phishing emails that were detected from only that scan.)</span></p>
                 </div>
                 <div class="p-2">
                   <h4>Update Email Password</h4>
-                  <p>1.	From the “Change Password” column, select  <a class="lni lni-pencil"></a></p>
-                  <p>2. Enter the “New Password” and select “Update”</p>
-                  <p>3.	Once successful, a message “Password successfully updated!” will be displayed</p>
+                  <p><span class="tab">1.	From the “Change Password” column, select <a class="lni lni-pencil"></a></span></p>
+                  <p><span class="tab">2. Enter the “New Password” and select “Update”</span></p>
+                  <p><span class="tab">3.	Once successful, a message “Password successfully updated!” will be displayed</span></p>
                 </div>
                 <div class="p-2">
                   <h4>Activate/Deactivate Subscription</h4>
-                  <p>1.	From the “Activate” column, select  <a class="lni lni-power-switch"></a></p>
-                  <p>2.	Once successful, the “Active State” will be changed</p>
+                  <p><span class="tab">1.	From the “Activate” column, select  <a class="lni lni-power-switch"></a></span></p>
+                  <p><span class="tab">2.	Once successful, the “Active State” will be changed</span></p>
                 </div>
-                <div class="p-2">
-                  <a target ="_blank" href="{{ url_for('static', filename='docs/Email Application Password Manager.pdf') }}">Need help setting up an application password?</a>
+                <div class="p-2 text-center">
+                  <a target ="_blank" href="{{ url_for('static', filename='docs/Email Application Password Manager.pdf') }}">
+                    Need help setting up an application password?</a>
                 </div>
               </div>
             </div>
