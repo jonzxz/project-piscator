@@ -31,18 +31,6 @@ progress::-webkit-progress-value {
 	height: 420px;
 }
 
-.second {
-	width: 35%;
-	float:left;
-	height: 420px;
-}
-
-.third {
-	width: 30%;
-	float:left;
-	height: 420px;
- }
-
 .login-user{
 	font-size: 20px;
 	margin-bottom: 30px;
@@ -60,6 +48,36 @@ progress::-webkit-progress-value {
 
 .detection-num{
 	font-size:30px;
+}
+
+.bg-c-detection-admin{
+	/* background-color:#63D3D3; */
+	/* background-color: #00C0EF; */
+	/* background-color:#b9dcf2; */
+	/*background-image: linear-gradient(120deg, #accbee 0%, #e7f0fd 100%);*/
+	font-size: 20px;
+	height: 127px;
+	border-bottom-color: #DA6666;
+	border-bottom-width: thick;
+	/* font-weight: bold;
+	color: white; */
+}
+
+.bg-c-detect-admin{
+	/* background-color:#63D3D3; */
+	/* background-color: #00C0EF; */
+	/* background-color:#b9dcf2; */
+	/*background-image: linear-gradient(120deg, #accbee 0%, #e7f0fd 100%);*/
+	font-size: 20px;
+	height: 127px;
+	border-bottom-color: #63D3D3;
+	border-bottom-width: thick;
+	/* font-weight: bold;
+	color: white; */
+}
+
+.lni-color{
+	color :#9890e3;
 }
 
 .bg-c-email{
@@ -102,10 +120,10 @@ progress::-webkit-progress-value {
 	font-weight: bold;
 }
 
-.sidepanel  {
+.sidepanel{
 	width: 260px;
 	position: fixed;
-	z-index: 1;
+	z-index : 1 ;
 	height: 100%;
 	top: 0;
 	left: 0;
