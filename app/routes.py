@@ -390,7 +390,7 @@ def check_phish(mid):
     if mailaddr.get_active_status() == False:
         logger.warning("Redirecting.. User selected inactive email address %s"\
         , mailaddr.get_email_address())
-        flash("Email is inactive!")
+        flash("Email is inactive!", 'error')
         return redirect(url_for('dash_email'))
 
     logger.info("Mailbox selected is %s", mailaddr.get_email_address())
@@ -406,7 +406,7 @@ def check_phish(mid):
         logger.info("Connected to mailbox %s", mailaddr.get_email_address())
     except ConnectionRefusedError:
         logger.error("Unable to connect to mailbox for %s", mailaddr.get_email_address())
-        flash("Unable to connect to mailbox!")
+        flash("Unable to connect to mailbox, please update your password!", 'error')
         return redirect(url_for('dash_email'))
 
     # Retrieves date last updated: converts datetime to date
