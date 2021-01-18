@@ -1,8 +1,13 @@
+## Application Objects
 from app import db
-from datetime import datetime
-from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin
+
+## Authentication Utilities
 from app import login
+from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
+
+## Utilities
+from datetime import datetime
 from random import randint
 
 # Defines the model for User class
@@ -17,49 +22,46 @@ class User(UserMixin, db.Model):
     is_active = db.Column(db.Boolean, nullable=False, default=True)
     reset_token = db.Column(db.Numeric(6, 0), unique=True, nullable=True)
 
-    # FK
-    # emails = db.relationship('EmailAddress', backref='owner', lazy='dynamic')
-
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "User ID: {} -- Username: {}".format(self.user_id, self.username)
 
-    def get_id(self):
+    def get_id(self) -> int:
         return self.user_id
-
-    def set_password(self, password: str):
-        self.password = generate_password_hash(password)
-
-    def check_password(self, password: str):
-        return check_password_hash(self.password, password)
-
-    def update_active_status(self, boolean: bool):
-        self.is_active = boolean
-
-    def update_admin_status(self, boolean: bool):
-        self.is_admin = boolean
-
-    def get_active_status(self) -> bool:
-        return self.is_active
-
-    def get_admin_status(self) -> bool:
-        return self.is_admin == True
 
     def get_username(self) -> str:
         return self.username
 
-    def set_last_logged_in(self, last_logged: datetime):
-        self.last_logged_in = last_logged
+    def set_password(self, password: str) -> None:
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password: str) -> bool:
+        return check_password_hash(self.password, password)
+
+    def get_active_status(self) -> bool:
+        return self.is_active
+
+    def set_active_status(self, boolean: bool) -> None:
+        self.is_active = boolean
+
+    def get_admin_status(self) -> bool:
+        return self.is_admin == True
+
+    def set_admin_status(self, boolean: bool) -> None:
+        self.is_admin = boolean
 
     def get_last_logged_in(self) -> datetime:
         return self.last_logged_in
 
-    def generate_reset_token(self):
+    def set_last_logged_in(self, last_logged: datetime) -> None:
+        self.last_logged_in = last_logged
+
+    def generate_reset_token(self) -> None:
         self.reset_token = randint(100000, 999999)
 
     def get_reset_token(self) -> int:
         return self.reset_token
 
-    def delete_reset_token(self):
+    def delete_reset_token(self) -> None:
         self.reset_token = None
 
     @login.user_loader

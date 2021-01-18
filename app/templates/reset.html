@@ -12,7 +12,6 @@
         <div class="row justify-content-center">
             <div class="col-md-12 justify-content-center">
                 <div class="logo mt-3 w-100 animated fadeInDown d-flex justify-content-center" style="margin-left:10%">
-                    <!-- play cheat margin to make text centered-->
                     <a href="{{ url_for('index') }}">
                         <img src="{{ url_for('static', filename='icons/logo_word.svg') }}" alt='Logo' width=70%>
                     </a>
@@ -41,7 +40,11 @@
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="reset">
                             {{ form.email_address(size=33, class='form-control text-center') }}
-                            <p class="text-center"><a href="#" data-toggle="tooltip" title="'Email Address' can be any that is registered with the account (make sure you have access to this email!).">What is 'Email Address'?</a></p>
+                            <p class="text-center">
+                                <a href="#" data-toggle="tooltip"
+                                title="'Email Address' can be any that is registered with the account (make sure you have access to this email!).">
+                                What is 'Email Address'?</a>
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -25,15 +25,15 @@ def test_add_email(driver):
 
     # Wait for Add Email Button to appear and click
     wait_mail_btn = WebDriverWait(driver, 3)
-    wait_mail_btn.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[2]/div/div/button')))
-    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div/div/button').click()
+    wait_mail_btn.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[2]/div[1]/div/div/button[1]')))
+    driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div[1]/div/div/button[1]').click()
 
     # Wait for fields in modal to appear and click
     wait_email_field = WebDriverWait(driver, 3)
     wait_email_field.until(EC.visibility_of_element_located((By.ID, 'email_address')))
     driver.find_element_by_id('email_address').send_keys(EMAIL_ADDR)
     driver.find_element_by_id('password').send_keys(EMAIL_PASSWORD)
-    driver.find_element_by_id('submit').click()
+    driver.find_element_by_id('add_mail_submit').click()
     assert EMAIL_ADDR in driver.page_source
 
 # Flows after test_add_email

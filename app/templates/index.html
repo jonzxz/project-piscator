@@ -3,10 +3,8 @@
 {% block content %}
 
     <!--====== HEADER PART START ======-->
-
     <header class="header-area">
         {% include "navbar.html" %}
-
         <div id="home" class="header-hero bg_cover" style="background-image: url({{ url_for('static', filename='images/banner-bg.svg') }}">
             <div class="container">
                 <div class="row justify-content-center">
@@ -30,42 +28,9 @@
             <div id="particles-1" class="particles"></div>
         </div> <!-- header hero -->
     </header>
-
     <!--====== HEADER PART ENDS ======-->
 
-    <!--====== BRAMD PART START ======-->
-    <!-- script tag for block commenting -->
-<script>/*
-    <div class="brand-area pt-90">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="brand-logo d-flex align-items-center justify-content-center justify-content-md-between">
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
-                            <img src="{{ url_for('static', filename='images/brand-1.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1.5s" data-wow-delay="0.2s">
-                            <img src="{{ url_for('static', filename='images/brand-2.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1.5s" data-wow-delay="0.3s">
-                            <img src="{{ url_for('static', filename='images/brand-3.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1.5s" data-wow-delay="0.4s">
-                            <img src="{{ url_for('static', filename='images/brand-4.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                        <div class="single-logo mt-30 wow fadeIn" data-wow-duration="1.5s" data-wow-delay="0.5s">
-                            <img src="{{ url_for('static', filename='images/brand-5.png') }}" alt="brand">
-                        </div> <!-- single logo -->
-                    </div> <!-- brand logo -->
-                </div>
-            </div>   <!-- row -->
-        </div> <!-- container -->
-    </div>*/
-</script>
-    <!--====== BRAMD PART ENDS ======-->
-
     <!--====== SERVICES PART START ======-->
-
     <section id="features" class="services-area pt-120">
         <div class="container">
             <div class="row justify-content-center">
@@ -122,11 +87,9 @@
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
-
     <!--====== SERVICES PART ENDS ======-->
 
     <!--====== ABOUT PART START ======-->
-
     <section id="about" class="about-area pt-70">
         <div class="container">
             <div class="row">
@@ -155,11 +118,9 @@
             <img src="{{ url_for('static', filename='images/about-shape-1.svg') }}" alt="shape">
         </div>
     </section>
-
     <!--====== ABOUT PART ENDS ======-->
 
     <!--====== ABOUT PART START ======-->
-
     <section class="about-area pt-70">
         <div class="about-shape-2">
             <img src="{{ url_for('static', filename='images/about-shape-2.svg') }}" alt="shape">
@@ -187,7 +148,6 @@
             </div> <!-- row -->
         </div> <!-- container -->
     </section>
-
     <!--====== ABOUT PART ENDS ======-->
 
     <!--====== VIDEO COUNTER PART START ======-->
@@ -226,12 +186,9 @@
             <img src="{{ url_for('static', filename='images/about-shape-1.svg') }}" alt="shape">
         </div>
     </section>
-
     <!--====== VIDEO COUNTER PART ENDS ======-->
 
-
     <!--====== FACTS PART STARTS ======-->
-
     <section id="facts" class="about-area pt-70">
         <div class="container">
             <div class="row">
@@ -255,7 +212,7 @@
                             <div class="col-4">
                                 <div class="single-counter counter-color-1 d-flex align-items-center justify-content-center">
                                     <div class="counter-items text-center">
-                                        <span class="count"><span class="counter">125</span>K</span>
+                                        <span class="count"><span class="counter" id="active-users"></span></span>
                                         <p class="text">Active Users</p>
                                     </div>
                                 </div> <!-- single counter -->
@@ -263,7 +220,7 @@
                             <div class="col-4">
                                 <div class="single-counter counter-color-2 d-flex align-items-center justify-content-center">
                                     <div class="counter-items text-center">
-                                        <span class="count"><span class="counter">87</span>K</span>
+                                        <span class="count"><span class="counter" id="detected-today"></span></span>
                                         <p class="text">Detected Today</p>
                                     </div>
                                 </div> <!-- single counter -->
@@ -271,7 +228,7 @@
                             <div class="col-4">
                                 <div class="single-counter counter-color-3 d-flex align-items-center justify-content-center">
                                     <div class="counter-items text-center">
-                                        <span class="count"><span class="counter">123123</span></span>
+                                        <span class="count"><span class="counter" id ="all-time"></span></span>
                                         <p class="text">Phishing Mails Detected</p>
                                     </div>
                                 </div> <!-- single counter -->
@@ -285,7 +242,6 @@
     <!--====== FACTS PART ENDS ======-->
 
     <!--====== FOOTER PART START ======-->
-
     <footer id="footer" class="footer-area pt-120">
         <div class="container">
 
@@ -298,16 +254,12 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="subscribe-form mt-50">
-                            <!-- implement Flask-Mail here -->
                             <form action="" method="post" novalidate>
                                 {{ contact_form.email_address(placeholder='Your email') }}
-                                <!-- <input type="text" placeholder="Your email"> -->
                                 <div class="purple-border mt-2">
                                     {{ contact_form.message(class='form-control', placeholder='Enter your question', rows='3') }}
-                                    <!-- <textarea class="form-control" rows="3" placeholder="Enter your question"></textarea> -->
                                 </div>
                                 {{ contact_form.submit(class='main-btn mt-2') }}
-                                <!-- <button class="main-btn">Talk to us</button> -->
                             </form>
                             <p class="blockquote-footer"> Currently disabled</p>
                         </div>
@@ -327,12 +279,6 @@
                                 Vexels - Logo Resources<br>
                                 Canva - Vector Resources<br>
                             </p>
-                            <!-- <ul class="social">
-                                <li><a href="#"><i class="lni lni-facebook-filled"></i></a></li>
-                                <li><a href="#"><i class="lni lni-twitter-filled"></i></a></li>
-                                <li><a href="#"><i class="lni lni-instagram-filled"></i></a></li>
-                                <li><a href="#"><i class="lni lni-linkedin-original"></i></a></li>
-                            </ul> -->
                         </div> <!-- footer about -->
                     </div>
                     <div class="col-lg-5 col-md-7 col-sm-7">
@@ -352,8 +298,8 @@
                                     <h4 class="title">Resources</h4>
                                 </div>
                                 <ul class="link">
-                                    <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li> <!-- To be done, url_for(privacy)-->
-                                    <li><a href="{{ url_for('tos') }}">Terms of Service</a></li> <!-- To be done, url_for(terms_service) -->
+                                    <li><a href="{{ url_for('privacy') }}">Privacy Policy</a></li>
+                                    <li><a href="{{ url_for('tos') }}">Terms of Service</a></li>
                                 </ul>
                             </div> <!-- footer wrapper -->
                         </div> <!-- footer link -->
@@ -384,28 +330,40 @@
         </div> <!-- container -->
         <div id="particles-2"></div>
     </footer>
-
     <!--====== FOOTER PART ENDS ======-->
 
-    <!--====== BACK TOP TOP PART START ======-->
-
+    <!--====== BACK TO TOP PART START ======-->
     <a href="#" class="back-to-top"><i class="lni lni-chevron-up"></i></a>
+    <!--====== BACK TO TOP PART ENDS ======-->
 
-    <!--====== BACK TOP TOP PART ENDS ======-->
+    <!--====== STATISTICS SCRIPT START =====-->
+    <script>
+        $(document).ready(function() {
+            var active_users = {{ statistics['active_users'] }};
+            var detected_today = {{ statistics['detected_today'] }};
+            var all_time_detected = {{ statistics['all_time_detected'] }};
 
-    <!--====== PART START ======-->
+            if (active_users >= 1000) {
+                active_users = Math.floor(active_users / 1000);
+                $("#active-users").parent().append('K');
+            }
 
-<!--
-    <section class="">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-"></div>
-            </div>
-        </div>
-    </section> -->
+            if (detected_today >= 1000) {
+                detected_today = Math.floor(detected_today / 1000);
+                $("#detected-today").parent().append('K');
+            }
 
+            if (all_time_detected >= 1000) {
+                all_time_detected = Math.floor(all_time_detected /1000);
+                $("#all-time").parent().append('K');
+            }
 
-    <!--====== PART ENDS ======-->
+            $("#active-users").text(active_users);
+            $("#detected-today").text(detected_today);
+            $("#all-time").text(all_time_detected);
+        })
+    </script>
+    <!--====== STATISTICS SCRIPT END =====-->
 
 
 {% endblock %}

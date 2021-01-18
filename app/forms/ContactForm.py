@@ -3,6 +3,7 @@ from wtforms import SubmitField, TextAreaField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired, Email
 
+# WTForm for "Contact Us" in landing page
 class ContactForm(FlaskForm):
     email_address = EmailField('Email Address', validators=[DataRequired(), Email()])
     message = TextAreaField('Your Message', validators=[DataRequired()])

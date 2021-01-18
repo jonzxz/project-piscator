@@ -1,5 +1,6 @@
 $(function () {
 
+
     "use strict";
 
     //===== Prealoder
@@ -60,7 +61,7 @@ $(function () {
 
     $('.counter').counterUp({
         delay: 10,
-        time: 3000
+        time: 2000
     });
 
 
@@ -323,10 +324,6 @@ $(function () {
         },
         "retina_detect": !0
     });
-
-
-
-
 
 
 });

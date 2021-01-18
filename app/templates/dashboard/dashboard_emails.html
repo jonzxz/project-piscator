@@ -8,11 +8,11 @@
         <thead>
           <tr class="tr-header">
             <th class="text-center" scope="col">Email</th>
-            <th class="text-center" scope="col">Phishing Emails Detected</th>
+            <th class="text-center" scope="col">Emails Detected / Checked</th>
             <th class="text-center" scope="col">Detection History</th>
             <th class="text-center" scope="col">Last Updated</th>
             <th class="text-center" scope="col">Active Status</th>
-            <th class="text-center" scope="col">Clean Mailbox</th>
+            <th class="text-center" scope="col">Scan Mailbox</th>
             <th class="text-center" scope="col">Change Password</th>
             <th class="text-center" scope="col">Activate</th>
           </tr>
@@ -21,7 +21,10 @@
           {% for email in user_emails %}
           <tr class="tr-bg">
             <td class="text-center">{{ email.get_email_address() }}</td>
-            <td class="text-center">{{ email.get_phishing_mail_detected() }}</td>
+            <td class="text-center">
+              {{ email.get_phishing_mail_detected() }} /
+              {{ email.get_total_mails_checked() }}
+            </td>
             <td class="text-center"><a class="lni lni-keyword-research" id="history-{{ email.email_id }}"
               name="history-{{ email.email_address }}" href="#"
               onclick="history({{ email.get_email_id() }});"></a></td>
@@ -76,7 +79,8 @@
       {% endwith %}
 
       <!-- Modal -->
-      <div class="modal fade" id="addMailModal" tabindex="-1" role="dialog" aria-labelledby="addMailModalLabel" aria-hidden="true">
+      <div class="modal fade" id="addMailModal" tabindex="-1" role="dialog"
+      aria-labelledby="addMailModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -160,7 +164,9 @@
                 </button>
               </div>
               <form action="{{ url_for('update_email_password') }}" method="post" novalidate>
+                {% if 'csrf_token' in change_email_password_form %}
                 {{ change_email_password_form.csrf_token(id = "unique_id") }}
+                {% endif %}
                 <div class="modal-body">
                   <div class="p-2">
                     {{ change_email_password_form.email_address.label }}

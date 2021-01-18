@@ -2,6 +2,7 @@ from cryptography.fernet import Fernet, InvalidToken
 import os, sys
 
 # Fernet -> AES128 in CBC with PKCS7 padding
+# Fernet wrapper, used for encrypting application passwords of EmailAddress
 class Encryption:
     def __init__(self):
         self.__key = os.environ.get('SECRET') or self.read_secret()

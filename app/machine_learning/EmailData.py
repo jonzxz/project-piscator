@@ -1,7 +1,8 @@
-import re, datetime, whois
-# from preprocessing.utils import clean_up_raw_body, flatten_from_tuples, identify_domains
-from app.machine_learning.utils import clean_up_raw_body, flatten_from_tuples, identify_domains
+import re, datetime
 import dns.resolver
+from app.machine_learning.utils import clean_up_raw_body
+from app.machine_learning.utils import flatten_from_tuples
+from app.machine_learning.utils import identify_domains
 
 class EmailData:
     def __init__(self, subject, from_, attachments, content, headers):
@@ -31,7 +32,6 @@ class EmailData:
         self.__domain = identify_domains(self.get_from())
 
 
-    ## -- Jon START --
     # number of http / total count. if more than 25% of links are http return a 1
     # if no http return -1
     def process_https_tokens(self):
@@ -304,7 +304,8 @@ class EmailData:
 
         if dmarc_status == 'pass':
             self.set_feature_dmarc_status(-1)
-        elif dmarc_status == 'bestguesspass' or dmarc_status == 'none' or dmarc_status == 'permerror':
+        elif dmarc_status == 'bestguesspass' or dmarc_status == 'none' \
+        or dmarc_status == 'permerror':
             self.set_feature_dmarc_status(1)
         else:
             self.set_feature_dmarc_status(0)
@@ -355,7 +356,8 @@ class EmailData:
             self.set_feature_mx_record(0)
 
     def identify_auth_results(self):
-        if 'ARC-Authentication-Results' in self.get_headers() or 'Authentication-Results' in self.get_headers():
+        if 'ARC-Authentication-Results' in self.get_headers()\
+         or 'Authentication-Results' in self.get_headers():
             try:
                 return (self.get_headers()['ARC-Authentication-Results'][0]).split(sep=' ')
             except KeyError:

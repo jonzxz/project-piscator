@@ -8,7 +8,7 @@ import pytest
 
 def add_mail(client, email, password):
     return client.post(
-    '/dashboard/emails', data={
+    '/dashboard/add_email', data={
     'email_address' : email,
     'password' : password
     },
