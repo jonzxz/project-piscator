@@ -20,6 +20,7 @@ from app.models.PhishingEmail import PhishingEmail
 
 ## Datetime
 from datetime import datetime, date, timedelta
+from pytz import timezone
 from sqlalchemy import Date, cast, func, extract
 
 ## Utils
@@ -527,7 +528,7 @@ def check_phish(mid):
     for msg in all_mails:
         try:
             sender = msg.from_
-            if (check_valid_time(last_updated, msg.date)):
+            if (check_valid_time(last_updated, msg.date.astimezone(timezone('Asia/Singapore')))):
                 print("Last updated: {}".format(last_updated))
                 print(msg.subject)
                 print("Date of mail: {}".format(msg.date))
@@ -560,7 +561,7 @@ def check_phish(mid):
                 PhishingEmail.content == mail_item.get_content()).first()
 
                 if not mail_exist:
-                    phishing_mails.append(Mail(sender, msg.date, msg.subject))
+                    phishing_mails.append(Mail(sender, msg.date.astimezone(timezone('Asia/Singapore')), msg.subject))
                     data['detection_count']+=1
                     detected_mail = PhishingEmail( \
                     sender_address = sender, \

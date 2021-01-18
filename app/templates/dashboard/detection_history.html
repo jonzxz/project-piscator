@@ -2,11 +2,66 @@
 {% block content %}
 <script>
   $(document).ready(function(){
-    $('#detectionTable').DataTable( {
+    oTable = $('#detectionTable').DataTable( {
       "order": [[ 2, "desc" ]],
       "columnDefs" : [{"targets":2, "type":"date-eu"}]
-    } );
+    });
   });
+
+  var DayValue = null;
+  var MonthValue = null;
+
+  function getSelectedValueDay(selectObject) {
+    var value = selectObject.value;
+    DayValue = value;
+
+    if(MonthValue != null)
+    {
+      if(MonthValue == "- Month -")
+      {
+        value = DayValue;
+      }
+      else
+      {
+        value = DayValue + " " + MonthValue;
+      }
+    }
+    if (DayValue == "- Day -" && MonthValue != null)
+    {
+      value = MonthValue;
+    }
+    if(MonthValue == "- Month -" && DayValue == "- Day -" || DayValue == "- Day -" && MonthValue == null)
+    {
+      oTable.column(2).search("").draw() ;
+      return;
+    }
+    oTable.column(2).search(value).draw() ;
+  }
+   function getSelectedValueMonth(selectObject) {
+    var value = selectObject.value;
+    MonthValue = value;
+    if(DayValue != null)
+    {
+      if(DayValue == "- Day -")
+      {
+        value = MonthValue;
+      }
+      else
+      {
+        value = DayValue + " " + MonthValue;
+      }
+    }
+    if (MonthValue == "- Month -" && DayValue != null)
+    {
+      value = DayValue;
+    }
+    if(MonthValue == "- Month -" && DayValue == "- Day -" || MonthValue == "- Month -" && DayValue == null)
+    {
+      oTable.column(2).search("").draw() ;
+      return;
+    }
+    oTable.column(2).search(value).draw() ;
+  }
 </script>
 <style>
   #detectionTable {border-style: none;}
@@ -17,6 +72,59 @@
 <div class="w-90 mx-auto pl-5 pt-5">
 <span class="h2 pt-2">Detection History</span>
 <div class="mt-3">
+  <span class="h6 pt-2">Filter by day</span>
+   <select class="form-control" style="width:200px" name="day" id="day" onchange="getSelectedValueDay(this)">
+    <option>- Day -</option>
+    <option value="01">1</option>
+    <option value="02">2</option>
+    <option value="03">3</option>
+    <option value="04">4</option>
+    <option value="05">5</option>
+    <option value="06">6</option>
+    <option value="07">7</option>
+    <option value="08">8</option>
+    <option value="09">9</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    <option value="13">13</option>
+    <option value="14">14</option>
+    <option value="15">15</option>
+    <option value="16">16</option>
+    <option value="17">17</option>
+    <option value="18">18</option>
+    <option value="19">19</option>
+    <option value="20">20</option>
+    <option value="21">21</option>
+    <option value="22">22</option>
+    <option value="23">23</option>
+    <option value="24">24</option>
+    <option value="25">25</option>
+    <option value="26">26</option>
+    <option value="27">27</option>
+    <option value="28">28</option>
+    <option value="29">29</option>
+    <option value="30">30</option>
+    <option value="31">31</option>
+  </select>
+  <span class="h6 pt-2">Filter by month</span>
+  <select class="form-control" style="width:200px" name="Fmonth" id="Fmonth" onchange="getSelectedValueMonth(this)">
+      <option>- Month -</option>
+      <option value="Jan">January</option>
+      <option value="Feb">February</option>
+      <option value="Mar">March</option>
+      <option value="Apr">April</option>
+      <option value="May">May</option>
+      <option value="Jun">June</option>
+      <option value="Jul">July</option>
+      <option value="Aug">August</option>
+      <option value="Sep">September</option>
+      <option value="Oct">October</option>
+      <option value="Nov">November</option>
+      <option value="Dec">December</option>
+  </select>
+  <br>
+
   <table id="detectionTable" class="table table-hover">
     <thead>
       <tr style="color: #889B95">
@@ -30,7 +138,7 @@
       <tr>
         <td>{{ mail.get_sender_address() }}</td>
         <td>{{ mail.get_subject() }}</td>
-        <td class="text-center">{{ mail.get_detected_on().strftime('%d-%m-%Y') }}</td>
+        <td class="text-center">{{ mail.get_detected_on().strftime('%d-%B-%Y') }}</td>
       </tr>
       {% endfor %}
     </tbody>
