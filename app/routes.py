@@ -302,7 +302,7 @@ def dash_account():
         if user is not None and user.check_password(form.current_password.data):
             ## -- Password Change START --
             if not disable_account \
-            and form.current_password.data == form.new_password.data:
+            and form.new_password.data == form.confirm_new_password.data:
                 logger.info("Entering password change")
                 logger.info("Password changed for %s", user.get_username())
                 user.set_password(form.new_password.data)
