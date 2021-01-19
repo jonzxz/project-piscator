@@ -219,7 +219,7 @@ def add_email():
             # If connection to mailbox fails
             else:
                 flash("Unable to connect to mailbox."\
-                " Maybe you've entered a wrong password?", 'error')
+                " Maybe you've entered a wrong email/password?", 'error')
         else:
             flash("{} already exist in our database!".format(email_addr), 'error')
             logger.error("Email already exist")

@@ -18,6 +18,9 @@ from app.models.PhishingEmail import PhishingEmail
 ## Typehints
 from typing import List
 
+##
+from socket import gaierror
+
 """
 Function to test connection via IMAP, returns connection attempt results
 """
@@ -32,7 +35,10 @@ def test_mailbox_conn(email_addr: str, password: str) -> bool:
         mailbox.logout()
     except imaplib.IMAP4.error:
         conn_status = False
-        logger.error("Attempting connection to mailbox failed!")
+        logger.error("IMAP4 Error: Connection failed!")
+    except gaierror:
+        conn_status = False
+        logger.error("GAIError: Connection failed")
     return conn_status
 
 """
