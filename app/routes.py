@@ -181,7 +181,8 @@ def dash_email():
     existing_addresses = get_existing_addresses_by_user_id(current_user.user_id)
     return render_template('dashboard/dashboard_emails.html',
     current_user = current_user.username, add_email_form = add_email_form, \
-    change_email_password_form = change_email_password_form, user_emails = existing_addresses)
+    change_email_password_form = change_email_password_form, \
+    user_emails = existing_addresses)
     ## -- Default Dashboard Loading END --
 
 @app.route('/dashboard/add_email', methods=['POST'])
@@ -203,7 +204,8 @@ def add_email():
             # Attempts a mailbox login via imap_tools based on submit
             # Adds the email address to the database
             logger.info("Checking mailbox connectivity..")
-            # -- If you want to test adding emails to a user account without checking connection
+            # -- If you want to test adding emails to a user account
+            # -- without checking connection
             # -- change the if statement to if True:
             if test_mailbox_conn(email_addr, password):
                 new_email = EmailAddress()
@@ -280,16 +282,6 @@ def dash_account():
     if form.validate_on_submit():
         logger.info("%s submitted account settings form", user.get_username())
 
-        # If not password is entered, error is caught on Form level
-
-        # Current password required for changing password / disabling of account
-        # both change in state and change of password requires the correct current password
-        if not user.check_password(form.current_password.data):
-            logger.info("%s submitted wrong password, redirecting to dashboard"\
-            , user.get_username())
-            flash('Invalid Current Password!')
-            return redirect(url_for('dash_account'))
-
         # Retrieve slider data
         disable_account = request.form.get('disable_account')
 
@@ -297,62 +289,45 @@ def dash_account():
         user.get_username(), user.get_active_status(), disable_account)
 
         """
-        If password update and account disabling is triggered, password will
-        not be updated.
+        Checks if update password or disable account is submitted
+        First condition: checks for password and new password criteria and
+        disable_account slider is None
+
+        Second condition: checks that disable_account slider is on and that
+        current password != new_password, because disable account does not display
+        new_password field so naturally current_password will NOT == new_password
+
+        Else: disable account with correct password entered but no slider.
         """
-        ## -- Password Change START --
-        #check for state change (db vs form)
-        #if user is active and form state is None (both means account is active) -> no change
-        #or user is inactive and form state is True (both means account is inactive) -> no change
-        if not disable_account:
-            # since no change in state, check for password change then
-            logger.info("Entering password change")
-            status = user.get_active_status()
-            if user is not None and user.check_password(form.current_password.data):
-                if not form.new_password.data or not form.confirm_new_password.data:
-                    logger.info("Either password fields are empty, redirecting.")
-                    flash("Please enter a new password to change passwords"\
-                    " or select disable account to disable your account.")
-                    return redirect(url_for('dash_account'))
-                elif form.new_password.data == form.confirm_new_password.data:
-                    logger.info("Password changed for %s", user.get_username())
-                    user.set_password(form.new_password.data)
-                    flash('Password Successfully Changed!')
-                else:
-                    logger.info("Mismatched passwords submited, redirecting.")
-                    flash('Passwords does not match!')
-                    return redirect(url_for('dash_account'))
-            else:
-                logger.info("Invalid current password submitted, redirecting.")
-                flash('Invalid \'Current Password\'!')
-                return redirect(url_for('dash_account'))
-        ## -- Password Change END --
-        ## -- Account State START --
-        else:
-            logger.info("Entering account enable/disable.")
-            # Change in state, disable/enable account
-            if user is not None and user.check_password(form.current_password.data):
-                if disable_account == "on":
-                    #to change is_active state to False -> disable account
-                    #to disable account
-                    user.set_active_status(False)
-                    logger.info("Setting %s account status to disabled"\
-                    , user.get_username())
-                    logger.info("Disabling all email addresses for %s"\
-                    , user.get_username())
-                    # Sets all email addresses for user to disabled
-                    disable_emails_by_user_id(user.get_id())
-                    flash('Account is Disabled! You\'ll be logged out in 5 seconds...')
-            else:
-                flash('Invalid \'Current Password\'!')
-                logger.info("User %s entered invalid current password"\
+        if user is not None and user.check_password(form.current_password.data):
+            ## -- Password Change START --
+            if not disable_account \
+            and form.current_password.data == form.new_password.data:
+                logger.info("Entering password change")
+                logger.info("Password changed for %s", user.get_username())
+                user.set_password(form.new_password.data)
+                flash('Password Successfully Changed!')
+            ## -- Password Change END --
+            ## -- Account State START --
+            elif disable_account=='on' \
+            and not form.current_password.data == form.new_password.data:
+                user.set_active_status(False)
+                logger.info("Setting %s account status to disabled"\
                 , user.get_username())
-                return redirect(url_for('dash_account'))
-            if form.new_password.data or form.confirm_new_password.data:
-                logger.info("Activation and password triggered"\
-                " - password not updated.")
-                flash('Password is not changed!')
-        ## -- Account State END --
+                logger.info("Disabling all email addresses for %s"\
+                , user.get_username())
+                # Sets all email addresses for user to disabled
+                disable_emails_by_user_id(user.get_id())
+                flash('Account is Disabled! You\'ll be logged out in 5 seconds..')
+            else:
+                flash('If you have intended to disable your account\
+                , click the slider!')
+            ## -- Account State END --
+        else:
+            flash('Invalid \'Current Password\'!')
+            logger.info("User %s entered invalid current password"\
+            , user.get_username())
+            return redirect(url_for('dash_account'))
 
         try:
             db.session.commit()
@@ -453,7 +428,8 @@ def check_phish(mid):
             # Exception happens when a msg.from_ is malformed resulting in
             # unparseable values. Automatically assume phishing email and add to record.
             # Denote Sender as 'INVALID_SENDER'
-            logger.error("HeaderParseError, unparseable msg.from_. Setting sender as INVALID_SENDER")
+            logger.error("HeaderParseError, unparseable msg.from_. \
+            Setting sender as INVALID_SENDER")
             sender = 'INVALID_SENDER'
 
         if not sender == mailaddr.get_email_address() or \
@@ -464,7 +440,8 @@ def check_phish(mid):
             , (msg.text + msg.html), msg.headers)
             mail_item.generate_features()
             result = model.predict(mail_item.repr_in_arr())
-            logger.info("Checking mail: %s -- Result: %s", mail_item.get_subject(), result)
+            logger.info("Checking mail: %s -- Result: %s"\
+            , mail_item.get_subject(), result)
             if result == 1:
                 logger.info("Phishing mail detected, subject: %s", msg.subject)
 

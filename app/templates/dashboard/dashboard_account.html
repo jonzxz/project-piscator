@@ -88,7 +88,7 @@
         {%else%}
         <div class="alert alert-danger"><p class="text-center">{{ message }}</p> </div>
         {% if not current_user.get_active_status() %}
-          <meta http-equiv = "refresh" content = "5; url ={{ url_for('logout') }}" />
+          <meta http-equiv = "refresh" content = "7; url ={{ url_for('logout') }}" />
         {% endif %}
         {% endif %}
       </div>
