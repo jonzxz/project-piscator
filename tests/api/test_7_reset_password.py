@@ -48,7 +48,7 @@ def test_request_reset_password(client, db):
     # Assert token is generated
     assert get_user_by_name(TEST_RESET_USER).get_reset_token()
 
-def test_update_password(client, db):
+def test_update_forgotten_password(client, db):
     TEST_RESET_USER = 'resetmyaccount'
     NEW_PASSWORD = 'pa$$w0rd'
     USER_ENTITY = get_user_by_name(TEST_RESET_USER)

@@ -6,7 +6,6 @@ from .test_2_authentication import login, logout
 from app import db
 from app.models.User import User
 
-from time import sleep
 # Flows after deactivating email so user is in dashboard still
 # Test password change in account setting by clicking into 'Account'
 # and testing with valid new passwords, log out and attempt login again

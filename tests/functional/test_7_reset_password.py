@@ -44,7 +44,7 @@ def test_request_reset_password(driver):
     # Assert redirected to reset page
     assert driver.current_url.split(sep='/')[-1] == 'change_password'
 
-def test_update_password(driver):
+def test_update_forgotten_password(driver):
     USERNAME = 'testuser123'
     TEST_RESET_PASSWORD = 'iforgotmypassword'
 
