@@ -16,7 +16,7 @@
           {{ form.hidden_tag() }}
           <div class="row pb-3">
             <div class="col-5 text-right">{{ form.username.label }}</div>
-            <div class="col-3"><input class="form-control" type="text" value="{{ current_user }}" disabled /></div>
+            <div class="col-3"><input class="form-control" type="text" value="{{ current_user.get_username() }}" disabled /></div>
           </div>
           <div class="row pb-3">
             <div class="col-5 text-right">{{ form.current_password.label }}</div>
@@ -43,7 +43,7 @@
           {{ form.hidden_tag() }}
           <div class="row pb-3">
             <div class="col-5 text-right">{{ form.username.label }}</div>
-            <div class="col-3"><input class="form-control" type="text" value="{{ current_user }}" disabled /></div>
+            <div class="col-3"><input class="form-control" type="text" value="{{ current_user.get_username() }}" disabled /></div>
           </div>
           <div class="row pb-3">
             <div class="col-5 text-right">{{ form.current_password.label }}</div>
@@ -87,7 +87,9 @@
         <div class="alert alert-success"><p class="text-center">{{ message }}</p> </div>
         {%else%}
         <div class="alert alert-danger"><p class="text-center">{{ message }}</p> </div>
-        <meta http-equiv = "refresh" content = "10; url ={{ url_for('logout') }}" />
+        {% if not current_user.get_active_status() %}
+          <meta http-equiv = "refresh" content = "5; url ={{ url_for('logout') }}" />
+        {% endif %}
         {% endif %}
       </div>
       {% endfor %}

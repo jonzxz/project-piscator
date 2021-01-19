@@ -342,7 +342,7 @@ def dash_account():
                     , user.get_username())
                     # Sets all email addresses for user to disabled
                     disable_emails_by_user_id(user.get_id())
-                    flash('Account is Disabled! You\'ll be logged out in 10 seconds...')
+                    flash('Account is Disabled! You\'ll be logged out in 5 seconds...')
             else:
                 flash('Invalid \'Current Password\'!')
                 logger.info("User %s entered invalid current password"\
@@ -367,7 +367,7 @@ def dash_account():
     # Updates values of status after changing status
     status = user.get_active_status()
     return render_template('dashboard/dashboard_account.html',
-    current_user = current_user.username, form = form, status = status)
+    current_user = current_user, form = form, status = status)
 
 
 @app.route('/dashboard/emails/phish/<mid>')
