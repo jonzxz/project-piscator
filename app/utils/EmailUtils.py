@@ -18,7 +18,7 @@ from app.models.PhishingEmail import PhishingEmail
 ## Typehints
 from typing import List
 
-##
+## Socket Exceptions
 from socket import gaierror
 
 """
@@ -51,6 +51,8 @@ def get_imap_svr(email_addr: str) -> str:
     if 'hotmail' in mail_provider or 'live' in mail_provider \
     or 'outlook' in mail_provider:
         return IMAP_OUTLOOK
+    if 'yahoo' in mail_provider:
+        return IMAP_YAHOO
     return 'INVALID'
 
 """
