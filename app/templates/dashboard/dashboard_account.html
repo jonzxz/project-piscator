@@ -87,6 +87,7 @@
         <div class="alert alert-success"><p class="text-center">{{ message }}</p> </div>
         {%else%}
         <div class="alert alert-danger"><p class="text-center">{{ message }}</p> </div>
+        <meta http-equiv = "refresh" content = "10; url ={{ url_for('logout') }}" />
         {% endif %}
       </div>
       {% endfor %}

@@ -312,7 +312,7 @@ def dash_account():
                 if not form.new_password.data or not form.confirm_new_password.data:
                     logger.info("Either password fields are empty, redirecting.")
                     flash("Please enter a new password to change passwords"\
-                    "or select disable account to disable your account.")
+                    " or select disable account to disable your account.")
                     return redirect(url_for('dash_account'))
                 elif form.new_password.data == form.confirm_new_password.data:
                     logger.info("Password changed for %s", user.get_username())
@@ -342,7 +342,7 @@ def dash_account():
                     , user.get_username())
                     # Sets all email addresses for user to disabled
                     disable_emails_by_user_id(user.get_id())
-                    flash('Account is Disabled!')
+                    flash('Account is Disabled! You\'ll be logged out in 10 seconds...')
             else:
                 flash('Invalid \'Current Password\'!')
                 logger.info("User %s entered invalid current password"\
