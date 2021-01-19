@@ -1,0 +1,60 @@
+.tab {
+    display: inline-block;
+    margin-left: 40px;
+}
+
+.ex1 {
+  width: 900px;
+  margin: auto;
+  font-family: "Calibri", sans-serif;
+
+}
+
+p{
+  color:white;
+  font-size: 18px;
+}
+
+a:link {
+  color:#FFF;
+}
+
+/* The color of the link when the mouse is hovered over it */
+a:hover {
+  color:#FFF;
+}
+
+/* When link has been visited */
+a:visited {
+  color:#FFF;
+}
+/* When link is clicked/selected */
+a:active {
+  color:#Fff;
+}
+
+body {
+  background: -webkit-linear-gradient(180deg, #1dd0e7, #1970c2);
+  background: -moz-linear-gradient(180deg, #1dd0e7, #1970c2);
+  background: -ms-linear-gradient(180deg, #1dd0e7, #1970c2);
+  background: -o-linear-gradient(180deg, #1dd0e7, #1970c2);
+  background: linear-gradient(180deg, #1dd0e7, #1970c2);
+}
+
+.text-404 {
+  font-size: 1000%;
+  padding-top: 10%;
+  padding-bottom: 2%;
+}
+
+.text-404-subheader {
+  font-size: 500%;
+  padding: 4%;
+}
+
+.text-404-subsubheader {
+  font-size: 150%;
+  padding: 2%;
+  font-weight: bold;
+  color: #FFF;
+}

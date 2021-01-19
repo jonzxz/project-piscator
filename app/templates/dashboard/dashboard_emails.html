@@ -1,107 +1,222 @@
 {% extends "dashboard/dashboard_base.html" %}
 {% block content %}
-<div class="w-90 mx-auto pl-5 pt-5">
-<span class="h2 pt-2">Subscription(s)</span>
-<div class="mt-3">
-  <table class="table table-hover">
-    <thead>
-      <tr style="color: #889B95">
-        <th class="text-center" scope="col">Email</th>
-        <th class="text-center" scope="col">Phishing Emails Detected</th>
-        <th class="text-center" scope="col">Detection History</th>
-        <th class="text-center" scope="col">Last Updated</th>
-        <th class="text-center" scope="col">Active Status</th>
-        <th class="text-center" scope="col">Clean Mailbox</th>
-        <th class="text-center" scope="col">Change Password</th>
-        <th class="text-center" scope="col">Activate</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for email in user_emails %}
-      <tr>
-        <td class="text-center">{{ email.get_email_address() }}</td>
-        <td class="text-center">{{ email.get_phishing_mail_detected() }}</td>
-        <td class="text-center"> <a class="lni lni-keyword-research" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="history({{ email.get_email_id() }});"></a></td>
-        {% if email.get_last_updated() is none %}
-          <td class="text-center">Never</td>
-        {% else %}
-          <td class="text-center">{{ email.get_prettified_date() }}</td>
-        {% endif %}
-        {% if email.get_active_status() %}
-          <td class="text-center" name="status-{{ email.email_address }}">Active</td>
-        {% else %}
-          <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
-        {% endif %}
-        <td class="text-center"> <a class="lni lni-brush" id="{{ email.email_id }}" name="{{ email.email_address }}" href="#" onclick="phish({{ email.get_email_id() }});"></a></td>
-        <td class="text-center"> <a class="lni lni-pencil"></a></td>
-        <td class="text-center"> <a class="lni lni-power-switch" id="{{ email.email_id }}" name="activate-{{ email.email_address}}" href="#" onclick="activate({{ email.get_email_id() }});"></a></td>
-      </tr>
-      {% endfor %}
-    </table>
-    </div>
-  <hr>
-  <!-- Button trigger modal -->
-  <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#addMailModal">
-    Add New Email
-  </button>
-
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for message in messages %}
-        <span class="alert alert-danger">{{ message }}</span>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-
-  <!-- Modal -->
-  <div class="modal fade" id="addMailModal" tabindex="-1" role="dialog" aria-labelledby="addMailModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addMailModalLabel">Add New Email</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="" method="post" novalidate>
-          {{ form.hidden_tag() }}
-          <div class="modal-body">
-            <div class="p-2">
-              {{ form.email_address.label}}
-              {{ form.email_address(class='form-control') }}
-            </div>
-            {% for error in form.email_address.errors %}
-            <span> {{ error }} </span>
+<div class="container ml-5 col-lg-12 col-md-12 col-xs-12">
+  <div class="w-90 mx-auto pl-5 pt-5">
+    <span class="h2 pt-2">Subscription(s)</span>
+    <div class="mt-3">
+      <table class="table table-hover">
+        <thead>
+          <tr class="tr-header">
+            <th class="text-center" scope="col">Email</th>
+            <th class="text-center" scope="col">Emails Detected / Checked</th>
+            <th class="text-center" scope="col">Detection History</th>
+            <th class="text-center" scope="col">Last Updated</th>
+            <th class="text-center" scope="col">Active Status</th>
+            <th class="text-center" scope="col">Scan Mailbox</th>
+            <th class="text-center" scope="col">Change Password</th>
+            <th class="text-center" scope="col">Activate</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for email in user_emails %}
+          <tr class="tr-bg">
+            <td class="text-center">{{ email.get_email_address() }}</td>
+            <td class="text-center">
+              {{ email.get_phishing_mail_detected() }} /
+              {{ email.get_total_mails_checked() }}
+            </td>
+            <td class="text-center"><a class="lni lni-keyword-research" id="history-{{ email.email_id }}"
+              name="history-{{ email.email_address }}" href="#"
+              onclick="history({{ email.get_email_id() }});"></a></td>
+              {% if email.get_last_updated() is none %}
+              <td class="text-center">Never</td>
+              {% else %}
+              <td class="text-center">{{ email.get_prettified_date() }}</td>
+              {% endif %}
+              {% if email.get_active_status() %}
+              <td class="text-center" name="status-{{ email.email_address }}">Active</td>
+              <td class="text-center"><a class="lni lni-brush" id="{{ email.email_id }}"
+                name="clean-{{ email.email_address }}" href="#"
+                onclick="phish({{ email.get_email_id() }});"></a></td>
+              {% else %}
+              <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
+              <td class="text-center"><span class="lni lni-brush" disabled></span></td>
+              {% endif %}
+              <td class="text-center">
+                <a class="lni lni-pencil" name="update-{{ email.email_address }}"
+                data-toggle="modal" data-target="#changePasswordModal"></a>
+              </td>
+              <td class="text-center">
+                <a class="lni lni-power-switch" id="activate-{{ email.email_id }}"
+                name="activate-{{ email.email_address}}" href="#"
+                onclick="activate({{ email.get_email_id() }});"></a>
+              </td>
+            </tr>
             {% endfor %}
-            <div class="p-2">
-              {{ form.password.label }}
-              {{ form.password(class='form-control') }}
+          </tbody>
+        </table>
+      </div>
+      <hr>
+      <!-- Button trigger modal -->
+      <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#addMailModal">
+        Add New Email
+      </button>
+      <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#instructionsModal">
+        Instructions
+      </button>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      {% if category == 'success' %}
+      <span class="alert alert-success">{{ message }}</span>
+      {% elif category == 'error' %}
+      <span class="alert alert-danger">{{ message }}</span>
+      {% endif %}
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <!-- Modal -->
+      <div class="modal fade" id="addMailModal" tabindex="-1" role="dialog"
+      aria-labelledby="addMailModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addMailModalLabel">Add New Email</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form action="{{ url_for('add_email') }}" method="post" novalidate>
+              {{ add_email_form.hidden_tag() }}
+              <div class="modal-body">
+                <div class="p-2">
+                  {{ add_email_form.email_address.label}}
+                  {{ add_email_form.email_address(class='form-control') }}
+                </div>
+                {% for error in add_email_form.email_address.errors %}
+                <span> {{ error }} </span>
+                {% endfor %}
+                <div class="p-2">
+                  {{ add_email_form.password.label }}
+                  {{ add_email_form.password(class='form-control') }}
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="main-btn" data-dismiss="modal">Close</button>
+                {{ add_email_form.add_mail_submit(class='main-btn') }}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="instructionsModal" tabindex="-1" role="dialog" aria-labelledby="instructionsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-instructionsModal" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id=instructionsModalLabel">Instructions</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="p-2">
+                <h4>Subscribe</h4>
+                <p><span class="tab">1. Select “Add New Email”</span></p>
+                <p><span class="tab">2.	Enter the email and its corresponding <b>application</b>
+                  password that you want subscribed to the service, and select “Add Email”</span></p>
+                  <p><span class="tab">3.	Once successful, the new entry will be displayed</span></p>
+                </div>
+                <div class="p-2">
+                  <h4>Scan for Phishing Emails</h4>
+                  <p><span class="tab">1. From the “Clean Mailbox” column, select
+                    <a class="lni lni-brush"></a> (Note: The time taken may vary
+                    depending on the number of unchecked emails in the mailbox.)</span></p>
+                  <p><span class="tab">2.	Once successful, you will be redirected to “Detection Results”
+                    (Note: “Detection Results” shows the details (sender, subject title and date sent)
+                    of the phishing emails that were detected from only that scan.)</span></p>
+                </div>
+                <div class="p-2">
+                  <h4>Update Email Password</h4>
+                  <p><span class="tab">1.	From the “Change Password” column, select <a class="lni lni-pencil"></a></span></p>
+                  <p><span class="tab">2. Enter the “New Password” and select “Update”</span></p>
+                  <p><span class="tab">3.	Once successful, a message “Password successfully updated!” will be displayed</span></p>
+                </div>
+                <div class="p-2">
+                  <h4>Activate/Deactivate Subscription</h4>
+                  <p><span class="tab">1.	From the “Activate” column, select  <a class="lni lni-power-switch"></a></span></p>
+                  <p><span class="tab">2.	Once successful, the “Active State” will be changed</span></p>
+                </div>
+                <div class="p-2 text-center">
+                  <a target ="_blank" href="{{ url_for('static', filename='docs/Email Application Password Manager.pdf') }}">
+                    Need help setting up an application password?</a>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="main-btn" data-dismiss="modal">Close</button>
-            {{ form.submit(class='main-btn') }}
+        </div>
+
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordLabel">Change Email Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form action="{{ url_for('update_email_password') }}" method="post" novalidate>
+                {% if 'csrf_token' in change_email_password_form %}
+                {{ change_email_password_form.csrf_token(id = "unique_id") }}
+                {% endif %}
+                <div class="modal-body">
+                  <div class="p-2">
+                    {{ change_email_password_form.email_address.label }}
+                    {{ change_email_password_form.email_address(class='form-control', id='update_pass_email_field', value='', readonly='readonly') }}
+                  </div>
+                  {% for error in change_email_password_form.email_address.errors %}
+                  <span> {{ error }} </span>
+                  {% endfor %}
+                  <div class="p-2">
+                    {{ change_email_password_form.new_password.label }}
+                    {{ change_email_password_form.new_password(class='form-control') }}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="main-btn" data-dismiss="modal">Close</button>
+                    {{ change_email_password_form.change_email_password_submit(class='main-btn') }}
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
-  </div>
-  </div>
 
-  <script>
-    function phish(mail_id) {
-      var names = document.getElementById(mail_id).name;
-      let url = "emails/phish/" + mail_id;
-      window.location.href = url;
-    }
+      <script>
+        function phish(mail_id) {
+          var names = document.getElementById(mail_id).name;
+          let url = "emails/phish/" + mail_id;
+          window.location.href = url;
+        }
 
-    function activate(mail_id) {
-      window.location.href = "emails/activation/" + mail_id;
-    }
+        function activate(mail_id) {
+          window.location.href = "emails/activation/" + mail_id;
+        }
 
-    function history(mail_id) {
-      window.location.href = "emails/history/" + mail_id
-    }
-  </script>
+        function history(mail_id) {
+          window.location.href = "emails/history/" + mail_id
+        }
 
-  {% endblock %}
+        $(document).ready(function(){
+          $(".lni-pencil").click(function(ele){ // Click to only happen on lni-pencil links
+            var tr = ele.target.parentNode.parentNode;
+            var mail = tr.cells[0].textContent;
+            $('#changePasswordModal').modal('show');
+            $("#update_pass_email_field").attr('value', mail);
+            $("#update_pass_email_field").attr('data', mail);
+          });
+        });
+      </script>
+      {% endblock %}

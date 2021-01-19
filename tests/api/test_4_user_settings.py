@@ -1,6 +1,7 @@
 from test_2_authentication import login
 from app.models.User import User
 import pytest
+from app.utils.DBUtils import get_user_by_name
 
 def change_user_settings(client, username, current_password, new_password, conf_new_password, disable_account):
     return client.post(
@@ -16,8 +17,8 @@ def change_user_settings(client, username, current_password, new_password, conf_
 
 def enable_account(client, db):
     USERNAME = 'testuser123'
-    user = db.session.query(User).filter(User.username == USERNAME).first()
-    user.update_active_status(True)
+    user = get_user_by_name(USERNAME)
+    user.set_active_status(True)
     db.session.commit()
 
 def test_valid_change_password(client, db):
@@ -28,7 +29,7 @@ def test_valid_change_password(client, db):
     DISABLE_ACCOUNT = None
     login(client, USERNAME, CURRENT_PW)
     change_user_settings(client, USERNAME, CURRENT_PW, NEW_PW, CONF_NEW_PW, DISABLE_ACCOUNT)
-    user = db.session.query(User).filter(User.username == USERNAME).first()
+    user = get_user_by_name(USERNAME)
     assert (user.check_password(NEW_PW))
 
 def test_invalid_change_mismatched_password(client, db):
@@ -39,7 +40,7 @@ def test_invalid_change_mismatched_password(client, db):
     DISABLE_ACCOUNT = None
     login(client, USERNAME, CURRENT_PW)
     change_user_settings(client, USERNAME, CURRENT_PW, NEW_PW, CONF_NEW_PW, DISABLE_ACCOUNT)
-    user = db.session.query(User).filter(User.username == USERNAME).first()
+    user = get_user_by_name(USERNAME)
     assert not (user.check_password(NEW_PW))
 
 def test_invalid_change_wrong_current_password(client, db):
@@ -50,7 +51,7 @@ def test_invalid_change_wrong_current_password(client, db):
     DISABLE_ACCOUNT = None
     login(client, USERNAME, CURRENT_PW)
     change_user_settings(client, USERNAME, CURRENT_PW, NEW_PW, CONF_NEW_PW, DISABLE_ACCOUNT)
-    user = db.session.query(User).filter(User.username == USERNAME).first()
+    user = get_user_by_name(USERNAME)
     assert not (user.check_password(NEW_PW))
 
 def test_disable_account_only(client, db):
@@ -61,7 +62,7 @@ def test_disable_account_only(client, db):
     DISABLE_ACCOUNT = "on"
     login(client, USERNAME, CURRENT_PW)
     change_user_settings(client, USERNAME, CURRENT_PW, NEW_PW, CONF_NEW_PW, DISABLE_ACCOUNT)
-    user = db.session.query(User).filter(User.username == USERNAME).first()
+    user = get_user_by_name(USERNAME)
     assert not user.get_active_status()
     enable_account(client, db)
 
@@ -73,6 +74,6 @@ def test_disable_account_with_passwords(client, db):
     DISABLE_ACCOUNT = "on"
     login(client, USERNAME, CURRENT_PW)
     change_user_settings(client, USERNAME, CURRENT_PW, NEW_PW, CONF_NEW_PW, DISABLE_ACCOUNT)
-    user = db.session.query(User).filter(User.username == USERNAME).first()
+    user = get_user_by_name(USERNAME)
     assert not user.check_password(NEW_PW)
     assert not user.get_active_status()

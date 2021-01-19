@@ -12,11 +12,11 @@ from time import sleep
 def test_request_reset_password(driver):
     # Uses back the same user created and tested in tests 2, 3, 4
     USERNAME = 'testuser123'
-    EMAIL_ADDR = 'testmail456@mymail.com'
+    EMAIL_ADDR = 'piscator.fisherman@gmail.com'
 
     # enables back the user from DB first
     user = db.session.query(User).filter(User.username == USERNAME).first()
-    user.update_active_status(True)
+    user.set_active_status(True)
     db.session.commit()
 
     # Assert user successfully enabled via database access

@@ -3,6 +3,8 @@ from test_2_authentication import login, logout
 from test_3_add_email import add_mail
 from app.models.User import User
 from app import db
+from app.utils.DBUtils import get_user_by_name
+from app.utils.FileUtils import get_server_mail_cred
 
 def request_reset_password(client, db, username, email_address):
     return client.post(
@@ -34,8 +36,9 @@ def test_request_reset_password(client, db):
 
     # Logs in to user and add an email address and log out
     login(client, TEST_RESET_USER, TEST_RESET_PASSWORD)
-    TEST_EMAIL_ADDRESS = 'testmail789@mymail.com'
-    TEST_EMAIL_PASSWORD = 'password'
+    MAIL_CREDS = get_server_mail_cred()
+    TEST_EMAIL_ADDRESS = MAIL_CREDS[2]
+    TEST_EMAIL_PASSWORD = MAIL_CREDS[3]
     add_mail(client, TEST_EMAIL_ADDRESS, TEST_EMAIL_PASSWORD)
     logout(client)
 
@@ -43,12 +46,12 @@ def test_request_reset_password(client, db):
     # Assert redirected to update password page
     assert b'token' in reset_response.data
     # Assert token is generated
-    assert (db.session.query(User).filter(User.username == TEST_RESET_USER).first()).get_reset_token()
+    assert get_user_by_name(TEST_RESET_USER).get_reset_token()
 
 def test_update_password(client, db):
     TEST_RESET_USER = 'resetmyaccount'
     NEW_PASSWORD = 'pa$$w0rd'
-    USER_ENTITY = db.session.query(User).filter(User.username == TEST_RESET_USER).first()
+    USER_ENTITY = get_user_by_name(TEST_RESET_USER)
     TOKEN_VALUE = USER_ENTITY.get_reset_token()
 
     # Creates a session variable for id to be passed in to route
@@ -66,7 +69,6 @@ def test_update_password(client, db):
 
     login_response = login(client, TEST_RESET_USER, NEW_PASSWORD)
     # Assert TEST_RESET_USER token is None
-    assert not db.session.query(User).filter(User.username == TEST_RESET_USER) \
-    .first().get_reset_token()
+    assert not get_user_by_name(TEST_RESET_USER).get_reset_token()
     # Assert successful login with new password
     assert b'dashboard' in login_response.data

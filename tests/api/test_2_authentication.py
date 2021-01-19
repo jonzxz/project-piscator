@@ -1,5 +1,6 @@
 from app.models.User import User
 import pytest
+from app.utils.DBUtils import get_user_by_name
 
 def register(client, username, password, confirm_password):
     return client.post(
@@ -31,7 +32,7 @@ def test_valid_register(client, db):
     CONF_PASSWORD = 'password'
     response = register(client, USERNAME, PASSWORD, CONF_PASSWORD)
     assert response.status_code == 200
-    assert db.session.query(User).filter(User.username == USERNAME).first()
+    assert get_user_by_name(USERNAME)
     assert b'Dashboard' in response.data
     logout(client)
 

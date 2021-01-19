@@ -2,6 +2,7 @@ import pytest
 from test_2_authentication import login, register, logout
 from app.models.User import User
 from app import db
+from app.utils.DBUtils import get_user_by_name
 
 def test_edit_user(client, db):
 
@@ -22,7 +23,7 @@ def test_edit_user(client, db):
     assert b'Administrator Dashboard' in login_response.data
 
     # Retrieves newly created user - gets ID, username and assert current status is ACTIVE
-    user_to_disable = db.session.query(User).filter(User.username == TEST_DISABLE_USER).first()
+    user_to_disable = get_user_by_name(TEST_DISABLE_USER)
     user_to_disable_id = user_to_disable.get_id()
     user_to_disable_name = user_to_disable.get_username()
     # Assert user is active
@@ -39,4 +40,4 @@ def test_edit_user(client, db):
     )
 
     # Assert user is now inactive
-    assert db.session.query(User).filter(User.username == TEST_DISABLE_USER).first().get_active_status() == False
+    assert get_user_by_name(TEST_DISABLE_USER).get_active_status() == False

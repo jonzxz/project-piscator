@@ -24,8 +24,8 @@ def test_admin_login(driver):
 def test_admin_can_view_users(driver):
     # Wait for User button to appear and click
     wait_user_btn = WebDriverWait(driver, 3)
-    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[2]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[2]').click()
+    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[2]')))
+    driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[2]').click()
 
     # Assert redirected to admin/user page
     # Assert table that populates database info is present
@@ -37,8 +37,8 @@ def test_admin_can_view_users(driver):
 def test_admin_logout(driver):
     # Logout
     wait_logout = WebDriverWait(driver, 5)
-    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="mySidepanel"]/a[5]')))
-    driver.find_element(By.XPATH, '//*[@id="mySidepanel"]/a[5]').click()
+    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[5]')))
+    driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[5]').click()
 
     # Assert redirected to index
     assert driver.current_url.split(sep='/')[-1] == 'index'

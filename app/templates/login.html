@@ -75,5 +75,10 @@
     $("#facts-nav").attr("href", "{{url_for('index') }}#facts");
     $("#footer-nav").attr("href", "{{url_for('index') }}#footer");
     $('a[name="login"]').remove();
+
+    // navbar
+    $('.navbar-area').addClass('sticky');
+    $(".navbar .navbar-brand img").attr("src", "/static/icons/logo_word_black.svg");
+
 </script>
 {% endblock %}
