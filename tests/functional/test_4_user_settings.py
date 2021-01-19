@@ -6,6 +6,7 @@ from .test_2_authentication import login, logout
 from app import db
 from app.models.User import User
 
+from time import sleep
 # Flows after deactivating email so user is in dashboard still
 # Test password change in account setting by clicking into 'Account'
 # and testing with valid new passwords, log out and attempt login again
@@ -53,18 +54,23 @@ def test_disable_account(driver):
     # Assert redirected to /account page
     assert driver.current_url.split(sep='/')[-1] == 'account'
 
-    # Wait for update button to appear (for form to appear)
-    wait_update_btn = WebDriverWait(driver, 5)
-    wait_update_btn.until(EC.visibility_of_element_located((By.ID, 'submit')))
+    # Wait for "Disable Account" navtab to appear
+    wait_nav_disable_acc_tab = WebDriverWait(driver, 3)
+    wait_nav_disable_acc_tab.until(EC.visibility_of_element_located((By.ID, 'nav-disable-account')))
+    driver.find_element(By.ID, 'nav-disable-account').click()
 
+    wait_disable_submit = WebDriverWait(driver, 3)
+    wait_disable_submit.until(EC.visibility_of_element_located((By.ID, 'disable_acc_submit')))
     # Enters current password
     # Slider for disable is actually a checkbox that must be interacted using JS
-    driver.find_element_by_id('current_password').send_keys('newpassword')
+    driver.find_element_by_id('disable_acc_current_password').send_keys('newpassword')
     checkbox = driver.find_element_by_css_selector("#disable_acc_switch")
     driver.execute_script("arguments[0].click();", checkbox)
-    driver.find_element_by_id('submit').click()
+    sleep(3)
+    driver.find_element_by_id('disable_acc_submit').click()
 
-    logout(driver)
+    wait_home = WebDriverWait(driver, 10)
+    wait_home.until(EC.visibility_of_element_located((By.ID, 'home-nav')))
     assert driver.current_url.split(sep='/')[-1] == 'index'
 
     # Assert login failed so user does not go into dashboard
