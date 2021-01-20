@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from .test_2_authentication import login, logout
 from app import db
+from time import sleep
 from app.models.User import User
 
 # Flows after deactivating email so user is in dashboard still
