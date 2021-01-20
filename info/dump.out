@@ -44,7 +44,8 @@ CREATE TABLE public.email_address (
     last_updated timestamp without time zone,
     phishing_mail_detected integer,
     owner_id integer,
-    total_mails_checked integer
+    total_mails_checked integer,
+    notification_preference boolean NOT NULL
 );
 
 
@@ -176,7 +177,7 @@ ALTER TABLE ONLY public."user" ALTER COLUMN user_id SET DEFAULT nextval('public.
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-836ec65e3c1a
+47751d1f389f
 \.
 
 
@@ -184,8 +185,7 @@ COPY public.alembic_version (version_num) FROM stdin;
 -- Data for Name: email_address; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.email_address (email_id, email_address, created_at, active, email_password, last_updated, phishing_mail_detected, owner_id, total_mails_checked) FROM stdin;
-2	piscator.honeypot@outlook.com	2021-01-17 00:11:28.051486	t	gAAAAABgAxAwOq_clObqAsUCLkt3ED_FoUJBPxXM8CzfgFKgQ2SfhnMmBq6PNOHHSserPEb6oPriT8A5IS3hZrBYU7s82d7W9IqIeLoBHytFHL7KAgWc6ps=	\N	0	2	0
+COPY public.email_address (email_id, email_address, created_at, active, email_password, last_updated, phishing_mail_detected, owner_id, total_mails_checked, notification_preference) FROM stdin;
 \.
 
 
@@ -202,8 +202,8 @@ COPY public.phishing_email (mail_id, sender_address, content, created_at, receiv
 --
 
 COPY public."user" (user_id, username, password, created_at, is_active, is_admin, last_logged_in, reset_token) FROM stdin;
-2	user	pbkdf2:sha256:150000$DyMwkytR$58f3cb52a4f9483f1df09435d57d8c69a385681f02680318023c61204da5aaa3	2021-01-17 00:10:21.395388	t	f	2021-01-17 00:10:21.394887	\N
-1	admin	pbkdf2:sha256:150000$SKuScFdI$15f7230738c1057f74812e162b143a2cfa0a4d20c21a0812e27c7da4131690bd	2021-01-17 00:10:08.608676	t	t	2021-01-17 00:10:08.608175	\N
+2	user	pbkdf2:sha256:150000$yFZNvfrE$ada91439915db803c753930b79f30967ad4a421ce7f54d4944009d703a6121af	2021-01-20 21:51:00.099	t	f	2021-01-20 21:51:00.098499	\N
+1	admin	pbkdf2:sha256:150000$N9ucPr9B$5b2c39408721520d1033737a1ac2dc5f4573a1f485999105a93e9828b8a4c7ce	2021-01-20 21:50:49.55354	t	t	2021-01-20 21:51:23.673772	\N
 \.
 
 
@@ -211,14 +211,14 @@ COPY public."user" (user_id, username, password, created_at, is_active, is_admin
 -- Name: email_address_email_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.email_address_email_id_seq', 2, true);
+SELECT pg_catalog.setval('public.email_address_email_id_seq', 1, false);
 
 
 --
 -- Name: phishing_email_mail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.phishing_email_mail_id_seq', 9, true);
+SELECT pg_catalog.setval('public.phishing_email_mail_id_seq', 1, false);
 
 
 --
