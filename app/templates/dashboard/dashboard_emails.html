@@ -15,6 +15,7 @@
             <th class="text-center" scope="col">Scan Mailbox</th>
             <th class="text-center" scope="col">Change Password</th>
             <th class="text-center" scope="col">Activate</th>
+            <th class="text-center" scope="col">Daily Notification</th>
           </tr>
         </thead>
         <tbody>
@@ -48,8 +49,19 @@
               </td>
               <td class="text-center">
                 <a class="lni lni-power-switch" id="activate-{{ email.email_id }}"
-                name="activate-{{ email.email_address}}" href="#"
+                name="activate-{{ email.email_address }}" href="#"
                 onclick="activate({{ email.get_email_id() }});"></a>
+              </td>
+              <td class="text-center">
+                {% if email.get_notification_pref() == True %}
+                <a class="lni lni-checkmark" id="notif-{{ email.email_id }}"
+                name="notif-{{ email.email_address }}" href="#"
+                onclick="notif({{ email.get_email_id() }});" value="notif-on"></a>
+                {% else %}
+                <a class="lni lni-close" id="notif-{{ email.email_id }}"
+                name="notif-{{ email.email_address }}" href="#"
+                onclick="notif({{ email.get_email_id() }});" value="notif-off"></a>
+                {% endif %}
               </td>
             </tr>
             {% endfor %}
@@ -64,6 +76,9 @@
       <button type="button" class="main-btn m-2" data-toggle="modal" data-target="#instructionsModal">
         Instructions
       </button>
+      <div>
+        <span class="blockquote-footer">Only Gmail, Outlook and Yahoo mailboxes are supported for now</span>
+      </div>
 
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -196,9 +211,7 @@
 
       <script>
         function phish(mail_id) {
-          var names = document.getElementById(mail_id).name;
-          let url = "emails/phish/" + mail_id;
-          window.location.href = url;
+          window.location.href = "emails/phish/" + mail_id;
         }
 
         function activate(mail_id) {
@@ -206,7 +219,11 @@
         }
 
         function history(mail_id) {
-          window.location.href = "emails/history/" + mail_id
+          window.location.href = "emails/history/" + mail_id;
+        }
+
+        function notif(mail_id) {
+          window.location.href = "emails/notif/" + mail_id;
         }
 
         $(document).ready(function(){

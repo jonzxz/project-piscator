@@ -125,7 +125,8 @@ def send_daily_notice() -> None:
     logger.info("Routine task: sending daily notice to all active mailboxes")
 
     all_active_mailboxes = db.session.query(EmailAddress)\
-    .filter(EmailAddress.active == True).all()
+    .filter(EmailAddress.active == True\
+    , EmailAddress.notification_preference == True).all()
 
     for mailbox in all_active_mailboxes:
         logger.info("Checking through %s if any phishing emails detected today.."\

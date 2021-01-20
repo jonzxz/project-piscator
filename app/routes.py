@@ -494,6 +494,26 @@ def mail_activation(mid):
     db.session.commit()
     return redirect(url_for('dash_email'))
 
+@app.route('/dashboard/emails/notif/<mid>')
+def mail_notification_preference(mid):
+    owner_id = get_owner_id_from_email_id(mid)
+
+    if current_user.is_anonymous or not owner_id == current_user.get_id() :
+        logger.warning("Anonymous or unauthorized user "\
+        "attempting notif preference update of address ID {}!".format(mid))
+        return redirect(url_for('index'))
+
+    logger.info("Entering function to update email preference..")
+    mail_addr = get_email_address_by_email_id(mid)
+    if mail_addr.get_notification_pref() == True:
+        mail_addr.set_notification_pref(False)
+    else:
+        mail_addr.set_notification_pref(True)
+
+    db.session.commit()
+    return redirect(url_for('dash_email'))
+
+
 @app.route('/dashboard/emails/history/<mid>')
 def detection_history(mid):
     owner_id = get_owner_id_from_email_id(mid)
