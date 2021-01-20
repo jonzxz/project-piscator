@@ -185,7 +185,7 @@ class AdminEmailView(AdminBaseView):
 	# in respective pages (create / edit)
 	form_create_rules = ['email_address', 'email_password', 'owner']
 	form_edit_rules = ['email_address', 'change_password', 'owner', \
-	'last_mailbox_size', 'phishing_mail_detected', 'created_at', 'last_updated',\
+	'phishing_mail_detected', 'created_at', 'last_updated',\
 	 'active' ]
 
 	# Function on creating a new address or editing password of an address
