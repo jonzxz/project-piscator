@@ -32,9 +32,44 @@ def test_register(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
     CONF_PASSWORD = 'password'
+    CONF_PASSWORD_ERR = 'password1'
     # Click 'Get Started'
     driver.find_element(By.XPATH, '//*[@id="home"]/div[1]/div[1]/div/div/a').click()
     assert driver.current_url.split(sep='/')[-1] == 'register'
+
+    #To submit form without any inputs
+    driver.find_element_by_id('submit').click()
+
+    #To submit form without checking the ToS and Privacy Policy
+    # Enter credentials
+    driver.find_element_by_id('username').send_keys(USERNAME)
+    driver.find_element_by_id('password').send_keys(PASSWORD)
+    driver.find_element_by_id('confirm_password').send_keys(CONF_PASSWORD)
+    driver.find_element_by_id('submit').click()
+
+    #To submit form with different password and confirm password
+    # Enter credentials
+    driver.find_element_by_id('password').send_keys(PASSWORD)
+    driver.find_element_by_id('confirm_password').send_keys(CONF_PASSWORD_ERR)
+    # Use JavaScript to select checkbox
+    checkbox = driver.find_element_by_css_selector("#agreement")
+    driver.execute_script("arguments[0].click();", checkbox)
+    driver.find_element_by_id('submit').click()
+
+    #To submit form with valid credentials and checking the checkbox
+    # Enter credentials
+    driver.find_element_by_id('password').send_keys(PASSWORD)
+    driver.find_element_by_id('confirm_password').send_keys(CONF_PASSWORD)
+    driver.find_element_by_id('submit').click()
+    # Assert user is redirected to dashboard
+    assert driver.current_url.split(sep='/')[-1] == 'dashboard'
+    logout(driver)
+
+    #To submit form with an existing username
+    # Click 'Get Started'
+    driver.find_element(By.XPATH, '//*[@id="home"]/div[1]/div[1]/div/div/a').click()
+    assert driver.current_url.split(sep='/')[-1] == 'register'
+
     # Enter credentials
     driver.find_element_by_id('username').send_keys(USERNAME)
     driver.find_element_by_id('password').send_keys(PASSWORD)
@@ -43,9 +78,12 @@ def test_register(driver):
     checkbox = driver.find_element_by_css_selector("#agreement")
     driver.execute_script("arguments[0].click();", checkbox)
     driver.find_element_by_id('submit').click()
-    # Assert user is redirected to dashboard
-    assert driver.current_url.split(sep='/')[-1] == 'dashboard'
-    logout(driver)
+
+    # Click 'Login to existing User'
+    #driver.find_element(By.XPATH, '/html/body/div/div[1]/div[1]/div/div/a').click()
+    #assert driver.current_url.split(sep='/')[-1] == 'login'
+
+    driver.find_element(By.XPATH, '/html/body/div[2]/div/div/div/nav/a').click()
 
 # Test logging in user from homepage - flows after logging out a newly registered user
 # Uses login utility function
