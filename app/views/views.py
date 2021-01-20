@@ -183,8 +183,8 @@ class AdminEmailView(AdminBaseView):
 
 	# Rulesets for creating and editing, these columns will appear
 	# in respective pages (create / edit)
-	form_create_rules = ['email_address', 'email_password', 'user']
-	form_edit_rules = ['email_address', 'change_password', 'user', \
+	form_create_rules = ['email_address', 'email_password', 'owner']
+	form_edit_rules = ['email_address', 'change_password', 'owner', \
 	'last_mailbox_size', 'phishing_mail_detected', 'created_at', 'last_updated',\
 	 'active' ]
 
