@@ -9,12 +9,10 @@ from app.models.User import User
 
 # Flows after deactivating email so user is in dashboard still
 # Test password change in account setting by clicking into 'Account'
-# and testing with valid new passwords, log out and attempt login again
-def test_change_password(driver):
+#To submit form with no input
+def test_change_password_no_input(driver):
     USERNAME = 'testuser123'
-    CUR_PASS = 'password'
-    NEW_PASS = 'newpassword'
-    CONF_NEW_PASS = 'newpassword'
+    MISSING_PASSWORD_ERR = 'Please enter your \'Current Password\'!'
 
     # Wait for account settings button to appear and click
     wait_acc_set_btn = WebDriverWait(driver, 3)
@@ -26,11 +24,60 @@ def test_change_password(driver):
     # Wait for update button to appear (for form to appear)
     wait_update_btn = WebDriverWait(driver, 5)
     wait_update_btn.until(EC.visibility_of_element_located((By.ID, 'submit')))
+    assert USERNAME in driver.page_source
+
+    driver.find_element_by_id('submit').click()
+
+    assert MISSING_PASSWORD_ERR in driver.page_source
+
+#To submit form with invalid current password
+def test_change_invalid_current_password(driver):
+    USERNAME = 'testuser123'
+    CUR_PASS = 'password123'
+    NEW_PASS = 'newpassword'
+    CONF_NEW_PASS = 'newpassword'
+    CURRENT_PASSWORD_ERR = 'Invalid \'Current Password\'!'
+
+    assert USERNAME in driver.page_source
 
     driver.find_element_by_id('current_password').send_keys(CUR_PASS)
     driver.find_element_by_id('new_password').send_keys(NEW_PASS)
     driver.find_element_by_id('confirm_new_password').send_keys(CONF_NEW_PASS)
     driver.find_element_by_id('submit').click()
+
+    assert CURRENT_PASSWORD_ERR in driver.page_source
+
+#To submit form with different new password and confirm new password
+def test_change_different_new_password(driver):
+    USERNAME = 'testuser123'
+    CUR_PASS = 'password'
+    NEW_PASS = 'newpassword'
+    CONF_NEW_PASS = 'newpassword123'
+    DIFFERENT_PASSWORD_ERR = 'New Password and Confirm New Password must match!'
+
+    assert USERNAME in driver.page_source
+
+    driver.find_element_by_id('current_password').send_keys(CUR_PASS)
+    driver.find_element_by_id('new_password').send_keys(NEW_PASS)
+    driver.find_element_by_id('confirm_new_password').send_keys(CONF_NEW_PASS)
+    driver.find_element_by_id('submit').click()
+
+    assert DIFFERENT_PASSWORD_ERR in driver.page_source
+
+# and testing with valid new passwords, log out and attempt login again
+def test_change_password(driver):
+    USERNAME = 'testuser123'
+    CUR_PASS = 'password'
+    NEW_PASS = 'newpassword'
+    CONF_NEW_PASS = 'newpassword'
+    CHANGE_PASSWORD_SUCCESS = 'Password Successfully Changed!'
+
+    driver.find_element_by_id('current_password').send_keys(CUR_PASS)
+    driver.find_element_by_id('new_password').send_keys(NEW_PASS)
+    driver.find_element_by_id('confirm_new_password').send_keys(CONF_NEW_PASS)
+    driver.find_element_by_id('submit').click()
+
+    assert CHANGE_PASSWORD_SUCCESS in driver.page_source
 
     # Logs out after changing password and reattempts login with new password
     # assert log out successful
@@ -40,6 +87,7 @@ def test_change_password(driver):
     # Assert login successful with new password
     login(driver, USERNAME, NEW_PASS)
     assert driver.current_url.split(sep='/')[-1] == 'dashboard'
+
 
 # Flows after password change
 # Test disabling an account
