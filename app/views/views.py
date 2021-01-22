@@ -6,6 +6,7 @@ from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
 from flask import redirect, url_for
+from flask_admin.form import UserForm
 
 ## WTForms
 from wtforms import StringField
@@ -51,6 +52,9 @@ class AdminUserView(AdminBaseView):
 		'is_active' : 'Active'
 	}
 
+	# Edit columns
+	column_editable_list = ['is_active']
+
 	create_modal = True
 	edit_modal = True
 	# column_searchable_list = ['username', 'user_id']
@@ -94,18 +98,22 @@ class AdminUserView(AdminBaseView):
 	# Function on creating a new user or editing password of user
 	def on_model_change(self, form, model, is_created):
 		logger.info("User form submitted")
-		# If new user is created
-		if is_created:
-			logger.info("New user created: {}".format(model.get_username()))
-			model.set_password(form.password.data)
+		if isinstance(UserForm, form):
+			# If new user is created
+			if is_created:
+				logger.info("New user created: {}".format(model.get_username()))
+				model.set_password(form.password.data)
+			else:
+				# If change_password field has data.
+				# If edit and field is empty does not do anything
+				if form.change_password.data:
+					logger.info("User {}'s password is changed"\
+					.format(model.get_username()))
+					# Password hashing is automatically done on Model level
+					model.set_password(form.change_password.data)
 		else:
-			# If change_password field has data.
-			# If edit and field is empty does not do anything
-			if form.change_password.data:
-				logger.info("User {}'s password is changed"\
-				.format(model.get_username()))
-				# Password hashing is automatically done on Model level
-				model.set_password(form.change_password.data)
+			logger.info(type(form))
+
 
 
 	# Function on deleting user - handling of deleting currently logged in user
