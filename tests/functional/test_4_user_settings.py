@@ -94,6 +94,8 @@ def test_change_password(driver):
 def test_disable_account(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'newpassword'
+    DISABLE_LOGOUT_MSG = "You'll be logged out in 5 seconds.."
+    ACCOUNT_IS_DISABLED = 'Account is disabled'
 
     # Wait for account settings button to appear
     wait_acc_set_btn = WebDriverWait(driver, 3)
@@ -117,6 +119,7 @@ def test_disable_account(driver):
     sleep(3)
     driver.find_element_by_id('disable_acc_submit').click()
 
+    assert DISABLE_LOGOUT_MSG in driver.page_source
     wait_home = WebDriverWait(driver, 10)
     wait_home.until(EC.visibility_of_element_located((By.ID, 'home-nav')))
     assert driver.current_url.split(sep='/')[-1] == 'index'
@@ -125,3 +128,4 @@ def test_disable_account(driver):
     login(driver, USERNAME, PASSWORD)
     assert not driver.current_url.split(sep='/')[-1] == 'dashboard'
     assert db.session.query(User).filter(User.username == USERNAME).first().get_active_status() == False
+    assert ACCOUNT_IS_DISABLED in driver.page_source

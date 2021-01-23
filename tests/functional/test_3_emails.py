@@ -95,7 +95,7 @@ def test_check_email(driver):
     driver.find_element_by_name('clean-{}'.format(EMAIL_ADDR)).click()
     assert driver.current_url.split(sep='/')[-2] == 'phish'
     assert 'Detection Results' in driver.page_source
-
+    sleep(2)
     # Wait for subscription button to appear and click
     wait_subscription = WebDriverWait(driver, 3)
     wait_subscription.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[3]')))
