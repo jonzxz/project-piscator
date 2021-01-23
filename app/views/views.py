@@ -226,6 +226,7 @@ class AdminPhishingView(AdminBaseView):
 
 	create_modal = True
 	edit_modal = True
+	column_searchable_list = ['subject']
 
 	## Custom View template
 	list_template = 'admin/admin_base_list.html'
