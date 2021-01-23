@@ -214,6 +214,7 @@ class AdminPhishingView(AdminBaseView):
 	# PK displayed, selected columns relabelled and displayed
 	can_set_page_size = True
 	column_display_pk = True
+	can_create = False
 	column_list = ['mail_id', 'sender_address', 'subject', 'content', 'created_at']
 	column_labels = {
 		'mail_id' : 'ID',
@@ -235,9 +236,18 @@ class AdminPhishingView(AdminBaseView):
 	column_sortable_list = ['mail_id', 'sender_address', 'created_at']
 
 	form_widget_args = {
+		'sender_address' : {
+			'readonly' : True
+		},
+		'subject' : {
+			'readonly' : True
+		},
 		'created_at' : {
-			'readonly' : True,
-			'disabled' : True
+			'readonly' : True
+		},
+		'content' : {
+			'rows' : 12,
+			'readonly' : True
 		}
 	}
 
@@ -245,7 +255,6 @@ class AdminPhishingView(AdminBaseView):
 		return model.content[:20] + '...' if len(model.content) > 20 else model.content
 
 	def _subject_formatter(view, context, model, name):
-		logger.info("LENGTH: %d", len(model.subject))
 		return model.subject[:30] + '...' if len(model.subject) > 100 else model.subject
 
 	column_formatters = {
