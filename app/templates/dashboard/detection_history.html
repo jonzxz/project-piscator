@@ -28,7 +28,7 @@
           <tr>
             <td>{{ mail.get_sender_address() }}</td>
             <td>{{ mail.get_subject() }}</td>
-            <td class="text-center">{{ mail.get_detected_on().strftime('%d-%B-%Y') }}</td>
+            <td class="text-center">{{ mail.get_detected_on().strftime('%d-%m-%Y') }}</td>
           </tr>
           {% endfor %}
         </tbody>
