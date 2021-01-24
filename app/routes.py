@@ -19,7 +19,7 @@ from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
 
 ## Datetime
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from pytz import timezone
 
 ## Utils
@@ -411,9 +411,13 @@ def check_phish(mid):
         flash("Unable to connect to mailbox, please update your password!", 'error')
         return redirect(url_for('dash_email'))
 
-    # Retrieves date last updated: converts datetime to date
+    # Retrieves date last updated
+    # if new email address is added column is empty
+    # sets last_updated to today - 1 day so that mails in the last 24 hours
+    # are checked
     last_updated = mailaddr.get_last_updated() \
-    if mailaddr.get_last_updated() else datetime.now()
+    if mailaddr.get_last_updated() else datetime.today() - timedelta(days=1)
+
     # Updates last updated to current time
     mailaddr.set_last_updated(datetime.now())
     logger.info("Updating mailbox last updated from %s to %s",\
