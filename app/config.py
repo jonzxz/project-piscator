@@ -57,20 +57,20 @@ class Config(object):
         {
             'id' : 'job3',
             'func' : 'app.utils.EmailUtils:send_daily_notice',
-            'trigger' : 'cron',
-            'day' : 1
+            'trigger' : 'interval',
+            'days' : 1
         },
         {
             'id' : 'job4',
             'func' : 'app.utils.DBUtils:delete_inactive_emails',
-            'trigger' : 'cron',
-            'day' : 90
+            'trigger' : 'interval',
+            'days' : 90
         },
         {
             'id' : 'job5',
             'func' : 'app.utils.DBUtils:delete_inactive_accounts',
-            'trigger' : 'cron',
-            'day' : 365
+            'trigger' : 'interval',
+            'days' : 365
         }
     ]
 
