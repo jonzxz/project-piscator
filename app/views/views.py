@@ -212,7 +212,8 @@ class AdminEmailView(AdminBaseView):
 		return model.created_at.strftime('%d-%m-%Y %H:%M:%S')
 
 	def last_updated_format(view, context, model, name):
-		return model.last_updated.strftime('%d-%m-%Y %H:%M:%S')
+		return model.last_updated.strftime('%d-%m-%Y %H:%M:%S')\
+		if model.last_updated else "Never"
 
 	column_formatters = {
 		'created_at' : create_date_format,
