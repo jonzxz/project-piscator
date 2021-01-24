@@ -19,7 +19,8 @@ from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
 
 ## Datetime
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from pytz import timezone
 
 ## Utils
 from app.utils.EmailUtils import test_mailbox_conn
@@ -27,6 +28,8 @@ from app.utils.EmailUtils import send_contact_us_email
 from app.utils.EmailUtils import get_imap_svr
 from app.utils.EmailUtils import send_phish_check_notice
 from app.utils.EmailUtils import send_password_token
+from app.utils.EmailUtils import check_valid_time
+from app.utils.EmailUtils import check_valid_sender
 from app.utils.DBUtils import get_user_by_id
 from app.utils.DBUtils import get_user_by_name
 from app.utils.DBUtils import get_email_address_by_address
@@ -383,13 +386,13 @@ def check_phish(mid):
         flash("Unable to connect to mailbox, please update your password!", 'error')
         return redirect(url_for('dash_email'))
 
-    # Retrieves date last updated: converts datetime to date
-    last_updated = mailaddr.get_last_updated().date() \
-    if mailaddr.get_last_updated() else datetime.now().date()
-    # Updates last updated to current time
-    mailaddr.set_last_updated(datetime.now())
-    logger.info("Updating mailbox last updated from %s to %s",\
-     last_updated.strftime("%d-%m-%Y"), datetime.now())
+    # Retrieves date last updated
+    # if new email address is added column is empty
+    # sets last_updated to today - 1 day so that mails in the last 24 hours
+    # are checked
+    last_updated = mailaddr.get_last_updated() \
+    if mailaddr.get_last_updated() else datetime.today() - timedelta(days=1)
+
 
     # Selects mailbox to Inbox only
     mailbox.folder.set("INBOX")
@@ -397,13 +400,19 @@ def check_phish(mid):
 
     # Sets a check criteria so that
     # only mails newer than last_updated and unread mails are checked
-    # check_criteria = AND(date_gte=last_updated, seen=False)
+    check_criteria = AND(date_gte=last_updated.date(), seen=False)
 
-    check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
+    """
+    FOR DEMO USE 
+    """
+    # Test code to intentionally pull retrieve backdated emails for demo purposes
+    # last_updated = datetime(2020, 12,17, 0, 0, 0)
+    # check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
 
     # Fetch mails from mailbox based on criteria, does not "read" the mail
     # and retrieves in bulk for faster performance at higher computing cost
     all_mails = mailbox.fetch(check_criteria, reverse=True, mark_seen=False, bulk=True)
+
     logger.info("Mails fetched..")
 
     # Iterates through the mails that are not sent from the sender's address
@@ -431,9 +440,8 @@ def check_phish(mid):
             logger.error("HeaderParseError, unparseable msg.from_. \
             Setting sender as INVALID_SENDER")
             sender = 'INVALID_SENDER'
-
-        if not sender == mailaddr.get_email_address() or \
-        not sender == 'piscator.fisherman@gmail.com':
+        if (check_valid_time(last_updated, msg.date)) \
+        and check_valid_sender(sender, mailaddr.get_email_address()):
             data['total_count']+=1
             mail_check_count +=1
             mail_item = EmailData(msg.subject, sender, msg.attachments\
@@ -449,7 +457,7 @@ def check_phish(mid):
                 , msg.subject, mail_item.get_content())
 
                 if not mail_exist:
-                    phishing_mails.append(Mail(sender, msg.date, msg.subject))
+                    phishing_mails.append(Mail(sender, msg.date.astimezone(timezone('Asia/Singapore')), msg.subject))
                     data['detection_count']+=1
                     detected_mail = PhishingEmail( \
                     sender_address = sender, \
@@ -460,6 +468,11 @@ def check_phish(mid):
                     )
                     db.session.add(detected_mail)
 
+    # Updates last updated to current time
+    mailaddr.set_last_updated(datetime.now())
+    logger.info("Updating mailbox last updated from %s to %s",\
+    last_updated.strftime("%d-%m-%Y, %H:%M:%S"), datetime.now())
+
     mailaddr.set_phishing_mail_detected(data['detection_count'])
     mailaddr.set_total_mails_checked(mail_check_count)
     db.session.commit()
@@ -469,8 +482,6 @@ def check_phish(mid):
 
     mailaddr = get_email_address_by_email_id(mid)
     mail_address = mailaddr.get_email_address()
-    logger.info(mailaddr)
-    logger.info(mail_address)
 
     # return redirect(url_for('dashboard'))
     return render_template('dashboard/detection_results.html', \

@@ -115,6 +115,13 @@ def send_password_token(destination: str, username: str, token: str) -> None:
     mailer.send(msg)
     logger.info("Password reset token email sent")
 
+def check_valid_time(last_updated, mail_time):
+    return True if mail_time.timestamp() > last_updated.timestamp() else False
+
+def check_valid_sender(sender, addr_owner):
+    return True if not sender == addr_owner \
+    or not sender == 'piscator.fisherman@gmail.com' else False
+
 """
 Will not work if TESTING is True
 Function to send an email if phishing emails are detected in an active mailbox

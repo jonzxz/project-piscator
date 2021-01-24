@@ -1,23 +1,31 @@
 {% extends "dashboard/dashboard_base.html" %}
 {% block content %}
+<style>
+  .ui-datepicker-trigger {width:24px; height: 24px;}
+</style>
 <div class="container ml-5 col-lg-12 col-md-12 col-xs-12">
-  <div class="w-90 mx-auto pl-5 pt-5">
-    <div class="h2 pt-2">Detection History</div>
-    <hr>
+  <div class="w-100 mx-auto pl-5 pt-5">
+    <span class="h2 pt-2">Detection History</span>
     <div class="h5">Email Address: {{ mail_address }}</div>
-    <div id="update_pass_email_field"></div>
     <div class="mt-3">
-      <table id="detectionTable" class="table table-hover">
+      <span class="h5 pt-2">Filter by date</span>
+       <p id="date_filter">
+        <span class="h8 pt-2" style="width:50px;">From:</span><input class="date_range_filter date"  type="text" id="datepicker_from" />
+        <span class="h8 pt-2"style="width:30px;">To:</span><input class="date_range_filter date" type="text" id="datepicker_to" />
+       </p>
+      <br>
+
+      <table id="datatable" class="table table-hover">
         <thead>
-          <tr class="tr-header">
-            <th class="text-center" scope="col">Sender</th>
-            <th class="text-center" scope="col">Subject</th>
+          <tr style="color: #889B95">
+            <th scope="col">Sender</th>
+            <th scope="col">Subject</th>
             <th class="text-center" scope="col">Detection Date</th>
           </tr>
         </thead>
         <tbody>
           {% for mail in phishing_mails %}
-          <tr class="tr-bg">
+          <tr>
             <td>{{ mail.get_sender_address() }}</td>
             <td>{{ mail.get_subject() }}</td>
             <td class="text-center">{{ mail.get_detected_on().strftime('%d-%m-%Y') }}</td>
@@ -30,12 +38,76 @@
 </div>
 
 <script>
+// Date range filter
+minDateFilter = "";
+maxDateFilter = "";
+
   $(document).ready(function(){
-    $('#detectionTable').DataTable( {
+      $.fn.dataTable.ext.search.push(
+          function(settings, data, dataIndex) {
+        if (typeof data._date == 'undefined') {
+          data._date = new Date(moment(data[2], 'MM-DD-YYYY')).getTime();
+        }
+
+        if (minDateFilter && !isNaN(minDateFilter)) {
+          if (data._date < minDateFilter) {
+            return false;
+          }
+        }
+
+        if (maxDateFilter && !isNaN(maxDateFilter)) {
+          if (data._date > maxDateFilter) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+        );
+
+    var oTable = $('#datatable').DataTable( {
       "order": [[ 2, "desc" ]],
       "columnDefs" : [{"targets":2, "type":"date-eu"}]
-    } );
+    });
+
+   $("#datepicker_from").datepicker({
+    dateFormat: "dd-mm-yy",
+    showOn: "button",
+    buttonImage: "{{ url_for('static', filename='images/calendar.png') }}",
+    buttonImageOnly: true,
+    "onSelect": function(date) {
+     //console.log(moment(date).format("DD/MM/YYYY"));
+      minDateFilter = new Date(moment(date, 'MM-DD-YYYY')).getTime();
+      oTable.draw();
+    }
+  }).keyup(function() {
+    minDateFilter = new Date(moment(this.value,'MM-DD-YYYY')).getTime();
+    oTable.draw();
   });
+
+  $("#datepicker_to").datepicker({
+    dateFormat: "dd-mm-yy",
+    showOn: "button",
+    buttonImage: "{{ url_for('static', filename='images/calendar.png') }}",
+    buttonImageOnly: true,
+    "onSelect": function(date) {
+      maxDateFilter = new Date(moment(date,'MM-DD-YYYY')).getTime();
+      oTable.draw();
+    }
+  }).keyup(function() {
+    maxDateFilter = new Date(moment(this.value,'MM-DD-YYYY')).getTime();
+    oTable.draw();
+  });
+
+ });
+
+
 </script>
+
+<script src="http://code.jquery.com/jquery-2.0.3.min.js" data-semver="2.0.3" data-require="jquery"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
+<link data-require="jqueryui@*" data-semver="1.10.0" rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/css/smoothness/jquery-ui-1.10.0.custom.min.css" />
+<script data-require="jqueryui@*" data-semver="1.10.0" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.0/jquery-ui.js"></script>
+<script src="//cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
 
 {% endblock %}
