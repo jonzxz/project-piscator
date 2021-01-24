@@ -1,24 +1,22 @@
 {% extends "dashboard/dashboard_base.html" %}
 {% block content %}
-<style>
-  .ui-datepicker-trigger {width:24px; height: 24px;}
-</style>
 <div class="container ml-5 col-lg-12 col-md-12 col-xs-12">
   <div class="w-100 mx-auto pl-5 pt-5">
     <div class="h2 pt-2">Detection History</div>
     <hr>
     <div class="h5">Email Address: {{ mail_address }}</div>
     <div class="mt-3">
-      <span class="h5 pt-2">Filter by date</span>
+      <div class="h5 pt-2">Filter by date</div>
        <p id="date_filter">
-        <span class="h8 pt-2" style="width:50px;">From:</span><input class="date_range_filter date"  type="text" id="datepicker_from" />
-        <span class="h8 pt-2"style="width:30px;">To:</span><input class="date_range_filter date" type="text" id="datepicker_to" />
+        <span class="h8 pt-2 date-width-from">From:</span>
+        <input class="date_range_filter date" type="text" id="datepicker_from" />
+        <span class="tab h8 pt-2 date-width-to">To:</span>
+        <input class="date_range_filter date" type="text" id="datepicker_to" />
        </p>
       <br>
-
       <table id="datatable" class="table table-hover">
         <thead>
-          <tr style="color: #889B95">
+          <tr class="tr-header">
             <th scope="col">Sender</th>
             <th scope="col">Subject</th>
             <th class="text-center" scope="col">Detection Date</th>
@@ -26,7 +24,7 @@
         </thead>
         <tbody>
           {% for mail in phishing_mails %}
-          <tr>
+          <tr class="tr-bg">
             <td>{{ mail.get_sender_address() }}</td>
             <td>{{ mail.get_subject() }}</td>
             <td class="text-center">{{ mail.get_detected_on().strftime('%d-%m-%Y') }}</td>
