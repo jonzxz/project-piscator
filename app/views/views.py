@@ -42,14 +42,18 @@ class AdminUserView(AdminBaseView):
 	can_set_page_size = True
 	column_display_pk = True
 	column_list = ['user_id', 'username', 'created_at', 'last_logged_in'\
-	, 'is_active', 'is_admin']
+	, 'is_active', 'is_admin', 'reset_token']
 	column_labels = {
 		'user_id' : 'ID',
 		'created_at' : 'Created At',
 		'last_logged_in' : 'Last Logged In',
 		'is_admin' : 'Administrator',
-		'is_active' : 'Active'
+		'is_active' : 'Active',
+		'reset_token' : 'Reset Token'
 	}
+
+	# Edit columns
+	column_editable_list = ['is_active']
 
 	create_modal = True
 	edit_modal = True
@@ -64,6 +68,7 @@ class AdminUserView(AdminBaseView):
 	# Sortable columns
 	column_sortable_list = ['user_id', 'username', 'created_at', 'last_logged_in',\
 	 'is_active', 'is_admin']
+
 
 	### Create / Edit form rules
 	# Additional fields not in column_list
@@ -91,6 +96,18 @@ class AdminUserView(AdminBaseView):
 	form_edit_rules = ['username', 'change_password', 'created_at',\
 	'last_logged_in', 'is_active', 'is_admin']
 
+	# Date formatters for created_at and last_logged_in columns
+	def create_date_format(view, context, model, name):
+		return model.created_at.strftime('%d-%m-%Y %H:%M:%S')
+
+	def last_login_format(view, context, model, name):
+		return model.last_logged_in.strftime('%d-%m-%Y %H:%M:%S')
+
+	column_formatters = {
+		'created_at' : create_date_format,
+		'last_logged_in' : last_login_format
+	}
+
 	# Function on creating a new user or editing password of user
 	def on_model_change(self, form, model, is_created):
 		logger.info("User form submitted")
@@ -101,12 +118,12 @@ class AdminUserView(AdminBaseView):
 		else:
 			# If change_password field has data.
 			# If edit and field is empty does not do anything
-			if form.change_password.data:
+			# hasattr is a check for if edit is done via Modal or inline in list
+			if hasattr(form, 'change_password') and form.change_password.data:
 				logger.info("User {}'s password is changed"\
 				.format(model.get_username()))
 				# Password hashing is automatically done on Model level
 				model.set_password(form.change_password.data)
-
 
 	# Function on deleting user - handling of deleting currently logged in user
 	def on_model_delete(self, model):
@@ -130,27 +147,34 @@ class AdminEmailView(AdminBaseView):
 	column_display_pk = True
 	column_list = ['email_id', 'email_address', 'owner_id',
 	 'phishing_mail_detected', 'total_mails_checked', 'created_at', 'last_updated'\
-	 , 'active']
+	 , 'active', 'notification_preference']
 	column_labels = {
 		'email_id' : 'ID',
 		'email_address' : 'Email Address',
 		'owner_id' : 'Owner ID',
-		'phishing_mail_detected' : 'Detection Count',
-		'total_mails_checked' : 'Total Mails Checked',
+		'phishing_mail_detected' : 'Detections',
+		'total_mails_checked' : 'Mails Checked',
 		'created_at' : 'Created At',
-		'last_updated' : 'Last Updated'
+		'last_updated' : 'Last Updated',
+		'active' : 'Active',
+		'notification_preference' : 'Notifications'
 	}
+
+	# Edit columns
+	column_editable_list = ['active', 'notification_preference']
 
 	create_modal = True
 	edit_modal = True
-	column_filters = ['owner_id']
+	column_filters = ['owner_id', 'email_address', 'email_id', 'active'\
+	, 'notification_preference']
 
 	list_template = 'admin/admin_base_list.html'
 	create_template = 'admin/admin_base_create.html'
 	edit_template = 'admin/admin_base_edit.html'
+
 	# Sortable columns
 	columns_sortable_list = ['email_id', 'owner_id', 'phishing_mail_detected',\
-	 'created_at', 'last_updated']
+	 'created_at', 'last_updated', 'active']
 
 	### Create / Edit form rules
 	# Additional fields not in column_list
@@ -164,10 +188,6 @@ class AdminEmailView(AdminBaseView):
 	# Read only columns for the following supposedly manually unmodifiable columns
 	form_widget_args = {
 		'last_mailbox_size' : {
-			'readonly' : True,
-			'disabled' : True
-		},
-		'phishing_mail_detected' : {
 			'readonly' : True,
 			'disabled' : True
 		},
@@ -185,8 +205,20 @@ class AdminEmailView(AdminBaseView):
 	# in respective pages (create / edit)
 	form_create_rules = ['email_address', 'email_password', 'owner']
 	form_edit_rules = ['email_address', 'change_password', 'owner', \
-	'phishing_mail_detected', 'created_at', 'last_updated',\
-	 'active' ]
+	'created_at', 'last_updated', 'active', 'notification_preference' ]
+
+	# Date formatters for created_at and last_logged_in columns
+	def create_date_format(view, context, model, name):
+		return model.created_at.strftime('%d-%m-%Y %H:%M:%S')
+
+	def last_updated_format(view, context, model, name):
+		return model.last_updated.strftime('%d-%m-%Y %H:%M:%S')\
+		if model.last_updated else "Never"
+
+	column_formatters = {
+		'created_at' : create_date_format,
+		'last_updated' : last_updated_format
+	}
 
 	# Function on creating a new address or editing password of an address
 	def on_model_change(self, form, model, is_created):
@@ -196,7 +228,7 @@ class AdminEmailView(AdminBaseView):
 			logger.info("New email created: {}".format(model.get_email_address()))
 			model.set_email_password(form.email_password.data)
 		else:
-			if form.change_password.data:
+			if hasattr(form, 'change_password') and form.change_password.data:
 				logger.info("Email Addr {}'s password is changed"\
 				.format(model.get_email_address()))
 				model.set_email_password(form.change_password.data)
