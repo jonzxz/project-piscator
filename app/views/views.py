@@ -101,7 +101,8 @@ class AdminUserView(AdminBaseView):
 		return model.created_at.strftime('%d-%m-%Y %H:%M:%S')
 
 	def last_login_format(view, context, model, name):
-		return model.last_logged_in.strftime('%d-%m-%Y %H:%M:%S')
+		return model.last_logged_in.strftime('%d-%m-%Y %H:%M:%S') \
+		if model.last_logged_in else None
 
 	column_formatters = {
 		'created_at' : create_date_format,
