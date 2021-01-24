@@ -10,6 +10,7 @@ from app.forms.AddEmailForm import AddEmailForm
 from app.forms.ChangeEmailPasswordForm import ChangeEmailPasswordForm
 from app.forms.ContactForm import ContactForm
 from app.forms.AccountSettingsForm import AccountSettingsForm
+from app.forms.DisableAccountForm import DisableAccountForm
 from app.forms.ResetPasswordRequestForm import ResetPasswordRequestForm
 from app.forms.UpdatePasswordForm import UpdatePasswordForm
 
@@ -278,10 +279,15 @@ def dash_account():
         logger.warning("Anonymous user in dashboard account, going to index..")
         return redirect(url_for('index'))
 
-    form = AccountSettingsForm()
+    password_form = AccountSettingsForm()
+    disable_form = DisableAccountForm()
     user = get_user_by_id(current_user.user_id)
     status = user.get_active_status()
 
+    return render_template('dashboard/dashboard_account.html',\
+    current_user = current_user, password_form = password_form,\
+    disable_form = disable_form, status = status)
+    """
     if form.validate_on_submit():
         logger.info("%s submitted account settings form", user.get_username())
 
@@ -291,7 +297,7 @@ def dash_account():
         logger.info("%s -- Active: %s -- DisableSlider: %s",
         user.get_username(), user.get_active_status(), disable_account)
 
-        """
+
         Checks if update password or disable account is submitted
         First condition: checks for password and new password criteria and
         disable_account slider is None
@@ -301,9 +307,13 @@ def dash_account():
         new_password field so naturally current_password will NOT == new_password
 
         Else: disable account with correct password entered but no slider.
-        """
+
         if user is not None and user.check_password(form.current_password.data):
             ## -- Password Change START --
+            logger.info("form.new_pw.data: %s", form.new_password.data)
+            logger.info("form.c_new_pw.data: %s", form.confirm_new_password.data)
+            logger.info("form.current_pw.data: %s", form.current_password.data)
+            logger.info("slider: %s", disable_account)
             if not disable_account \
             and form.new_password.data == form.confirm_new_password.data:
                 logger.info("Entering password change")
@@ -346,7 +356,82 @@ def dash_account():
     status = user.get_active_status()
     return render_template('dashboard/dashboard_account.html',
     current_user = current_user, form = form, status = status)
+    """
 
+@app.route('/dashboard/account/update_password', methods=['POST'])
+def update_password():
+    logger.info("Entering update_password")
+    password_form = AccountSettingsForm()
+    disable_form = DisableAccountForm()
+    user = get_user_by_id(current_user.user_id)
+
+    # 1st Condition: valid password + new passwords are valid and NOT empty
+    # 2nd Condition: invalid current password
+    # 3rd Condition: empty new password
+    # 4th Condition: mismatced new passwords
+    # Code is handled this way due to method being rerouted from dash_account
+    # so the validators in the form do not work, thus requiring manual handling
+    if password_form.is_submitted():
+        logger.info("Password update form submitted")
+        if user.check_password(password_form.current_password.data) and \
+        not (password_form.new_password.data == '' \
+        or password_form.confirm_new_password.data == '') and \
+        password_form.new_password.data == password_form.confirm_new_password.data:
+            logger.info("All fields entered are valid")
+            user.set_password(password_form.new_password.data)
+            flash('Password Successfully Changed!', 'success')
+            db.session.commit()
+            logger.debug("Successfully changed user %s password"\
+            ", updated database", user)
+
+        elif not user.check_password(password_form.current_password.data):
+            logger.info("Wrong current password entered")
+            flash('Invalid Current Password!', 'error')
+        elif password_form.new_password.data == '' or \
+        password_form.confirm_new_password.data == '':
+            logger.info("Either password submitted is empty")
+            flash('Passwords cannot be empty!', 'error')
+        elif not password_form.new_password.data \
+        == password_form.confirm_new_password.data:
+            logger.info("Mismatched new passwords entered")
+            flash('New Password and Confirm New Password must match!', 'error')
+
+    return redirect(url_for('dash_account'))
+
+@app.route('/dashboard/account/disable', methods=['POST'])
+def disable_account():
+    logger.info("Entering disable_account")
+    password_form = AccountSettingsForm()
+    disable_form = DisableAccountForm()
+    user = get_user_by_id(current_user.user_id)
+
+    # 1st Condition: valid password + slider is enabled
+    # 2nd Condition: invalid current password
+    # 3rd Condition: slider not turned on
+    # Code is handled this way due to method being rerouted from dash_account
+    # so the validators in the form do not work, thus requiring manual handling
+    if disable_form.is_submitted():
+        slider_data = request.form.get('disable_account')
+
+        logger.info("Disable account form submitted")
+
+        if user.check_password(disable_form.current_password.data) and \
+        slider_data == 'on':
+            logger.info("all good!")
+            user.set_active_status(False)
+            disable_emails_by_user_id(user.get_id())
+            db.session.commit()
+            flash('Account is Disabled! You\'ll be logged out in 5 seconds..',\
+             'success')
+        elif not user.check_password(disable_form.current_password.data):
+            logger.info("Wrong password entered")
+            flash('Invalid Current Password!', 'error')
+        elif not slider_data == 'on':
+            logger.info('Slider not turned on')
+            flash('If you have intended to disable your account\
+            , click the slider!', 'error')
+
+    return redirect(url_for('dash_account'))
 
 @app.route('/dashboard/emails/phish/<mid>')
 def check_phish(mid):
