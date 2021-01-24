@@ -306,7 +306,8 @@ def update_password():
         if user.check_password(password_form.current_password.data) and \
         not (password_form.new_password.data == '' \
         or password_form.confirm_new_password.data == '') and \
-        password_form.new_password.data == password_form.confirm_new_password.data:
+        password_form.new_password.data == \
+        password_form.confirm_new_password.data:
             logger.info("All fields entered are valid")
             user.set_password(password_form.new_password.data)
             flash('Password Successfully Changed!', 'success')
@@ -472,7 +473,8 @@ def check_phish(mid):
                 , msg.subject, mail_item.get_content())
 
                 if not mail_exist:
-                    phishing_mails.append(Mail(sender, msg.date.astimezone(timezone('Asia/Singapore')), msg.subject))
+                    phishing_mails.append(Mail(sender, \
+                    msg.date.astimezone(timezone('Asia/Singapore')), msg.subject))
                     data['detection_count']+=1
                     detected_mail = PhishingEmail( \
                     sender_address = sender, \
