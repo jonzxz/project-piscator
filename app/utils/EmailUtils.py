@@ -115,10 +115,19 @@ def send_password_token(destination: str, username: str, token: str) -> None:
     mailer.send(msg)
     logger.info("Password reset token email sent")
 
-def check_valid_time(last_updated, mail_time):
+"""
+Function to compare 2 datetime object's timestamp
+Used to compare last_updated of an email address and date of a mail being checked
+Returns True if the mail's date is later than last_updated
+"""
+def check_valid_time(last_updated: datetime, mail_time: datetime) -> None:
     return True if mail_time.timestamp() > last_updated.timestamp() else False
 
-def check_valid_sender(sender, addr_owner):
+"""
+Function to check if sender of a mail is "valid"
+Returns True if sender is NOT the email address or the team's email address
+"""
+def check_valid_sender(sender: str, addr_owner: str):
     return True if not sender == addr_owner \
     or not sender == 'piscator.fisherman@gmail.com' else False
 

@@ -59,8 +59,19 @@ class Config(object):
             'func' : 'app.utils.EmailUtils:send_daily_notice',
             'trigger' : 'cron',
             'day' : 1
+        },
+        {
+            'id' : 'job4',
+            'func' : 'app.utils.DBUtils:delete_inactive_emails',
+            'trigger' : 'cron',
+            'day' : 90
+        },
+        {
+            'id' : 'job5',
+            'func' : 'app.utils.DBUtils:delete_inactive_accounts',
+            'trigger' : 'cron',
+            'day' : 365
         }
-
     ]
 
     SCHEDULER_API_ENABLED = True
