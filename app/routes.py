@@ -403,7 +403,7 @@ def check_phish(mid):
     check_criteria = AND(date_gte=last_updated.date(), seen=False)
 
     """
-    FOR DEMO USE 
+    FOR DEMO USE
     """
     # Test code to intentionally pull retrieve backdated emails for demo purposes
     # last_updated = datetime(2020, 12,17, 0, 0, 0)
@@ -534,14 +534,12 @@ def detection_history(mid):
         "activation of address ID {}!".format(mid))
         return redirect(url_for('index'))
 
+    logger.info("Entering detection history..")
     mailaddr = get_email_address_by_email_id(mid)
     mail_address = mailaddr.get_email_address()
 
     detection_history = db.session.query(PhishingEmail)\
     .filter(PhishingEmail.receiver_id == mid).all()
-    logger.info(detection_history)
-    logger.info(mailaddr)
-    logger.info(mail_address)
     return render_template('dashboard/detection_history.html'\
     , phishing_mails = detection_history, mail_address = mail_address)
 
