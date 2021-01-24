@@ -1,4 +1,4 @@
-import sys
+import sys, os
 
 def get_recaptcha_secret() -> str:
     try:
@@ -7,8 +7,8 @@ def get_recaptcha_secret() -> str:
             secret.close()
             return key
     except FileNotFoundError as fnfe:
-        print("ReCAPTCHA secret key file not found!")
-        sys.exit(1)
+        print("ReCAPTCHA secret key file not found! Loading from ENV")
+        return os.environ.get('RECAPTCHA_SECRET')
 
 def get_server_mail_cred():
     try:
@@ -17,5 +17,5 @@ def get_server_mail_cred():
             mail_cred.close()
             return creds
     except FileNotFoundError as fnfe:
-        print("MAIL_CRED key file not found!")
-        sys.exit(1)
+        print("MAIL_CRED key file not found! Loading from ENV")
+        return [os.environ.get('MAIL_ADDR'), os.environ.get('MAIL_PASS')]
