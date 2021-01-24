@@ -7,6 +7,20 @@ body {
 	background-color: white;
 }
 
+.ui-datepicker-trigger{
+	width:24px;
+	height: 24px;
+}
+
+.date-width-from{
+	width:50px;
+}
+
+.date-width-to{
+	width:30px;
+}
+
+
 .modal-dialog-instructionsModal{
 	max-width: 650px;
 }
