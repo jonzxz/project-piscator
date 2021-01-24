@@ -418,10 +418,6 @@ def check_phish(mid):
     last_updated = mailaddr.get_last_updated() \
     if mailaddr.get_last_updated() else datetime.today() - timedelta(days=1)
 
-    # Updates last updated to current time
-    mailaddr.set_last_updated(datetime.now())
-    logger.info("Updating mailbox last updated from %s to %s",\
-     last_updated.strftime("%d-%m-%Y, %H:%M:%S"), datetime.now())
 
     # Selects mailbox to Inbox only
     mailbox.folder.set("INBOX")
@@ -431,6 +427,11 @@ def check_phish(mid):
     # only mails newer than last_updated and unread mails are checked
     check_criteria = AND(date_gte=last_updated.date(), seen=False)
 
+    """
+    FOR DEMO USE 
+    """
+    # Test code to intentionally pull retrieve backdated emails for demo purposes
+    # last_updated = datetime(2020, 12,17, 0, 0, 0)
     # check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
 
     # Fetch mails from mailbox based on criteria, does not "read" the mail
@@ -490,6 +491,11 @@ def check_phish(mid):
                     )
                     db.session.add(detected_mail)
 
+    # Updates last updated to current time
+    mailaddr.set_last_updated(datetime.now())
+    logger.info("Updating mailbox last updated from %s to %s",\
+    last_updated.strftime("%d-%m-%Y, %H:%M:%S"), datetime.now())
+
     mailaddr.set_phishing_mail_detected(data['detection_count'])
     mailaddr.set_total_mails_checked(mail_check_count)
     db.session.commit()
@@ -499,8 +505,6 @@ def check_phish(mid):
 
     mailaddr = get_email_address_by_email_id(mid)
     mail_address = mailaddr.get_email_address()
-    logger.info(mailaddr)
-    logger.info(mail_address)
 
     # return redirect(url_for('dashboard'))
     return render_template('dashboard/detection_results.html', \
