@@ -154,6 +154,14 @@ progress::-webkit-progress-value {
 	color: #889B95;
 }
 
+.table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
+   background-color: #e2ebf0;
+}
+
+.table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
+   background-color: white;
+}
+
 .poppins {
 	font-family: "Poppins", sans-serif;
 	/* font-weight: bold; */
