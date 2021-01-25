@@ -16,6 +16,7 @@ class EmailAddress(db.Model):
     active = db.Column(db.Boolean, nullable=False, default=True)
     last_updated = db.Column(db.DateTime, nullable=True, default=None)
     created_at = db.Column(db.DateTime, index=True,default=datetime.now)
+    notification_preference = db.Column(db.Boolean, nullable=False, default=True)
 
     # FK
     owner_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
@@ -83,6 +84,12 @@ class EmailAddress(db.Model):
 
     def get_created_at(self) -> datetime:
         return self.created_at
+
+    def get_notification_pref(self) -> bool:
+        return self.notification_preference
+
+    def set_notification_pref(self, pref: bool) -> None:
+        self.notification_preference = pref
 
     def set_last_updated(self, last_updated: datetime):
         self.last_updated = last_updated

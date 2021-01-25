@@ -116,6 +116,22 @@ def send_password_token(destination: str, username: str, token: str) -> None:
     logger.info("Password reset token email sent")
 
 """
+Function to compare 2 datetime object's timestamp
+Used to compare last_updated of an email address and date of a mail being checked
+Returns True if the mail's date is later than last_updated
+"""
+def check_valid_time(last_updated: datetime, mail_time: datetime) -> None:
+    return True if mail_time.timestamp() > last_updated.timestamp() else False
+
+"""
+Function to check if sender of a mail is "valid"
+Returns True if sender is NOT the email address or the team's email address
+"""
+def check_valid_sender(sender: str, addr_owner: str):
+    return True if not sender == addr_owner \
+    or not sender == 'piscator.fisherman@gmail.com' else False
+
+"""
 Will not work if TESTING is True
 Function to send an email if phishing emails are detected in an active mailbox
 on a daily basis. Mails will not be sent if no phishing emails detected for
@@ -125,7 +141,8 @@ def send_daily_notice() -> None:
     logger.info("Routine task: sending daily notice to all active mailboxes")
 
     all_active_mailboxes = db.session.query(EmailAddress)\
-    .filter(EmailAddress.active == True).all()
+    .filter(EmailAddress.active == True\
+    , EmailAddress.notification_preference == True).all()
 
     for mailbox in all_active_mailboxes:
         logger.info("Checking through %s if any phishing emails detected today.."\

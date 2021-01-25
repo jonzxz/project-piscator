@@ -142,7 +142,10 @@ def get_admin_dashboard_stats() -> Dict:
     }
     return statistics
 
-
+"""
+Function to retrieve card and chart data for Subscriber Dashboard as a
+Dictionary. Does not include Monthly Overview chart
+"""
 def get_user_dashboard_stats() -> Dict:
     # -- Email Address Status Count START
     all_emails = db.session.query(EmailAddress)\
@@ -179,6 +182,9 @@ def get_user_dashboard_stats() -> Dict:
 
     return statistics
 
+"""
+Function to retrieve monthly statistics for Subscriber Dashboard as a List.
+"""
 def get_user_monthly_overview() -> List:
     monthly_stats = {
         1: 0,
@@ -247,12 +253,15 @@ def get_admin_monthly_overview() -> List:
     monthly_stats = list(monthly_stats.values())
     return monthly_stats
 
-
-def disable_emails_by_user_id(id):
+"""
+Function to disable email addresses owned by a User by ID.
+"""
+def disable_emails_by_user_id(id) -> None:
     user_emails = get_existing_addresses_by_user_id(id)
     for email in user_emails:
         logger.info("Disabling %s", email)
         email.set_active_status(False)
+
 """
 Function to check if detected mail item is not already in the database
 Returns a boolean as result
@@ -374,3 +383,31 @@ def check_all_mailboxes() -> None:
             logger.info("Finished checking mails.. logging out")
             mailbox.logout()
         db.session.commit()
+
+"""
+Function to delete all inactive email addresses
+Triggered as a scheduled task via Flask-APScheduler
+"""
+def delete_inactive_emails() -> None:
+    all_inactive_mailboxes = db.session.query(EmailAddress)\
+    .filter(EmailAddress.active == False)\
+    .all()
+
+    for email in all_inactive_mailboxes:
+        db.session.delete(email)
+
+    db.session.commit()
+
+"""
+Function to delete all inactive subscriber accounts
+Triggered as a scheduled task via Flask-APScheduler
+"""
+def delete_inactive_accounts() -> None:
+    all_inactive_accounts = db.session.query(User)\
+    .filter(User.is_active == False)\
+    .all()
+
+    for account in all_inactive_accounts:
+        db.session.delete(user)
+
+    db.session.commit()

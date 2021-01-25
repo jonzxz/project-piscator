@@ -10,6 +10,7 @@ from app.forms.AddEmailForm import AddEmailForm
 from app.forms.ChangeEmailPasswordForm import ChangeEmailPasswordForm
 from app.forms.ContactForm import ContactForm
 from app.forms.AccountSettingsForm import AccountSettingsForm
+from app.forms.DisableAccountForm import DisableAccountForm
 from app.forms.ResetPasswordRequestForm import ResetPasswordRequestForm
 from app.forms.UpdatePasswordForm import UpdatePasswordForm
 
@@ -19,7 +20,8 @@ from app.models.EmailAddress import EmailAddress
 from app.models.PhishingEmail import PhishingEmail
 
 ## Datetime
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
+from pytz import timezone
 
 ## Utils
 from app.utils.EmailUtils import test_mailbox_conn
@@ -27,6 +29,8 @@ from app.utils.EmailUtils import send_contact_us_email
 from app.utils.EmailUtils import get_imap_svr
 from app.utils.EmailUtils import send_phish_check_notice
 from app.utils.EmailUtils import send_password_token
+from app.utils.EmailUtils import check_valid_time
+from app.utils.EmailUtils import check_valid_sender
 from app.utils.DBUtils import get_user_by_id
 from app.utils.DBUtils import get_user_by_name
 from app.utils.DBUtils import get_email_address_by_address
@@ -275,75 +279,90 @@ def dash_account():
         logger.warning("Anonymous user in dashboard account, going to index..")
         return redirect(url_for('index'))
 
-    form = AccountSettingsForm()
+    password_form = AccountSettingsForm()
+    disable_form = DisableAccountForm()
     user = get_user_by_id(current_user.user_id)
     status = user.get_active_status()
 
-    if form.validate_on_submit():
-        logger.info("%s submitted account settings form", user.get_username())
+    return render_template('dashboard/dashboard_account.html',\
+    current_user = current_user, password_form = password_form,\
+    disable_form = disable_form, status = status)
 
-        # Retrieve slider data
-        disable_account = request.form.get('disable_account')
+@app.route('/dashboard/account/update_password', methods=['POST'])
+def update_password():
+    logger.info("Entering update_password")
+    password_form = AccountSettingsForm()
+    disable_form = DisableAccountForm()
+    user = get_user_by_id(current_user.user_id)
 
-        logger.info("%s -- Active: %s -- DisableSlider: %s",
-        user.get_username(), user.get_active_status(), disable_account)
-
-        """
-        Checks if update password or disable account is submitted
-        First condition: checks for password and new password criteria and
-        disable_account slider is None
-
-        Second condition: checks that disable_account slider is on and that
-        current password != new_password, because disable account does not display
-        new_password field so naturally current_password will NOT == new_password
-
-        Else: disable account with correct password entered but no slider.
-        """
-        if user is not None and user.check_password(form.current_password.data):
-            ## -- Password Change START --
-            if not disable_account \
-            and form.new_password.data == form.confirm_new_password.data:
-                logger.info("Entering password change")
-                logger.info("Password changed for %s", user.get_username())
-                user.set_password(form.new_password.data)
-                flash('Password Successfully Changed!')
-            ## -- Password Change END --
-            ## -- Account State START --
-            elif disable_account=='on' \
-            and not form.current_password.data == form.new_password.data:
-                user.set_active_status(False)
-                logger.info("Setting %s account status to disabled"\
-                , user.get_username())
-                logger.info("Disabling all email addresses for %s"\
-                , user.get_username())
-                # Sets all email addresses for user to disabled
-                disable_emails_by_user_id(user.get_id())
-                flash('Account is Disabled! You\'ll be logged out in 5 seconds..')
-            else:
-                flash('If you have intended to disable your account\
-                , click the slider!')
-            ## -- Account State END --
-        else:
-            flash('Invalid \'Current Password\'!')
-            logger.info("User %s entered invalid current password"\
-            , user.get_username())
-            return redirect(url_for('dash_account'))
-
-        try:
+    # 1st Condition: valid password + new passwords are valid and NOT empty
+    # 2nd Condition: invalid current password
+    # 3rd Condition: empty new password
+    # 4th Condition: mismatced new passwords
+    # Code is handled this way due to method being rerouted from dash_account
+    # so the validators in the form do not work, thus requiring manual handling
+    if password_form.is_submitted():
+        logger.info("Password update form submitted")
+        if user.check_password(password_form.current_password.data) and \
+        not (password_form.new_password.data == '' \
+        or password_form.confirm_new_password.data == '') and \
+        password_form.new_password.data == \
+        password_form.confirm_new_password.data:
+            logger.info("All fields entered are valid")
+            user.set_password(password_form.new_password.data)
+            flash('Password Successfully Changed!', 'success')
             db.session.commit()
             logger.debug("Successfully changed user %s password"\
             ", updated database", user)
-            return redirect(url_for('dash_account'))
-        except IntegrityError:
-            db.session.rollback()
-            logger.error("Failed to change password for %s"\
-            ", rolling back database", user)
 
-    # Updates values of status after changing status
-    status = user.get_active_status()
-    return render_template('dashboard/dashboard_account.html',
-    current_user = current_user, form = form, status = status)
+        elif not user.check_password(password_form.current_password.data):
+            logger.info("Wrong current password entered")
+            flash('Invalid Current Password!', 'error')
+        elif password_form.new_password.data == '' or \
+        password_form.confirm_new_password.data == '':
+            logger.info("Either password submitted is empty")
+            flash('Passwords cannot be empty!', 'error')
+        elif not password_form.new_password.data \
+        == password_form.confirm_new_password.data:
+            logger.info("Mismatched new passwords entered")
+            flash('New Password and Confirm New Password must match!', 'error')
 
+    return redirect(url_for('dash_account'))
+
+@app.route('/dashboard/account/disable', methods=['POST'])
+def disable_account():
+    logger.info("Entering disable_account")
+    password_form = AccountSettingsForm()
+    disable_form = DisableAccountForm()
+    user = get_user_by_id(current_user.user_id)
+
+    # 1st Condition: valid password + slider is enabled
+    # 2nd Condition: invalid current password
+    # 3rd Condition: slider not turned on
+    # Code is handled this way due to method being rerouted from dash_account
+    # so the validators in the form do not work, thus requiring manual handling
+    if disable_form.is_submitted():
+        slider_data = request.form.get('disable_account')
+
+        logger.info("Disable account form submitted")
+
+        if user.check_password(disable_form.current_password.data) and \
+        slider_data == 'on':
+            logger.info("all good!")
+            user.set_active_status(False)
+            disable_emails_by_user_id(user.get_id())
+            db.session.commit()
+            flash('Account is Disabled! You\'ll be logged out in 5 seconds..',\
+             'success')
+        elif not user.check_password(disable_form.current_password.data):
+            logger.info("Wrong password entered")
+            flash('Invalid Current Password!', 'error')
+        elif not slider_data == 'on':
+            logger.info('Slider not turned on')
+            flash('If you have intended to disable your account\
+            , click the slider!', 'error')
+
+    return redirect(url_for('dash_account'))
 
 @app.route('/dashboard/emails/phish/<mid>')
 def check_phish(mid):
@@ -383,13 +402,13 @@ def check_phish(mid):
         flash("Unable to connect to mailbox, please update your password!", 'error')
         return redirect(url_for('dash_email'))
 
-    # Retrieves date last updated: converts datetime to date
-    last_updated = mailaddr.get_last_updated().date() \
-    if mailaddr.get_last_updated() else datetime.now().date()
-    # Updates last updated to current time
-    mailaddr.set_last_updated(datetime.now())
-    logger.info("Updating mailbox last updated from %s to %s",\
-     last_updated.strftime("%d-%m-%Y"), datetime.now())
+    # Retrieves date last updated
+    # if new email address is added column is empty
+    # sets last_updated to today - 1 day so that mails in the last 24 hours
+    # are checked
+    last_updated = mailaddr.get_last_updated() \
+    if mailaddr.get_last_updated() else datetime.today() - timedelta(days=1)
+
 
     # Selects mailbox to Inbox only
     mailbox.folder.set("INBOX")
@@ -397,13 +416,19 @@ def check_phish(mid):
 
     # Sets a check criteria so that
     # only mails newer than last_updated and unread mails are checked
-    # check_criteria = AND(date_gte=last_updated, seen=False)
+    check_criteria = AND(date_gte=last_updated.date(), seen=False)
 
-    check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
+    """
+    FOR DEMO USE
+    """
+    # Test code to intentionally pull retrieve backdated emails for demo purposes
+    # last_updated = datetime(2020, 12,17, 0, 0, 0)
+    # check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
 
     # Fetch mails from mailbox based on criteria, does not "read" the mail
     # and retrieves in bulk for faster performance at higher computing cost
     all_mails = mailbox.fetch(check_criteria, reverse=True, mark_seen=False, bulk=True)
+
     logger.info("Mails fetched..")
 
     # Iterates through the mails that are not sent from the sender's address
@@ -431,9 +456,8 @@ def check_phish(mid):
             logger.error("HeaderParseError, unparseable msg.from_. \
             Setting sender as INVALID_SENDER")
             sender = 'INVALID_SENDER'
-
-        if not sender == mailaddr.get_email_address() or \
-        not sender == 'piscator.fisherman@gmail.com':
+        if (check_valid_time(last_updated, msg.date)) \
+        and check_valid_sender(sender, mailaddr.get_email_address()):
             data['total_count']+=1
             mail_check_count +=1
             mail_item = EmailData(msg.subject, sender, msg.attachments\
@@ -449,7 +473,8 @@ def check_phish(mid):
                 , msg.subject, mail_item.get_content())
 
                 if not mail_exist:
-                    phishing_mails.append(Mail(sender, msg.date, msg.subject))
+                    phishing_mails.append(Mail(sender, \
+                    msg.date.astimezone(timezone('Asia/Singapore')), msg.subject))
                     data['detection_count']+=1
                     detected_mail = PhishingEmail( \
                     sender_address = sender, \
@@ -460,6 +485,11 @@ def check_phish(mid):
                     )
                     db.session.add(detected_mail)
 
+    # Updates last updated to current time
+    mailaddr.set_last_updated(datetime.now())
+    logger.info("Updating mailbox last updated from %s to %s",\
+    last_updated.strftime("%d-%m-%Y, %H:%M:%S"), datetime.now())
+
     mailaddr.set_phishing_mail_detected(data['detection_count'])
     mailaddr.set_total_mails_checked(mail_check_count)
     db.session.commit()
@@ -469,8 +499,6 @@ def check_phish(mid):
 
     mailaddr = get_email_address_by_email_id(mid)
     mail_address = mailaddr.get_email_address()
-    logger.info(mailaddr)
-    logger.info(mail_address)
 
     # return redirect(url_for('dashboard'))
     return render_template('dashboard/detection_results.html', \
@@ -494,6 +522,26 @@ def mail_activation(mid):
     db.session.commit()
     return redirect(url_for('dash_email'))
 
+@app.route('/dashboard/emails/notif/<mid>')
+def mail_notification_preference(mid):
+    owner_id = get_owner_id_from_email_id(mid)
+
+    if current_user.is_anonymous or not owner_id == current_user.get_id() :
+        logger.warning("Anonymous or unauthorized user "\
+        "attempting notif preference update of address ID {}!".format(mid))
+        return redirect(url_for('index'))
+
+    logger.info("Entering function to update email preference..")
+    mail_addr = get_email_address_by_email_id(mid)
+    if mail_addr.get_notification_pref() == True:
+        mail_addr.set_notification_pref(False)
+    else:
+        mail_addr.set_notification_pref(True)
+
+    db.session.commit()
+    return redirect(url_for('dash_email'))
+
+
 @app.route('/dashboard/emails/history/<mid>')
 def detection_history(mid):
     owner_id = get_owner_id_from_email_id(mid)
@@ -503,14 +551,12 @@ def detection_history(mid):
         "activation of address ID {}!".format(mid))
         return redirect(url_for('index'))
 
+    logger.info("Entering detection history..")
     mailaddr = get_email_address_by_email_id(mid)
     mail_address = mailaddr.get_email_address()
 
     detection_history = db.session.query(PhishingEmail)\
     .filter(PhishingEmail.receiver_id == mid).all()
-    logger.info(detection_history)
-    logger.info(mailaddr)
-    logger.info(mail_address)
     return render_template('dashboard/detection_history.html'\
     , phishing_mails = detection_history, mail_address = mail_address)
 

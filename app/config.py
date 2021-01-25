@@ -18,7 +18,7 @@ class Config(object):
     #Recaptcha
     RECAPTCHA_USE_SSL = False
     RECAPTCHA_PUBLIC_KEY = '6Lezk-IZAAAAABW4o03l4BBW8OpmmZ8p7GhUZQC0'
-    RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_SECRET') or get_recaptcha_secret()
+    RECAPTCHA_PRIVATE_KEY = get_recaptcha_secret()
     RECAPTCHA_OPTIONS = {'theme' : 'black'}
 
     # Configures ReCAPTCHA and Contact Us
@@ -30,9 +30,9 @@ class Config(object):
     MAIL_CREDS = get_server_mail_cred()
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
-    MAIL_USERNAME = os.environ.get('MAIL_ADDR') or MAIL_CREDS[0]
-    MAIL_PASSWORD = os.environ.get('MAIL_PASS') or MAIL_CREDS[1]
-    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_ADDR') or MAIL_CREDS[0]
+    MAIL_USERNAME = MAIL_CREDS[0]
+    MAIL_PASSWORD = MAIL_CREDS[1]
+    MAIL_DEFAULT_SENDER = MAIL_CREDS[0]
     MAIL_USE_TSL = False
     MAIL_USE_SSL = True
     MAIL_SUPRRESS_SEND = False
@@ -57,10 +57,21 @@ class Config(object):
         {
             'id' : 'job3',
             'func' : 'app.utils.EmailUtils:send_daily_notice',
-            'trigger' : 'cron',
-            'day' : 1
+            'trigger' : 'interval',
+            'days' : 1
+        },
+        {
+            'id' : 'job4',
+            'func' : 'app.utils.DBUtils:delete_inactive_emails',
+            'trigger' : 'interval',
+            'days' : 90
+        },
+        {
+            'id' : 'job5',
+            'func' : 'app.utils.DBUtils:delete_inactive_accounts',
+            'trigger' : 'interval',
+            'days' : 365
         }
-
     ]
 
     SCHEDULER_API_ENABLED = True
