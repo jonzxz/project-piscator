@@ -244,15 +244,15 @@ class AdminPhishingView(AdminBaseView):
 	### Display Rules
 	# Page set allowed
 	# PK displayed, selected columns relabelled and displayed
+	title = 'Phishing Mails'
 	can_set_page_size = True
 	column_display_pk = True
-	column_list = ['mail_id', 'sender_address', 'subject', 'content', 'created_at']
+	column_list = ['mail_id', 'sender_address', 'subject', 'created_at']
 	column_labels = {
 		'mail_id' : 'ID',
 		'sender_address' : 'Sender',
 		'subject' : 'Subject',
-		'content' : 'Content',
-		'created_at' : 'Created At'
+		'created_at' : 'Detected At'
 	}
 
 	create_modal = True
@@ -273,14 +273,10 @@ class AdminPhishingView(AdminBaseView):
 		}
 	}
 
-	def _content_formatter(view, context, model, name):
-		return model.content[:20] + '...' if len(model.content) > 20 else model.content
-
 	def _subject_formatter(view, context, model, name):
 		logger.info("LENGTH: %d", len(model.subject))
 		return model.subject[:30] + '...' if len(model.subject) > 100 else model.subject
 
 	column_formatters = {
-		'subject' : _subject_formatter,
-		'content' : _content_formatter
+		'subject' : _subject_formatter
 	}
