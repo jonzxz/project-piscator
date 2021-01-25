@@ -77,6 +77,6 @@ from app.views import views
 admin = Admin(app, name='piscator', template_mode='bootstrap4', index_view=views.GlobalIndexView())
 with warnings.catch_warnings():
 	warnings.filterwarnings('ignore', 'Fields missing from ruleset', UserWarning)
-	admin.add_view(views.AdminUserView(User.User, db.session))
-	admin.add_view(views.AdminEmailView(EmailAddress.EmailAddress, db.session))
-	admin.add_view(views.AdminPhishingView(PhishingEmail.PhishingEmail, db.session))
+	admin.add_view(views.AdminUserView(User.User, db.session, "Subscribers"))
+	admin.add_view(views.AdminEmailView(EmailAddress.EmailAddress, db.session, "Email Address"))
+	admin.add_view(views.AdminPhishingView(PhishingEmail.PhishingEmail, db.session, "Phishing Mails"))
