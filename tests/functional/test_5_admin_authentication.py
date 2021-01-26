@@ -11,7 +11,7 @@ from .test_2_authentication import login, logout
 def test_admin_login(driver):
     ADMIN_USER = 'admin'
     PASSWORD = 'password'
-    driver.get('localhost:5000')
+    driver.get('http://localhost:5000')
     # Enter credentials
     login(driver, ADMIN_USER, PASSWORD)
     # Assert user is redirected to admin dashboard

@@ -12,7 +12,7 @@ def driver():
     options = Options()
     driver = webdriver.Chrome(options=options)
     driver.maximize_window()
-    driver.get('localhost:5000')
+    driver.get('http://localhost:5000')
     yield driver
     driver.quit()
 

@@ -10,8 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 def login(driver, username, password):
     # Click 'Sign In'
     wait_login_btn = WebDriverWait(driver, 5)
-    wait_login_btn.until(EC.visibility_of_element_located((By.XPATH, '/html/body/header/div[1]/div/div/div/nav/div[2]/a')))
-    driver.find_element(By.XPATH, '/html/body/header/div[1]/div/div/div/nav/div[2]/a').click()
+    wait_login_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="navbar"]/div[2]/a')))
+    driver.find_element(By.XPATH, '//*[@id="navbar"]/div[2]/a').click()
     # Enter credentials
     driver.find_element_by_id('username').send_keys(username)
     driver.find_element_by_id('password').send_keys(password)
@@ -109,13 +109,14 @@ def test_register_existing(driver):
     assert driver.current_url.split(sep='/')[-1] != 'dashboard'
     assert EXISTING_USERNAME_ERR in driver.page_source
 
-    driver.get('localhost:5000')
-    assert driver.title == 'Project Piscator'
 
 # Test logging in user from homepage - flows after logging out a newly registered user
 # Uses login utility function
 #Login with unregistered username
 def test_unregistered_login(driver):
+    driver.get('http://localhost:5000')
+    assert driver.title == 'Project Piscator'
+    
     USERNAME = 'testuser123456'
     PASSWORD = 'password'
     INVALID_USER_PASS_ERR = 'Invalid username or password'
