@@ -39,18 +39,12 @@ progress {
   height: 22px;
 }
 progress::-webkit-progress-bar {
-  background-color: #8a80ff;
+  background-color: #FFFFFF;
   border-radius: 7px;
 }
 progress::-webkit-progress-value {
-	background-color: #FFFFFF;
+	background-color: #8a80ff;
   border-radius: 7px;
-}
-
-.first {
-	width: 35%;
-	float:left;
-	height: 420px;
 }
 
 .login-user{
@@ -70,32 +64,21 @@ progress::-webkit-progress-value {
 
 .detection-num{
 	font-size:30px;
+	color :#9890e3;
 }
 
 .bg-c-detection-admin{
-	/* background-color:#63D3D3; */
-	/* background-color: #00C0EF; */
-	/* background-color:#b9dcf2; */
-	/*background-image: linear-gradient(120deg, #accbee 0%, #e7f0fd 100%);*/
 	font-size: 20px;
 	height: 127px;
 	border-bottom-color: #DA6666;
 	border-bottom-width: thick;
-	/* font-weight: bold;
-	color: white; */
 }
 
 .bg-c-detect-admin{
-	/* background-color:#63D3D3; */
-	/* background-color: #00C0EF; */
-	/* background-color:#b9dcf2; */
-	/*background-image: linear-gradient(120deg, #accbee 0%, #e7f0fd 100%);*/
 	font-size: 20px;
 	height: 127px;
 	border-bottom-color: #63D3D3;
 	border-bottom-width: thick;
-	/* font-weight: bold;
-	color: white; */
 }
 
 .lni-color{
@@ -103,38 +86,33 @@ progress::-webkit-progress-value {
 }
 
 .bg-c-email{
-	background-color: #8a80ff;
+	border-bottom-color: #63D3D3;
+	border-bottom-width: thick;
 	font-size: 20px;
-	font-weight: bold;
-	color: white;
 }
 
 .bg-c-today{
-	background-color:#ffcf4d;
+	border-bottom-color: #ffcf4d;
+	border-bottom-width: thick;
 	font-size: 20px;
-	font-weight: bold;
-	color: white;
 }
 
 .bg-c-weekly{
-	background-color:#669cff;
+	border-bottom-color: #669cff;
+	border-bottom-width: thick;
 	font-size: 20px;
-	font-weight: bold;
-	color: white;
 }
 
 .bg-c-monthly{
-	background-color:#ff8c66;
+	border-bottom-color: #ff8c66;
+	border-bottom-width: thick;
 	font-size: 20px;
-	font-weight: bold;
-	color: white;
 }
 
 .bg-c-all{
-	background-color: #40f2a2;
+	border-bottom-color: #40f2a2;
+	border-bottom-width: thick;
 	font-size: 20px;
-	font-weight: bold;
-	color: white;
 }
 
 .bg-bar-chart{
@@ -174,6 +152,10 @@ progress::-webkit-progress-value {
 
 .tr-header{
 	color: #889B95;
+}
+
+.text-super{
+	vertical-align:super;
 }
 
 .poppins {
