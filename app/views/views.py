@@ -251,12 +251,8 @@ class AdminPhishingView(AdminBaseView):
 	# PK displayed, selected columns relabelled and displayed
 	can_set_page_size = True
 	column_display_pk = True
-<<<<<<< HEAD
 	can_create = False
-	column_list = ['mail_id', 'sender_address', 'subject', 'content', 'created_at']
-=======
 	column_list = ['mail_id', 'sender_address', 'subject', 'created_at']
->>>>>>> admin_yannis
 	column_labels = {
 		'mail_id' : 'ID',
 		'sender_address' : 'Sender',
