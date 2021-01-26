@@ -353,14 +353,13 @@ def disable_account():
             disable_emails_by_user_id(user.get_id())
             db.session.commit()
             flash('Account is Disabled! You\'ll be logged out in 5 seconds..',\
-             'success')
+             'error')
         elif not user.check_password(disable_form.current_password.data):
             logger.info("Wrong password entered")
             flash('Invalid Current Password!', 'error')
         elif not slider_data == 'on':
             logger.info('Slider not turned on')
-            flash('If you have intended to disable your account\
-            , click the slider!', 'error')
+            flash('If you intend to disable your account, click the slider!', 'error')
 
     return redirect(url_for('dash_account'))
 
