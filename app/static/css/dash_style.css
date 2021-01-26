@@ -173,4 +173,31 @@ progress::-webkit-progress-value {
 	border-bottom-color: #40F2A2;
 	border-bottom-width: thick;
 	font-size: 20px;
+	color: #818181;
+	display: block;
+	transition: 0.3s;
+	background-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
+	color: white;
+	border-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
+}
+
+.sidepanel a:hover {
+	color: #84fab0;
+}
+
+.tr-header{
+	color: #889B95;
+}
+
+.table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
+   background-color: #e2ebf0;
+}
+
+.table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
+   background-color: white;
+}
+
+.poppins {
+	font-family: "Poppins", sans-serif;
+	/* font-weight: bold; */
 }

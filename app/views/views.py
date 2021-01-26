@@ -96,6 +96,8 @@ class AdminUserView(AdminBaseView):
 	form_edit_rules = ['username', 'change_password', 'created_at',\
 	'last_logged_in', 'is_active', 'is_admin']
 
+	column_default_sort = 'user_id'
+
 	# Date formatters for created_at and last_logged_in columns
 	def create_date_format(view, context, model, name):
 		return model.created_at.strftime('%d-%m-%Y %H:%M:%S')
@@ -177,6 +179,8 @@ class AdminEmailView(AdminBaseView):
 	columns_sortable_list = ['email_id', 'owner_id', 'phishing_mail_detected',\
 	 'created_at', 'last_updated', 'active']
 
+	column_default_sort = 'email_id'
+
 	### Create / Edit form rules
 	# Additional fields not in column_list
 	# 'email_password' for creating new addresses
@@ -247,14 +251,17 @@ class AdminPhishingView(AdminBaseView):
 	# PK displayed, selected columns relabelled and displayed
 	can_set_page_size = True
 	column_display_pk = True
+<<<<<<< HEAD
 	can_create = False
 	column_list = ['mail_id', 'sender_address', 'subject', 'content', 'created_at']
+=======
+	column_list = ['mail_id', 'sender_address', 'subject', 'created_at']
+>>>>>>> admin_yannis
 	column_labels = {
 		'mail_id' : 'ID',
 		'sender_address' : 'Sender',
 		'subject' : 'Subject',
-		'content' : 'Content',
-		'created_at' : 'Created At'
+		'created_at' : 'Detected At'
 	}
 
 	create_modal = True
@@ -284,6 +291,8 @@ class AdminPhishingView(AdminBaseView):
 			'readonly' : True
 		}
 	}
+
+	column_default_sort = 'mail_id'
 
 	def _content_formatter(view, context, model, name):
 		return model.content[:20] + '...' if len(model.content) > 20 else model.content
