@@ -31,7 +31,7 @@ def test_admin_disable_user(driver):
     user_to_disable = db.session.query(User).filter(User.username ==TEST_DISABLE_USER).first()
     user_to_disable_id = user_to_disable.get_id()
 
-    # Clicks on 'Users' in admin navbar
+    # Clicks on 'Subscribers' in admin navbar
     wait_user_btn = WebDriverWait(driver, 3)
     wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[2]')))
     driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[2]').click()
@@ -47,8 +47,8 @@ def test_admin_disable_user(driver):
     sleep(2)
     # Unchecks active checkbox
     wait_active_box = WebDriverWait(driver, 3)
-    wait_active_box.until(EC.visibility_of_element_located((By.ID, 'is_active')))
-    checkbox = driver.find_element_by_css_selector("#is_active")
+    wait_active_box.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="fa_modal_window"]/div/div/form/fieldset/div/div[5]/input')))
+    checkbox = driver.find_element_by_css_selector(".form-control-lg#is_active")
     driver.execute_script("arguments[0].click();", checkbox)
 
     # Clicks "Save" in edit page
@@ -93,10 +93,10 @@ def test_enable_user(driver):
 
     # The sleep(2) is required otherwise wait_active_box does not work
     sleep(2)
-    # Unchecks active checkbox
+    # Checks active checkbox
     wait_active_box = WebDriverWait(driver, 3)
-    wait_active_box.until(EC.visibility_of_element_located((By.ID, 'is_active')))
-    checkbox = driver.find_element_by_css_selector("#is_active")
+    wait_active_box.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="fa_modal_window"]/div/div/form/fieldset/div/div[5]/input')))
+    checkbox = driver.find_element_by_css_selector(".form-control-lg#is_active")
     driver.execute_script("arguments[0].click();", checkbox)
 
     # Clicks "Save" in edit page
