@@ -11,10 +11,9 @@
             <th class="text-center" scope="col">Emails Detected / Checked</th>
             <th class="text-center" scope="col">Detection History</th>
             <th class="text-center" scope="col">Last Updated</th>
-            <th class="text-center" scope="col">Active Status</th>
             <th class="text-center" scope="col">Scan Mailbox</th>
             <th class="text-center" scope="col">Change Password</th>
-            <th class="text-center" scope="col">Activate</th>
+            <th class="text-center" scope="col">Active Status</th>
             <th class="text-center" scope="col">Daily Notification</th>
           </tr>
         </thead>
@@ -34,24 +33,29 @@
               {% else %}
               <td class="text-center">{{ email.get_prettified_date() }}</td>
               {% endif %}
+
               {% if email.get_active_status() %}
-              <td class="text-center" name="status-{{ email.email_address }}">Active</td>
               <td class="text-center"><a class="lni lni-brush" id="{{ email.email_id }}"
-                name="clean-{{ email.email_address }}" href="#"
-                onclick="phish({{ email.get_email_id() }});"></a></td>
-              {% else %}
-              <td class="text-center" name="status-{{ email.email_address }}">Inactive</td>
-              <td class="text-center"><span class="lni lni-brush" disabled></span></td>
-              {% endif %}
+              name="clean-{{ email.email_address }}" href="#"
+              onclick="phish({{ email.get_email_id() }});"></a></td>
               <td class="text-center">
                 <a class="lni lni-pencil" name="update-{{ email.email_address }}"
                 data-toggle="modal" data-target="#changePasswordModal"></a>
               </td>
+              <td class="text-center"><a class="lni lni-checkmark" id="activate-{{ email.email_id }}"
+              name="activate-{{ email.email_address }}" href="#"
+              onclick="activate({{ email.get_email_id() }});" value="active-notif-on"></a></td>
+              {% else %}
+              <td class="text-center"><span class="lni lni-brush" disabled></span></td>
               <td class="text-center">
-                <a class="lni lni-power-switch" id="activate-{{ email.email_id }}"
-                name="activate-{{ email.email_address }}" href="#"
-                onclick="activate({{ email.get_email_id() }});"></a>
+                <a class="lni lni-pencil" name="update-{{ email.email_address }}"
+                data-toggle="modal" data-target="#changePasswordModal"></a>
               </td>
+              <td class="text-center"><a class="lni lni-close" id="activate-{{ email.email_id }}"
+              name="activate-{{ email.email_address }}" href="#"
+              onclick="activate({{ email.get_email_id() }});" value="active-notif-off"></a></td>
+              {% endif %}
+
               <td class="text-center">
                 {% if email.get_notification_pref() == True %}
                 <a class="lni lni-checkmark" id="notif-{{ email.email_id }}"
