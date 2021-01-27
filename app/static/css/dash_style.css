@@ -173,12 +173,6 @@ progress::-webkit-progress-value {
 	border-bottom-color: #40F2A2;
 	border-bottom-width: thick;
 	font-size: 20px;
-	color: #818181;
-	display: block;
-	transition: 0.3s;
-	background-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
-	color: white;
-	border-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
 }
 
 .sidepanel a:hover {
