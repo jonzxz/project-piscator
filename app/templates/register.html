@@ -2,6 +2,7 @@
 {% block content %}
 {% include "navbar.html" %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login_reg_style.css') }}">
+<br>
 <div class="main-container">
   <div class="sub-container w-25 p-4 mb-5 round-radius">
     <div class="row">
@@ -12,8 +13,8 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12 d-flex justify-content-center mt-2 mb-2 animated fadeIn">
-        <div class="text-md font-weight-bold">Or</div>
+      <div class="col-md-12 d-flex justify-content-center mt-3 mb-2 animated fadeIn">
+        <div class="h5 text-md font-weight-bold">Or</div>
       </div>
     </div>
     <div class="row">
@@ -52,12 +53,12 @@
 
         {% if form.errors %}
           {% for error in form.confirm_password.errors %}
-          <div class="row mt-2 mb-2 justify-content-center">
+          <div class="row justify-content-center">
             <div class="alert alert-danger">{{ error }}</div>
           </div>
           {% endfor %}
           {% for error in form.agreement.errors %}
-          <div class="row mt-2 mb-2 justify-content-center">
+          <div class="row justify-content-center">
             <div class="alert alert-danger">{{ error }}</div>
           </div>
           {% endfor %}
