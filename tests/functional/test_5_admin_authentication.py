@@ -22,7 +22,7 @@ def test_admin_login(driver):
 # Test opening the user view and that redirection is correct and User table is present
 # -- Possible improvement to check if created TESTUSER123 is present
 def test_admin_can_view_users(driver):
-    # Wait for User button to appear and click
+    # Wait for Subscribers button to appear and click
     wait_user_btn = WebDriverWait(driver, 3)
     wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[2]')))
     driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[2]').click()
