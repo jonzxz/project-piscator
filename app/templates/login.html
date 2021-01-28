@@ -4,27 +4,23 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login_reg_style.css') }}">
 <div class="main-container">
     <div class="sub-container w-25 p-3 mb-4 round-radius">
-        <!-- <div class="row">
-            <div class="col-md-12 pl-5 ml-2 mt-2 mb-2 animated fadeIn">
-                <div class="h3">Login</div>
-            </div>
-        </div> -->
-        <div class="row justify-content-center">
+        <div class="container-title-bar">L O G I N</div>
+        <div class="row justify-content-center mt-2">
             <form action="" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <div class="row mt-2 mb-2 justify-content-center">
                     <div class="col-md-12">
-                        {{ form.username(size=33, class='form-control') }}
+                        {{ form.username(size=33, class='form-control text-center') }}
                     </div>
                 </div>
                 <div class="row mt-2 mb-2 justify-content-center">
                     <div class="col-md-12">
-                        {{ form.password(size=33, class='form-control')}}
+                        {{ form.password(size=33, class='form-control text-center')}}
                     </div>
                 </div>
-                <div class="row mt-2 mb-2 pl-3">
+                <div class="row mt-2 mb-2 justify-content-center">
                     <div class="col-xs-6">
-                        {{ form.remember_me() }}  {{ form.remember_me.label }}
+                        {{ form.remember_me() }} {{ form.remember_me.label }}
                     </div>
                 </div>
                 <div class="row">
@@ -32,18 +28,15 @@
                         <div class="login">
                             {{ form.submit(class='main-btn w-100') }}
                         </div>
-                        <div class="login-existing pl-2">
-                            <a href="{{ url_for('reset') }}" class="main-btn">Forget your password?</a>
-                        </div>
                     </div>
                 </div>
-                <!-- <div class="row mt-2 mb-2">
+                <div class="row mt-2 mb-2">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="login-existing">
                             <a href="{{ url_for('reset') }}" class="main-btn">Forget your password?</a>
                         </div>
                     </div>
-                </div> -->
+                </div>
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -53,9 +46,9 @@
                                         <span class="alert alert-danger m2"> {{ message }} </span>
                                     {% elif category == 'success' %}
                                         <span class="alert alert-success m2"> {{ message }} </span>
-                                    {% endif %}
+                                    {% endif%}
                                 {% endfor %}
-                            {% endif %}
+                            {% endif%}
                         {% endwith %}
                     </div>
                 </div>
