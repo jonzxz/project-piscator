@@ -11,8 +11,8 @@ from app.models.EmailAddress import EmailAddress
 
 def add_email(driver, email, password):
     # Wait for Add Email Button to appear and click
-    wait_mail_btn = WebDriverWait(driver, 3)
-    wait_mail_btn.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/div[2]/div[1]/div/div/button[1]')))
+    wait_mail_btn = WebDriverWait(driver, 5)
+    wait_mail_btn.until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div[2]/div[1]/div/div/button[1]')))
     driver.find_element(By.XPATH, '/html/body/div[2]/div[2]/div[1]/div/div/button[1]').click()
 
     # Wait for fields in modal to appear and click
