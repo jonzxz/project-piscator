@@ -116,7 +116,7 @@ def test_register_existing(driver):
 def test_unregistered_login(driver):
     driver.get('http://localhost:5000')
     assert driver.title == 'Project Piscator'
-    
+
     USERNAME = 'testuser123456'
     PASSWORD = 'password'
     INVALID_USER_PASS_ERR = 'Invalid username or password'
@@ -140,7 +140,7 @@ def test_invalid_password_login(driver):
     assert INVALID_USER_PASS_ERR in driver.page_source
 
 #Login with username, empty password
-def test_invalid_password_login(driver):
+def test_empty_password_login(driver):
     USERNAME = 'testuser123'
 
     driver.find_element_by_id('username').send_keys(USERNAME)
