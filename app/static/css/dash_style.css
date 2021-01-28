@@ -1,6 +1,134 @@
 body {
 	font-family: "Lato", sans-serif;
-	background-image: linear-gradient(to right, #FDFBFB 0%, #EBEDEE 100%);
+	background-image: linear-gradient(to right, #fdfbfb 0%, #ebedee 100%);
+}
+
+/* admin_base_list */
+.admin-list-title{
+	font-family: "Lato", sans-serif;
+	color: #596164;
+}
+
+.tr-bg{
+	background-color: white;
+}
+
+.modal-dialog-instructionsModal{
+	max-width: 650px;
+}
+
+/* admin_base_list */
+.table-admin-list{
+	 width: 120%;
+}
+
+progress {
+  border-radius: 7px;
+  width: 100%;
+  height: 22px;
+}
+progress::-webkit-progress-bar {
+  background-color: #8a80ff;
+  border-radius: 7px;
+}
+progress::-webkit-progress-value {
+	background-color: #FFFFFF;
+  border-radius: 7px;
+}
+
+.first {
+	width: 35%;
+	float:left;
+	height: 420px;
+}
+
+.login-user{
+	font-size: 20px;
+	margin-bottom: 30px;
+	text-transform: uppercase;
+	text-align:center;
+	font-weight: bold;
+	color: white;
+	font-family: "Lato", sans-serif;
+}
+
+.tab {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.detection-num{
+	font-size:30px;
+}
+
+.bg-c-detection-admin{
+	/* background-color:#63D3D3; */
+	/* background-color: #00C0EF; */
+	/* background-color:#b9dcf2; */
+	/*background-image: linear-gradient(120deg, #accbee 0%, #e7f0fd 100%);*/
+	font-size: 20px;
+	height: 127px;
+	border-bottom-color: #DA6666;
+	border-bottom-width: thick;
+	/* font-weight: bold;
+	color: white; */
+}
+
+.bg-c-detect-admin{
+	/* background-color:#63D3D3; */
+	/* background-color: #00C0EF; */
+	/* background-color:#b9dcf2; */
+	/*background-image: linear-gradient(120deg, #accbee 0%, #e7f0fd 100%);*/
+	font-size: 20px;
+	height: 127px;
+	border-bottom-color: #63D3D3;
+	border-bottom-width: thick;
+	/* font-weight: bold;
+	color: white; */
+}
+
+.lni-color{
+	color :#9890e3;
+}
+
+.bg-c-email{
+	background-color: #8a80ff;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+}
+
+.bg-c-today{
+	background-color:#ffcf4d;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+}
+
+.bg-c-weekly{
+	background-color:#669cff;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+}
+
+.bg-c-monthly{
+	background-color:#ff8c66;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+}
+
+.bg-c-all{
+	background-color: #40f2a2;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+}
+
+.bg-bar-chart{
+	font-size: 20px;
+	font-weight: bold;
 }
 
 .sidepanel{
@@ -13,7 +141,7 @@ body {
 	overflow-x: hidden;
 	transition: 0.5s;
 	padding-top: 60px;
-	background-image: linear-gradient(to right, #209CFF 0%, #1D92EF 100%);
+	background-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
 	color: white;
 }
 
@@ -24,155 +152,9 @@ body {
 	color: #818181;
 	display: block;
 	transition: 0.3s;
-	background-image: linear-gradient(to right, #209CFF 0%, #1D92EF 100%);
+	background-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
 	color: white;
-	border-image: linear-gradient(to right, #209CFF 0%, #1D92EF 100%);
-}
-
-.sidepanel a:hover {
-	color: #84FAB0;
-}
-
-.poppins {
-	font-family: "Poppins", sans-serif;
-}
-
-/* dashboard_emails, detection_history, detection_results */
-.tr-bg{
-	background-color: white;
-}
-
-/* dashboard_emails, detection_history, detection_results */
-.tr-header{
-	color: #889B95;
-}
-
-/* detection_history */
-.ui-datepicker-trigger{
-	width:24px;
-	height: 24px;
-}
-
-/* detection_history */
-.date-width-from{
-	width:50px;
-}
-
-/* detection_history */
-.date-width-to{
-	width:30px;
-}
-
-/* dashboard_emails */
-.modal-dialog-instructionsModal{
-	max-width: 650px;
-}
-
-/* admin_base_list */
-.table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
-	background-color: #FFFFFF;
-}
-.table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
-	background-color: #E2EBF0;
-}
-
-/* admin_base, dashboard_base */
-.login-user{
-	font-size: 20px;
-	margin-bottom: 30px;
-	text-transform: uppercase;
-	text-align:center;
-	font-weight: bold;
-	color: white;
-	font-family: "Lato", sans-serif;
-}
-
-/* dashboard_emails, detection_history */
-.tab {
-    display: inline-block;
-    margin-left: 10px;
-}
-
-/*  admin_index, dashboard_home */
-.detection-num{
-	font-size:30px;
-	color :#9890E3;
-}
-
-/* admin_index */
-.bg-c-today-admin{
-	font-size: 20px;
-	height: 127px;
-	border-bottom-color: #DA6666;
-	border-bottom-width: thick;
-}
-
-/* admin_index */
-.bg-c-all-time-admin{
-	font-size: 20px;
-	height: 127px;
-	border-bottom-color: #63D3D3;
-	border-bottom-width: thick;
-}
-
-/* dashboard_emails */
-.text-super{
-	vertical-align:super;
-}
-
-/* dashboard_home */
-progress {
-  border-radius: 7px;
-  width: 100%;
-  height: 22px;
-}
-progress::-webkit-progress-bar {
-  background-color: #FFFFFF;
-	border-radius: 7px;
-}
-progress::-webkit-progress-value {
-	background-color: #8A80FF;
-  border-radius: 7px;
-}
-
-/* dashboard_home */
-.lni-color{
-	color :#9890E3;
-}
-
-/* dashboard_home */
-.bg-c-email{
-	border-bottom-color: #63D3D3;
-	border-bottom-width: thick;
-	font-size: 20px;
-}
-
-/* dashboard_home */
-.bg-c-today{
-	border-bottom-color: #FFCF4D;
-	border-bottom-width: thick;
-	font-size: 20px;
-}
-
-/* dashboard_home */
-.bg-c-weekly{
-	border-bottom-color: #669CFF;
-	border-bottom-width: thick;
-	font-size: 20px;
-}
-
-/* dashboard_home */
-.bg-c-monthly{
-	border-bottom-color: #FF8C66;
-	border-bottom-width: thick;
-	font-size: 20px;
-}
-
-/* dashboard_home */
-.bg-c-all{
-	border-bottom-color: #40F2A2;
-	border-bottom-width: thick;
-	font-size: 20px;
+	border-image: linear-gradient(to right, #209cff 0%, #1D92EF 100%);
 }
 
 .sidepanel a:hover {
@@ -183,12 +165,18 @@ progress::-webkit-progress-value {
 	color: #889B95;
 }
 
-.table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
    background-color: #e2ebf0;
 }
 
-.table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
-   background-color: white;
+.table-striped > tbody > tr:nth-child(even) > td,
+.table-striped > tbody > tr:nth-child(even) > th {
+   background-color: #F7F7F7;
+}
+
+.table-striped > thead > tr > th {
+	background-color: #FFFFFF;
 }
 
 .poppins {
