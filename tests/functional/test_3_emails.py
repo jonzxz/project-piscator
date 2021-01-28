@@ -6,6 +6,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 from app.utils.FileUtils import get_server_mail_cred
+from app import db
+from app.models.EmailAddress import EmailAddress
 
 def add_email(driver, email, password):
     # Wait for Add Email Button to appear and click
@@ -136,4 +138,26 @@ def test_deactivate_email(driver):
     wait_email_entry = WebDriverWait(driver, 5)
     wait_email_entry.until(EC.visibility_of_element_located((By.NAME, 'activate-{}'.format(EMAIL_ADDR))))
     driver.find_element_by_name('activate-{}'.format(EMAIL_ADDR)).click()
-    assert driver.find_element_by_name('status-{}'.format(EMAIL_ADDR)).text == 'Inactive'
+    assert db.session.query(EmailAddress).filter(EmailAddress.email_address == EMAIL_ADDR).first().get_active_status() == False
+
+    sleep(2)
+    wait_email_entry = WebDriverWait(driver, 5)
+    wait_email_entry.until(EC.visibility_of_element_located((By.NAME, 'activate-{}'.format(EMAIL_ADDR))))
+    driver.find_element_by_name('activate-{}'.format(EMAIL_ADDR)).click()
+    assert db.session.query(EmailAddress).filter(EmailAddress.email_address == EMAIL_ADDR).first().get_active_status() == True
+
+def test_daily_notification(driver):
+    MAIL_CREDS = get_server_mail_cred()
+    EMAIL_ADDR = MAIL_CREDS[0]
+
+    sleep(2)
+    wait_email_entry = WebDriverWait(driver, 5)
+    wait_email_entry.until(EC.visibility_of_element_located((By.NAME, 'notif-{}'.format(EMAIL_ADDR))))
+    driver.find_element_by_name('notif-{}'.format(EMAIL_ADDR)).click()
+    assert db.session.query(EmailAddress).filter(EmailAddress.email_address == EMAIL_ADDR).first().get_notification_pref() == False
+
+    sleep(2)
+    wait_email_entry = WebDriverWait(driver, 5)
+    wait_email_entry.until(EC.visibility_of_element_located((By.NAME, 'notif-{}'.format(EMAIL_ADDR))))
+    driver.find_element_by_name('notif-{}'.format(EMAIL_ADDR)).click()
+    assert db.session.query(EmailAddress).filter(EmailAddress.email_address == EMAIL_ADDR).first().get_notification_pref() == True
