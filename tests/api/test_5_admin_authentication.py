@@ -10,9 +10,15 @@ def test_valid_login(client):
     assert response.status_code == 200
     assert b'Administrator Dashboard' in response.data
 
-def test_invalid_login(client):
-    USERNAME = 'INVALIDADMIN'
-    PASSWORD = 'NOTpassword'
-    response = login(client, USERNAME, PASSWORD)
+def test_view_users(client):
+    return client.post(
+    '/admin/user',
+    follow_redirects=True
+    )
     assert response.status_code == 200
-    assert not b'Administrator Dashboard' in response.data
+    assert b'Users' in response.data
+
+def test_logout(client):
+    response = client.get('/logout', follow_redirects=True)
+    assert response.status_code == 200
+    assert b'The Email Phishing Detection Service' in response.data
