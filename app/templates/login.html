@@ -2,7 +2,7 @@
 {% block content %}
 {% include "navbar.html" %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login_reg_style.css') }}">
-<div class="main-container">
+<div class="main-container pt-5">
     <div class="sub-container w-25 p-3 mb-4 round-radius">
         <div class="container-title-bar">L O G I N</div>
         <div class="row justify-content-center mt-2">
@@ -23,6 +23,13 @@
                         {{ form.remember_me() }} {{ form.remember_me.label }}
                     </div>
                 </div>
+                {% if form.errors %}
+                  {% for error in form.password.errors %}
+                  <div class="row justify-content-center">
+                    <div class="alert alert-danger">{{ error }}</div>
+                  </div>
+                  {% endfor %}
+                {% endif %}
                 <div class="row">
                     <div class="col-md-12 d-flex justify-content-center animated fadeIn">
                         <div class="login">
