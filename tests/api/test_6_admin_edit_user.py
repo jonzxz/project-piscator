@@ -5,7 +5,6 @@ from app import db
 from app.utils.DBUtils import get_user_by_name
 
 def test_edit_user(client, db):
-
     # Creates a new user to be disabled via direct database access
     TEST_DISABLE_USER = 'disableme'
     TEST_DISABLE_PASSWORD = 'password'
@@ -41,3 +40,15 @@ def test_edit_user(client, db):
 
     # Assert user is now inactive
     assert get_user_by_name(TEST_DISABLE_USER).get_active_status() == False
+
+    # Sends POST request to disable user - sets is_active to None
+    client.post(
+    '/admin/user/edit/?id={}'.format(user_to_disable_id), data={
+    'username' : '{}'.format(user_to_disable_name),
+    'is_active' : True
+    },
+    follow_redirects = True
+    )
+
+    # Assert user is now inactive
+    assert get_user_by_name(TEST_DISABLE_USER).get_active_status() == True
