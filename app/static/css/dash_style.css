@@ -49,7 +49,7 @@ body {
 
 /* dashboard_emails, detection_history, detection_results */
 .tr-bg{
-	background-color: white;
+	background-color: #FFFFFF;
 }
 
 /* dashboard_emails, detection_history, detection_results */
@@ -80,7 +80,7 @@ body {
 
 /* admin_base_list */
 .table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
-	background-color: #FFFFFF;
+	background-color: #F7F7F7;
 }
 .table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
 	background-color: #E2EBF0;
@@ -183,22 +183,6 @@ progress::-webkit-progress-value {
 	border-bottom-color: #40F2A2;
 	border-bottom-width: thick;
 	font-size: 20px;
-}
-
-.sidepanel a:hover {
-	color: #84fab0;
-}
-
-.tr-header{
-	color: #889B95;
-}
-
-.table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
-   background-color: #f7f7f7;
-}
-
-.table-striped > tbody > tr:nth-child(even) > td, .table-striped > tbody > tr:nth-child(even) > th {
-   background-color: #ffffff;
 }
 
 .poppins {
