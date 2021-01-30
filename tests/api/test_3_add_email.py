@@ -27,7 +27,7 @@ def detection_check(client, mail_id):
 def detection_history(client, mail_id):
     return client.get('/dashboard/emails/history/{}'.format(mail_id), follow_redirects=True)
 
-# Make sure user is valid and email does not exist in database
+# Test invalid add email with invalid email address
 # Assert HTTP code, assert database entry, assert new mail displayed in page
 def test_invalid_add_mail(client, db):
     USERNAME = 'testuser123'
@@ -40,6 +40,7 @@ def test_invalid_add_mail(client, db):
     assert response.status_code == 200
     assert b'Unable to connect to mailbox.' in response.data
 
+# Test invalid add email with invalid password
 def test_invalid_add_mail_password(client, db):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -52,6 +53,7 @@ def test_invalid_add_mail_password(client, db):
     assert response.status_code == 200
     assert b'Unable to connect to mailbox.' in response.data
 
+# Test valid add email address
 def test_valid_add_mail(client, db):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -65,6 +67,7 @@ def test_valid_add_mail(client, db):
     assert get_email_address_by_address(EMAIL_ADDR)
     assert b'piscator.fisherman@gmail.com' in response.data
 
+# Test invalid add email with existing email address
 def test_valid_add_existing_mail(client, db):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -77,6 +80,7 @@ def test_valid_add_existing_mail(client, db):
     assert response.status_code == 200
     assert b'piscator.fisherman@gmail.com already exist in our database!' in response.data
 
+# Test phishing check for added email address
 def test_check_email(client, db):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -89,6 +93,7 @@ def test_check_email(client, db):
     assert response.status_code == 200
     assert b'Detection Results' in response.data
 
+# Test accessing detection history for added email address
 def test_detection_history(client, db):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -101,6 +106,7 @@ def test_detection_history(client, db):
     assert response.status_code == 200
     assert b'Detection History' in response.data
 
+# Test disabling and enabling an email address
 def test_valid_disable_enable_mail(client, db):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -110,15 +116,18 @@ def test_valid_disable_enable_mail(client, db):
     login(client, USERNAME, PASSWORD)
     mail_id = get_email_id_by_mail_address(EMAIL_ADDR)
     response = enable_disable_mail(client, mail_id)
-    updated_status = get_email_address_by_address('piscator.fisherman@gmail.com').get_active_status()
+    updated_status = get_email_address_by_address('piscator.fisherman@gmail.com')\
+    .get_active_status()
     assert response.status_code == 200
     assert updated_status == False
 
     response = enable_disable_mail(client, mail_id)
-    updated_status = get_email_address_by_address('piscator.fisherman@gmail.com').get_active_status()
+    updated_status = get_email_address_by_address('piscator.fisherman@gmail.com')\
+    .get_active_status()
     assert response.status_code == 200
     assert updated_status == True
 
+# Test valid disabling and enabling email address notification preference
 def test_valid_disable_enable_daily_notif(client, db):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -128,11 +137,13 @@ def test_valid_disable_enable_daily_notif(client, db):
     login(client, USERNAME, PASSWORD)
     mail_id = get_email_id_by_mail_address(EMAIL_ADDR)
     response = enable_disable_notif(client, mail_id)
-    updated_pref = get_email_address_by_address('piscator.fisherman@gmail.com').get_notification_pref()
+    updated_pref = get_email_address_by_address('piscator.fisherman@gmail.com')\
+    .get_notification_pref()
     assert response.status_code == 200
     assert updated_pref == False
 
     response = enable_disable_notif(client, mail_id)
-    updated_pref = get_email_address_by_address('piscator.fisherman@gmail.com').get_notification_pref()
+    updated_pref = get_email_address_by_address('piscator.fisherman@gmail.com')\
+    .get_notification_pref()
     assert response.status_code == 200
     assert updated_pref == True

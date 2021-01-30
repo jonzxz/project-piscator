@@ -4,6 +4,7 @@ from app.models.User import User
 from app import db
 from app.utils.DBUtils import get_user_by_name
 
+# Test valid amendment of user account
 def test_edit_user(client, db):
     # Creates a new user to be disabled via direct database access
     TEST_DISABLE_USER = 'disableme'

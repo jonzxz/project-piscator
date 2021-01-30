@@ -24,6 +24,7 @@ def update_new_password(client, db, new_password, token):
     follow_redirects=True
     )
 
+# Test valid reset password request
 def test_request_reset_password(client, db):
     # Creates a new user
     TEST_RESET_USER = 'resetmyaccount'
@@ -42,12 +43,14 @@ def test_request_reset_password(client, db):
     add_mail(client, TEST_EMAIL_ADDRESS, TEST_EMAIL_PASSWORD)
     logout(client)
 
-    reset_response = request_reset_password(client, db, TEST_RESET_USER, TEST_EMAIL_ADDRESS)
+    reset_response = request_reset_password(client, db, TEST_RESET_USER\
+    , TEST_EMAIL_ADDRESS)
     # Assert redirected to update password page
     assert b'token' in reset_response.data
     # Assert token is generated
     assert get_user_by_name(TEST_RESET_USER).get_reset_token()
 
+# Test valid reset password update
 def test_update_forgotten_password(client, db):
     TEST_RESET_USER = 'resetmyaccount'
     NEW_PASSWORD = 'pa$$w0rd'

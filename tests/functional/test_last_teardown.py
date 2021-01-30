@@ -3,7 +3,6 @@ from app import db
 from app.models.User import User
 from app.models.EmailAddress import EmailAddress
 
-
 def test_teardown():
     email = db.session.query(EmailAddress).filter(EmailAddress.email_address == 'piscator.fisherman@gmail.com').first()
     user = db.session.query(User).filter(User.username == 'testuser123').first()
