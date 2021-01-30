@@ -10,7 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 def login(driver, username, password):
     # Click 'Sign In'
     wait_login_btn = WebDriverWait(driver, 5)
-    wait_login_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="navbar"]/div[2]/a')))
+    wait_login_btn.until(EC.element_to_be_clickable((By.XPATH\
+    , '//*[@id="navbar"]/div[2]/a')))
     driver.find_element(By.XPATH, '//*[@id="navbar"]/div[2]/a').click()
     # Enter credentials
     driver.find_element_by_id('username').send_keys(username)
@@ -22,14 +23,15 @@ def login(driver, username, password):
 def logout(driver):
     # Waits for logout button to appear and click
     wait_logout = WebDriverWait(driver, 5)
-    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[5]')))
+    wait_logout.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="user-panel"]/a[5]')))
     driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[5]').click()
 
 # Test registering a user from homepage
 # Clicks on 'Get Started', enter register credentials and check user is redirected to dashboard
 # Finally logs out
 
-#To submit form without any inputs
+# Test invalid register with empty fields
 def test_register_no_input(driver):
     REQUIRED_FIELD_ERR = 'This field is required.'
     TOS_POLICIES_ERR = 'You must agree to the terms and policies to register!'
@@ -43,7 +45,7 @@ def test_register_no_input(driver):
     assert REQUIRED_FIELD_ERR in driver.page_source
     assert TOS_POLICIES_ERR in driver.page_source
 
-#To submit form without checking the ToS and Privacy Policy
+# Test invalid register without checking agreement checkbox
 def test_register_uncheck_checkbox(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -58,7 +60,7 @@ def test_register_uncheck_checkbox(driver):
     assert driver.current_url.split(sep='/')[-1] != 'dashboard'
     assert TOS_POLICIES_ERR in driver.page_source
 
-#To submit form with different password and confirm password
+# Test invalid register with mismatched passwords
 def test_register_different_passwords(driver):
     PASSWORD = 'password'
     CONF_PASSWORD_ERR = 'password1'
@@ -74,7 +76,7 @@ def test_register_different_passwords(driver):
     assert driver.current_url.split(sep='/')[-1] != 'dashboard'
     assert DIFF_PASSWORS_ERR in driver.page_source
 
-#To submit form with valid credentials and checking the checkbox
+# Test valid register
 def test_register(driver):
     PASSWORD = 'password'
     CONF_PASSWORD = 'password'
@@ -87,7 +89,7 @@ def test_register(driver):
     assert driver.current_url.split(sep='/')[-1] == 'dashboard'
     logout(driver)
 
-#To submit form with an existing username
+# Test invalid register with existing username
 def test_register_existing(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'password'
@@ -111,8 +113,7 @@ def test_register_existing(driver):
 
 
 # Test logging in user from homepage - flows after logging out a newly registered user
-# Uses login utility function
-#Login with unregistered username
+# Test invalid login with unregistered account
 def test_unregistered_login(driver):
     driver.get('http://localhost:5000')
     assert driver.title == 'Project Piscator'
@@ -126,7 +127,7 @@ def test_unregistered_login(driver):
     assert driver.current_url.split(sep='/')[-1] != 'dashboard'
     assert INVALID_USER_PASS_ERR in driver.page_source
 
-#Login with exisitng username, invalid password
+# Test invalid login with incorrect password
 def test_invalid_password_login(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'password123'
@@ -139,7 +140,7 @@ def test_invalid_password_login(driver):
     assert driver.current_url.split(sep='/')[-1] != 'dashboard'
     assert INVALID_USER_PASS_ERR in driver.page_source
 
-#Login with username, empty password
+# Test invalid login with empty password
 def test_empty_password_login(driver):
     USERNAME = 'testuser123'
 
@@ -148,7 +149,7 @@ def test_empty_password_login(driver):
 
     assert driver.current_url.split(sep='/')[-1] != 'dashboard'
 
-#Login with exisitng and valid credentials
+# Test valid login
 def test_login(driver):
     PASSWORD = 'password'
 

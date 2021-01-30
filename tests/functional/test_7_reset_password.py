@@ -9,6 +9,7 @@ from app import db
 from time import sleep
 
 # Flows from test_6 admin edit user, starts from index
+# Test valid request for password reset
 def test_request_reset_password(driver):
     # Uses back the same user created and tested in tests 2, 3, 4
     USERNAME = 'testuser123'
@@ -20,17 +21,24 @@ def test_request_reset_password(driver):
     db.session.commit()
 
     # Assert user successfully enabled via database access
-    assert (db.session.query(User).filter(User.username == USERNAME).first()).get_active_status() == True
+    assert (db.session.query(User).filter(User.username == USERNAME)\
+    .first()).get_active_status() == True
 
     # Click 'Sign In' from index
     wait_login_btn = WebDriverWait(driver, 5)
-    wait_login_btn.until(EC.visibility_of_element_located((By.XPATH, '/html/body/header/div[1]/div/div/div/nav/div[2]/a')))
-    driver.find_element(By.XPATH, '/html/body/header/div[1]/div/div/div/nav/div[2]/a').click()
+    wait_login_btn.until(EC.visibility_of_element_located((By.XPATH\
+    , '/html/body/header/div[1]/div/div/div/nav/div[2]/a')))
+
+    driver.find_element(By.XPATH\
+    , '/html/body/header/div[1]/div/div/div/nav/div[2]/a').click()
 
     # Click forget your password? button
     wait_forget_btn = WebDriverWait(driver, 5)
-    wait_forget_btn.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[3]/div[1]/div[2]/form/div[5]/div/div/a')))
-    driver.find_element(By.XPATH, '/html/body/div[3]/div[1]/div[2]/form/div[5]/div/div/a').click()
+    wait_forget_btn.until(EC.visibility_of_element_located((By.XPATH\
+    , '/html/body/div[3]/div[1]/div[2]/form/div[5]/div/div/a')))
+
+    driver.find_element(By.XPATH\
+    , '/html/body/div[3]/div[1]/div[2]/form/div[5]/div/div/a').click()
 
     # Assert redirected to reset page
     assert driver.current_url.split(sep='/')[-1] == 'reset'
@@ -44,6 +52,7 @@ def test_request_reset_password(driver):
     # Assert redirected to reset page
     assert driver.current_url.split(sep='/')[-1] == 'change_password'
 
+# Test valid password reset update
 def test_update_forgotten_password(driver):
     USERNAME = 'testuser123'
     TEST_RESET_PASSWORD = 'iforgotmypassword'

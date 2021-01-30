@@ -11,6 +11,7 @@ from time import sleep
 # Flows from test_5 admin logout so this starts from homepage
 # Creates a new dummy user via direct DB access to be tested on
 # Logs in using utility login function, retrieves new user ID, disable active status of user.
+# Test valid disabling of user account
 def test_admin_disable_user(driver):
 
     TEST_DISABLE_USER = 'disableme'
@@ -28,17 +29,21 @@ def test_admin_disable_user(driver):
     login(driver, ADMIN_USER, PASSWORD)
 
     # Search for newly created user for it's ID
-    user_to_disable = db.session.query(User).filter(User.username ==TEST_DISABLE_USER).first()
+    user_to_disable = db.session.query(User)\
+    .filter(User.username ==TEST_DISABLE_USER).first()
     user_to_disable_id = user_to_disable.get_id()
 
     # Clicks on 'Subscribers' in admin navbar
     wait_user_btn = WebDriverWait(driver, 3)
-    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[2]')))
+    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="admin-panel"]/a[2]')))
     driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[2]').click()
 
     # Searches for edit (a pencil in 1st column) by href where it's url is href_link
     # and click to enter edit page for the particular user
-    href_link = '//a[@href="{}"]'.format('/admin/user/edit/?id={}&url=%2Fadmin%2Fuser%2F&modal=True'.format(user_to_disable_id))
+    href_link = '//a[@href="{}"]'\
+    .format('/admin/user/edit/?id={}&url=%2Fadmin%2Fuser%2F&modal=True'\
+    .format(user_to_disable_id))
     wait_user_entry = WebDriverWait(driver, 5)
     wait_user_entry.until(EC.visibility_of_element_located((By.XPATH, href_link)))
     driver.find_element(By.XPATH, href_link).click()
@@ -47,7 +52,8 @@ def test_admin_disable_user(driver):
     sleep(2)
     # Unchecks active checkbox
     wait_active_box = WebDriverWait(driver, 3)
-    wait_active_box.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="fa_modal_window"]/div/div/form/fieldset/div/div[5]/input')))
+    wait_active_box.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="fa_modal_window"]/div/div/form/fieldset/div/div[5]/input')))
     checkbox = driver.find_element_by_css_selector(".form-control-lg#is_active")
     driver.execute_script("arguments[0].click();", checkbox)
 
@@ -56,8 +62,12 @@ def test_admin_disable_user(driver):
     # And the sleep(2) is required otherwise the click will NOT work sometimes
     sleep(2)
     wait_submit = WebDriverWait(driver, 3)
-    wait_submit.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="fa_modal_window"]/div/div/form/fieldset/div[2]/input')))
-    driver.find_element(By.XPATH, '//*[@id="fa_modal_window"]/div/div/form/fieldset/div[2]/input').send_keys(Keys.RETURN)
+    wait_submit.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="fa_modal_window"]/div/div/form/fieldset/div[2]/input')))
+
+    driver.find_element(By.XPATH\
+    , '//*[@id="fa_modal_window"]/div/div/form/fieldset/div[2]/input')\
+    .send_keys(Keys.RETURN)
 
     # Finally redirects to list view again after editing user status
     # The database is actually updated at this point
@@ -66,28 +76,35 @@ def test_admin_disable_user(driver):
 
 # As mentioned above, assertion have to be done in a separate test
 # in order to reflect the correct user active status, no idea why - 25/12/20 Jon K
+# Secondary function to assert previous test
 def test_assert_disable_user(driver):
     TEST_DISABLE_USER = 'disableme'
-    updated_user = db.session.query(User).filter(User.username == TEST_DISABLE_USER).first()
+    updated_user = db.session.query(User)\
+    .filter(User.username == TEST_DISABLE_USER).first()
     assert updated_user.get_active_status() == False
 
-
+# Test valid enabling of user account
 def test_enable_user(driver):
     TEST_ENABLE_USER = 'disableme'
 
     # Search for newly created user for it's ID
-    user_to_enable = db.session.query(User).filter(User.username ==TEST_ENABLE_USER).first()
+    user_to_enable = db.session.query(User)\
+    .filter(User.username == TEST_ENABLE_USER).first()
     user_to_enable_id = user_to_enable.get_id()
 
     # Clicks on 'Users' in admin navbar
     wait_user_btn = WebDriverWait(driver, 3)
-    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[2]')))
+    wait_user_btn.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="admin-panel"]/a[2]')))
     driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[2]').click()
 
     # Searches for edit (a pencil in 1st column) by href where it's url is href_link
     # and click to enter edit page for the particular user
-    href_link = '//a[@href="{}"]'.format('/admin/user/edit/?id={}&url=%2Fadmin%2Fuser%2F&modal=True'.format(user_to_enable_id))
+    href_link = '//a[@href="{}"]'\
+    .format('/admin/user/edit/?id={}&url=%2Fadmin%2Fuser%2F&modal=True'\
+    .format(user_to_enable_id))
     wait_user_entry = WebDriverWait(driver, 5)
+
     wait_user_entry.until(EC.visibility_of_element_located((By.XPATH, href_link)))
     driver.find_element(By.XPATH, href_link).click()
 
@@ -95,7 +112,8 @@ def test_enable_user(driver):
     sleep(2)
     # Checks active checkbox
     wait_active_box = WebDriverWait(driver, 3)
-    wait_active_box.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="fa_modal_window"]/div/div/form/fieldset/div/div[5]/input')))
+    wait_active_box.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="fa_modal_window"]/div/div/form/fieldset/div/div[5]/input')))
     checkbox = driver.find_element_by_css_selector(".form-control-lg#is_active")
     driver.execute_script("arguments[0].click();", checkbox)
 
@@ -104,8 +122,12 @@ def test_enable_user(driver):
     # And the sleep(2) is required otherwise the click will NOT work sometimes
     sleep(2)
     wait_submit = WebDriverWait(driver, 3)
-    wait_submit.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="fa_modal_window"]/div/div/form/fieldset/div[2]/input')))
-    driver.find_element(By.XPATH, '//*[@id="fa_modal_window"]/div/div/form/fieldset/div[2]/input').send_keys(Keys.RETURN)
+    wait_submit.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="fa_modal_window"]/div/div/form/fieldset/div[2]/input')))
+
+    driver.find_element(By.XPATH\
+    , '//*[@id="fa_modal_window"]/div/div/form/fieldset/div[2]/input')\
+    .send_keys(Keys.RETURN)
 
     # Finally redirects to list view again after editing user status
     # The database is actually updated at this point
@@ -114,14 +136,17 @@ def test_enable_user(driver):
 
 # As mentioned above, assertion have to be done in a separate test
 # in order to reflect the correct user active status, no idea why - 25/12/20 Jon K
+# Secondary function to assert previous test
 def test_assert_enable_user(driver):
     TEST_ENABLE_USER = 'disableme'
-    updated_user = db.session.query(User).filter(User.username == TEST_ENABLE_USER).first()
+    updated_user = db.session.query(User)\
+    .filter(User.username == TEST_ENABLE_USER).first()
     assert updated_user.get_active_status() == True
 
     # Logout back to index
     wait_logout = WebDriverWait(driver, 5)
-    wait_logout.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="admin-panel"]/a[5]')))
+    wait_logout.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="admin-panel"]/a[5]')))
     driver.find_element(By.XPATH, '//*[@id="admin-panel"]/a[5]').click()
 
     # Assert redirected to index

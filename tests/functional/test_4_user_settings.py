@@ -7,30 +7,52 @@ from app import db
 from time import sleep
 from app.models.User import User
 
+# Reusable function to click on "Account Settings" and "Disable Account" tab
+def disable_acc_navtab(driver):
+    # Wait for account settings button to appear
+    wait_acc_set_btn = WebDriverWait(driver, 3)
+    wait_acc_set_btn.until(EC.element_to_be_clickable((By.XPATH\
+    , '//*[@id="user-panel"]/a[4]')))
+    driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[4]').click()
+    # Assert redirected to /account page
+    assert driver.current_url.split(sep='/')[-1] == 'account'
+
+    # Wait for "Disable Account" navtab to appear
+    wait_nav_disable_acc_tab = WebDriverWait(driver, 3)
+    wait_nav_disable_acc_tab.until(EC.element_to_be_clickable((By.ID\
+    , 'nav-disable-account')))
+    driver.find_element(By.ID, 'nav-disable-account').click()
+
+    wait_disable_submit = WebDriverWait(driver, 3)
+    wait_disable_submit.until(EC.visibility_of_element_located((By.ID\
+    , 'disable_acc_submit')))
+
 # Flows after deactivating email so user is in dashboard still
 # Test password change in account setting by clicking into 'Account'
-#To submit form with no input
+# Test invalid change password with empty passwords
 def test_change_password_no_input(driver):
     USERNAME = 'testuser123'
     MISSING_PASSWORD_ERR = 'Invalid Current Password!'
 
     # Wait for account settings button to appear and click
     wait_acc_set_btn = WebDriverWait(driver, 3)
-    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[4]')))
+    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH\
+    , '//*[@id="user-panel"]/a[4]')))
     driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[4]').click()
     # Assert redirected to /account page
     assert driver.current_url.split(sep='/')[-1] == 'account'
 
     # Wait for update button to appear (for form to appear)
     wait_update_btn = WebDriverWait(driver, 5)
-    wait_update_btn.until(EC.visibility_of_element_located((By.ID, 'update_password_submit')))
+    wait_update_btn.until(EC.visibility_of_element_located((By.ID\
+    , 'update_password_submit')))
     assert USERNAME in driver.page_source
 
     driver.find_element_by_id('update_password_submit').click()
 
     assert MISSING_PASSWORD_ERR in driver.page_source
 
-#To submit form with invalid current password
+# Test invalid change password with incorrect current password
 def test_change_invalid_current_password(driver):
     USERNAME = 'testuser123'
     CUR_PASS = 'password123'
@@ -47,7 +69,7 @@ def test_change_invalid_current_password(driver):
 
     assert CURRENT_PASSWORD_ERR in driver.page_source
 
-#To submit form with different new password and confirm new password
+# Test invalid change password with mismatched new passwords
 def test_change_different_new_password(driver):
     USERNAME = 'testuser123'
     CUR_PASS = 'password'
@@ -64,7 +86,7 @@ def test_change_different_new_password(driver):
 
     assert DIFFERENT_PASSWORD_ERR in driver.page_source
 
-# and testing with valid new passwords, log out and attempt login again
+# Test valid change password and login with new password
 def test_change_password(driver):
     USERNAME = 'testuser123'
     CUR_PASS = 'password'
@@ -88,24 +110,9 @@ def test_change_password(driver):
     login(driver, USERNAME, NEW_PASS)
     assert driver.current_url.split(sep='/')[-1] == 'dashboard'
 
-def disable_acc_navtab(driver):
-    # Wait for account settings button to appear
-    wait_acc_set_btn = WebDriverWait(driver, 3)
-    wait_acc_set_btn.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="user-panel"]/a[4]')))
-    driver.find_element(By.XPATH, '//*[@id="user-panel"]/a[4]').click()
-    # Assert redirected to /account page
-    assert driver.current_url.split(sep='/')[-1] == 'account'
-
-    # Wait for "Disable Account" navtab to appear
-    wait_nav_disable_acc_tab = WebDriverWait(driver, 3)
-    wait_nav_disable_acc_tab.until(EC.visibility_of_element_located((By.ID, 'nav-disable-account')))
-    driver.find_element(By.ID, 'nav-disable-account').click()
-
-    wait_disable_submit = WebDriverWait(driver, 3)
-    wait_disable_submit.until(EC.visibility_of_element_located((By.ID, 'disable_acc_submit')))
 
 # Flows after password change
-#To submit form with correct password but without selecting the disable account slider_data
+# Test invalid disable account with no slider enabled
 def test_without_slider_disable_account(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'newpassword'
@@ -119,7 +126,7 @@ def test_without_slider_disable_account(driver):
     assert driver.current_url.split(sep='/')[-1] == 'account'
     assert INVALID_DISABLE_ACC_ERR in driver.page_source
 
-#To submit form without password but selected the slider
+# Test invalid disable account with empty current password
 def test_without_password_disable_account(driver):
     USERNAME = 'testuser123'
     INVALID_DISABLE_ACC_PASS_ERR = 'Invalid Current Password!'
@@ -134,7 +141,7 @@ def test_without_password_disable_account(driver):
     assert driver.current_url.split(sep='/')[-1] == 'account'
     assert INVALID_DISABLE_ACC_PASS_ERR in driver.page_source
 
-#To submit form with invalid password and with slider
+# Test invalid disable account with incorrect current password
 def test_wrong_password_disable_account(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'newpassword1'
@@ -151,7 +158,7 @@ def test_wrong_password_disable_account(driver):
     assert driver.current_url.split(sep='/')[-1] == 'account'
     assert INVALID_DISABLE_ACC_PASS_ERR in driver.page_source
 
-# Test disabling an account
+# Test valid account disable
 def test_disable_account(driver):
     USERNAME = 'testuser123'
     PASSWORD = 'newpassword'
@@ -176,5 +183,7 @@ def test_disable_account(driver):
     # Assert login failed so user does not go into dashboard
     login(driver, USERNAME, PASSWORD)
     assert driver.current_url.split(sep='/')[-1] != 'dashboard'
-    assert db.session.query(User).filter(User.username == USERNAME).first().get_active_status() == False
     assert ACCOUNT_IS_DISABLED in driver.page_source
+    assert db.session.query(User)\
+    .filter(User.username == USERNAME)\
+    .first().get_active_status() == False
