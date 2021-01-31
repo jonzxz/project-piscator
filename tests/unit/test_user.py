@@ -32,6 +32,13 @@ def test_user_admin_status(user):
     user.set_admin_status(True)
     assert user.get_admin_status()
 
+def test_user_created_at(user):
+    assert not user.get_created_at()
+
+    time = datetime.now()
+    user.set_created_at(time)
+    assert user.get_created_at() == time
+
 # Test user last logged in
 def test_user_last_logged_in(user):
     # Assert last logged in is None
