@@ -32,6 +32,7 @@ def test_user_admin_status(user):
     user.set_admin_status(True)
     assert user.get_admin_status()
 
+# Test user created at is set correctly
 def test_user_created_at(user):
     assert not user.get_created_at()
 

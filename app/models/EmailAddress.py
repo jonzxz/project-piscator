@@ -56,7 +56,6 @@ class EmailAddress(db.Model):
         return self.phishing_mail_detected
 
     def set_phishing_mail_detected(self, num_phish_detected: int) -> None:
-        print(type(self.phishing_mail_detected), type(num_phish_detected))
         self.phishing_mail_detected += num_phish_detected
 
     def get_total_mails_checked(self) -> int:
