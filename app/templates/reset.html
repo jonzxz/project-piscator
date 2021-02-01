@@ -63,8 +63,7 @@
     </div>
     <div id="particles-2" class="particles"></div>
   </div>
-  {% endblock %}
-
+  
   <script>
     $("#home-nav").attr("href", "{{url_for('index') }}");
     $("#feature-nav").attr("href", "{{url_for('index') }}#features");
@@ -81,3 +80,5 @@
       $( document ).tooltip();
     } );
   </script>
+
+  {% endblock %}
