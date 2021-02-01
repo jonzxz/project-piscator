@@ -52,16 +52,10 @@ class EmailAddress(db.Model):
     def get_owner_id(self) -> int:
         return self.owner_id
 
-    def set_mailbox_size(self, last_mb_size: int):
-        self.last_mailbox_size = last_mb_size
-
-    def get_mailbox_size(self) -> int:
-        return self.last_mailbox_size
-
     def get_phishing_mail_detected(self) -> int:
         return self.phishing_mail_detected
 
-    def set_phishing_mail_detected(self, num_phish_detected: int):
+    def set_phishing_mail_detected(self, num_phish_detected: int) -> None:
         self.phishing_mail_detected += num_phish_detected
 
     def get_total_mails_checked(self) -> int:
@@ -73,13 +67,10 @@ class EmailAddress(db.Model):
     def get_active_status(self) -> bool:
         return self.active
 
-    def set_active_status(self, boolean: bool):
+    def set_active_status(self, boolean: bool) -> None:
         self.active = boolean
 
-    def get_active_status(self) -> bool:
-        return self.active
-
-    def set_created_at(self, created_at: datetime):
+    def set_created_at(self, created_at: datetime) -> None:
         self.created_at = created_at
 
     def get_created_at(self) -> datetime:
@@ -91,7 +82,7 @@ class EmailAddress(db.Model):
     def set_notification_pref(self, pref: bool) -> None:
         self.notification_preference = pref
 
-    def set_last_updated(self, last_updated: datetime):
+    def set_last_updated(self, last_updated: datetime) -> None:
         self.last_updated = last_updated
 
     def get_last_updated(self) -> datetime:

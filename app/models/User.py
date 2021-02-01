@@ -49,6 +49,12 @@ class User(UserMixin, db.Model):
     def set_admin_status(self, boolean: bool) -> None:
         self.is_admin = boolean
 
+    def get_created_at(self) -> datetime:
+        return self.created_at
+
+    def set_created_at(self, created_at: datetime) -> None:
+        self.created_at = created_at
+
     def get_last_logged_in(self) -> datetime:
         return self.last_logged_in
 
