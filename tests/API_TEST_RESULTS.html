@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Test Report</title>
+    <style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #E6E6E6;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #E6E6E6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.log {
+  background-color: #e6e6e6;
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  height: 230px;
+  overflow-y: scroll;
+  padding: 5px;
+  white-space: pre-wrap;
+}
+.log:only-child {
+  height: inherit;
+}
+
+div.image {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 320px;
+}
+div.image img {
+  width: 320px;
+}
+
+div.video {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 320px;
+}
+div.video video {
+  overflow: hidden;
+  width: 320px;
+  height: 240px;
+}
+
+.collapsed {
+  display: none;
+}
+
+.expander::after {
+  content: " (show details)";
+  color: #BBB;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.collapser::after {
+  content: " (hide details)";
+  color: #BBB;
+  font-style: italic;
+  cursor: pointer;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+
+.sort-icon {
+  font-size: 0px;
+  float: left;
+  margin-right: 5px;
+  margin-top: 5px;
+  /*triangle*/
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+.inactive .sort-icon {
+  /*finish triangle*/
+  border-top: 8px solid #E6E6E6;
+}
+.asc.active .sort-icon {
+  /*finish triangle*/
+  border-bottom: 8px solid #999;
+}
+.desc.active .sort-icon {
+  /*finish triangle*/
+  border-top: 8px solid #999;
+}
+</style></head>
+  <body onLoad="init()">
+    <script>/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+function toArray(iter) {
+    if (iter === null) {
+        return null;
+    }
+    return Array.prototype.slice.call(iter);
+}
+
+function find(selector, elem) { // eslint-disable-line no-redeclare
+    if (!elem) {
+        elem = document;
+    }
+    return elem.querySelector(selector);
+}
+
+function findAll(selector, elem) {
+    if (!elem) {
+        elem = document;
+    }
+    return toArray(elem.querySelectorAll(selector));
+}
+
+function sortColumn(elem) {
+    toggleSortStates(elem);
+    const colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
+    let key;
+    if (elem.classList.contains('result')) {
+        key = keyResult;
+    } else if (elem.classList.contains('links')) {
+        key = keyLink;
+    } else {
+        key = keyAlpha;
+    }
+    sortTable(elem, key(colIndex));
+}
+
+function showAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(showExtras);
+}
+
+function hideAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(hideExtras);
+}
+
+function showExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.remove('collapsed');
+    expandcollapse.classList.remove('expander');
+    expandcollapse.classList.add('collapser');
+}
+
+function hideExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.add('collapsed');
+    expandcollapse.classList.remove('collapser');
+    expandcollapse.classList.add('expander');
+}
+
+function showFilters() {
+    const filterItems = document.getElementsByClassName('filter');
+    for (let i = 0; i < filterItems.length; i++)
+        filterItems[i].hidden = false;
+}
+
+function addCollapse() {
+    // Add links for show/hide all
+    const resulttable = find('table#results-table');
+    const showhideall = document.createElement('p');
+    showhideall.innerHTML = '<a href="javascript:showAllExtras()">Show all details</a> / ' +
+                            '<a href="javascript:hideAllExtras()">Hide all details</a>';
+    resulttable.parentElement.insertBefore(showhideall, resulttable);
+
+    // Add show/hide link to each result
+    findAll('.col-result').forEach(function(elem) {
+        const collapsed = getQueryParameter('collapsed') || 'Passed';
+        const extras = elem.parentNode.nextElementSibling;
+        const expandcollapse = document.createElement('span');
+        if (extras.classList.contains('collapsed')) {
+            expandcollapse.classList.add('expander');
+        } else if (collapsed.includes(elem.innerHTML)) {
+            extras.classList.add('collapsed');
+            expandcollapse.classList.add('expander');
+        } else {
+            expandcollapse.classList.add('collapser');
+        }
+        elem.appendChild(expandcollapse);
+
+        elem.addEventListener('click', function(event) {
+            if (event.currentTarget.parentNode.nextElementSibling.classList.contains('collapsed')) {
+                showExtras(event.currentTarget);
+            } else {
+                hideExtras(event.currentTarget);
+            }
+        });
+    });
+}
+
+function getQueryParameter(name) {
+    const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function init () { // eslint-disable-line no-unused-vars
+    resetSortHeaders();
+
+    addCollapse();
+
+    showFilters();
+
+    sortColumn(find('.initial-sort'));
+
+    findAll('.sortable').forEach(function(elem) {
+        elem.addEventListener('click',
+            function() {
+                sortColumn(elem);
+            }, false);
+    });
+}
+
+function sortTable(clicked, keyFunc) {
+    const rows = findAll('.results-table-row');
+    const reversed = !clicked.classList.contains('asc');
+    const sortedRows = sort(rows, keyFunc, reversed);
+    /* Whole table is removed here because browsers acts much slower
+     * when appending existing elements.
+     */
+    const thead = document.getElementById('results-table-head');
+    document.getElementById('results-table').remove();
+    const parent = document.createElement('table');
+    parent.id = 'results-table';
+    parent.appendChild(thead);
+    sortedRows.forEach(function(elem) {
+        parent.appendChild(elem);
+    });
+    document.getElementsByTagName('BODY')[0].appendChild(parent);
+}
+
+function sort(items, keyFunc, reversed) {
+    const sortArray = items.map(function(item, i) {
+        return [keyFunc(item), i];
+    });
+
+    sortArray.sort(function(a, b) {
+        const keyA = a[0];
+        const keyB = b[0];
+
+        if (keyA == keyB) return 0;
+
+        if (reversed) {
+            return keyA < keyB ? 1 : -1;
+        } else {
+            return keyA > keyB ? 1 : -1;
+        }
+    });
+
+    return sortArray.map(function(item) {
+        const index = item[1];
+        return items[index];
+    });
+}
+
+function keyAlpha(colIndex) {
+    return function(elem) {
+        return elem.childNodes[1].childNodes[colIndex].firstChild.data.toLowerCase();
+    };
+}
+
+function keyLink(colIndex) {
+    return function(elem) {
+        const dataCell = elem.childNodes[1].childNodes[colIndex].firstChild;
+        return dataCell == null ? '' : dataCell.innerText.toLowerCase();
+    };
+}
+
+function keyResult(colIndex) {
+    return function(elem) {
+        const strings = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed',
+            'Skipped', 'Passed'];
+        return strings.indexOf(elem.childNodes[1].childNodes[colIndex].firstChild.data);
+    };
+}
+
+function resetSortHeaders() {
+    findAll('.sort-icon').forEach(function(elem) {
+        elem.parentNode.removeChild(elem);
+    });
+    findAll('.sortable').forEach(function(elem) {
+        const icon = document.createElement('div');
+        icon.className = 'sort-icon';
+        icon.textContent = 'vvv';
+        elem.insertBefore(icon, elem.firstChild);
+        elem.classList.remove('desc', 'active');
+        elem.classList.add('asc', 'inactive');
+    });
+}
+
+function toggleSortStates(elem) {
+    //if active, toggle between asc and desc
+    if (elem.classList.contains('active')) {
+        elem.classList.toggle('asc');
+        elem.classList.toggle('desc');
+    }
+
+    //if inactive, reset all other functions and add ascending active
+    if (elem.classList.contains('inactive')) {
+        resetSortHeaders();
+        elem.classList.remove('inactive');
+        elem.classList.add('active');
+    }
+}
+
+function isAllRowsHidden(value) {
+    return value.hidden == false;
+}
+
+function filterTable(elem) { // eslint-disable-line no-unused-vars
+    const outcomeAtt = 'data-test-result';
+    const outcome = elem.getAttribute(outcomeAtt);
+    const classOutcome = outcome + ' results-table-row';
+    const outcomeRows = document.getElementsByClassName(classOutcome);
+
+    for(let i = 0; i < outcomeRows.length; i++){
+        outcomeRows[i].hidden = !elem.checked;
+    }
+
+    const rows = findAll('.results-table-row').filter(isAllRowsHidden);
+    const allRowsHidden = rows.length == 0 ? true : false;
+    const notFoundMessage = document.getElementById('not-found-message');
+    notFoundMessage.hidden = !allRowsHidden;
+}
+</script>
+    <h1>API.html</h1>
+    <p>Report generated on 01-Feb-2021 at 22:00:34 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.1.1</p>
+    <h2>Environment</h2>
+    <table id="environment">
+      <tr>
+        <td>Packages</td>
+        <td>{"pluggy": "0.13.1", "py": "1.9.0", "pytest": "6.1.2"}</td></tr>
+      <tr>
+        <td>Platform</td>
+        <td>Windows-10-10.0.19041-SP0</td></tr>
+      <tr>
+        <td>Plugins</td>
+        <td>{"html": "3.1.1", "metadata": "1.11.0"}</td></tr>
+      <tr>
+        <td>Python</td>
+        <td>3.8.5</td></tr></table>
+    <h2>Summary</h2>
+    <p>34 tests ran in 12.40 seconds. </p>
+    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="passed">34 passed</span>, <input checked="true" class="filter" data-test-result="skipped" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="skipped">0 skipped</span>, <input checked="true" class="filter" data-test-result="failed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="failed">0 failed</span>, <input checked="true" class="filter" data-test-result="error" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="error">0 errors</span>, <input checked="true" class="filter" data-test-result="xfailed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xfailed">0 expected failures</span>, <input checked="true" class="filter" data-test-result="xpassed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xpassed">0 unexpected passes</span>
+    <h2>Results</h2>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable result initial-sort" col="result">Result</th>
+          <th class="sortable" col="name">Test</th>
+          <th class="sortable" col="duration">Duration</th>
+          <th class="sortable links" col="links">Links</th></tr>
+        <tr hidden="true" id="not-found-message">
+          <th colspan="4">No results found. Try to check the filters</th></tr></thead>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_1_connectivity.py::test_index</td>
+          <td class="col-duration">0.06</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_invalid_register_no_input</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [register:75] : Entering register function
+[LOG] [DEBUG] [register:81] : Register form submitted
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:75 Entering register function
+DEBUG    app:routes.py:81 Register form submitted<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_invalid_register_uncheck_checkbox</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [register:75] : Entering register function
+[LOG] [DEBUG] [register:81] : Register form submitted
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:75 Entering register function
+DEBUG    app:routes.py:81 Register form submitted<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_invalid_register_different_passwords</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [register:75] : Entering register function
+[LOG] [DEBUG] [register:81] : Register form submitted
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:75 Entering register function
+DEBUG    app:routes.py:81 Register form submitted<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_valid_register</td>
+          <td class="col-duration">0.09</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [register:75] : Entering register function
+[LOG] [DEBUG] [register:81] : Register form submitted
+[LOG] [DEBUG] [register:93] : Successfully created user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [logout:135] : Logging out user, removing credentials from session
+[LOG] [DEBUG] [logout:138] : Successfully logged out
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:75 Entering register function
+DEBUG    app:routes.py:81 Register form submitted
+DEBUG    app:routes.py:93 Successfully created user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:135 Logging out user, removing credentials from session
+DEBUG    app:routes.py:138 Successfully logged out<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_invalid_register_exist</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [register:75] : Entering register function
+[LOG] [DEBUG] [register:81] : Register form submitted
+[LOG] [ERROR] [register:97] : Username already taken
+[LOG] [WARNING] [register:98] : Registration failed, user not registered
+[LOG] [DEBUG] [register:75] : Entering register function
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:75 Entering register function
+DEBUG    app:routes.py:81 Register form submitted
+ERROR    app:routes.py:97 Username already taken
+WARNING  app:routes.py:98 Registration failed, user not registered
+DEBUG    app:routes.py:75 Entering register function<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_invalid_unregistered_login</td>
+          <td class="col-duration">0.01</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:107] : Entering login function
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:107 Entering login function<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_invalid_password_login</td>
+          <td class="col-duration">0.06</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:107] : Entering login function
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:107 Entering login function<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_invalid_empty_password_login</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_valid_login</td>
+          <td class="col-duration">0.11</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [logout:135] : Logging out user, removing credentials from session
+[LOG] [DEBUG] [logout:138] : Successfully logged out
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:135 Logging out user, removing credentials from session
+DEBUG    app:routes.py:138 Successfully logged out<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_2_authentication.py::test_logout</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [INFO] [logout:135] : Logging out user, removing credentials from session
+[LOG] [DEBUG] [logout:138] : Successfully logged out
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     app:routes.py:135 Logging out user, removing credentials from session
+DEBUG    app:routes.py:138 Successfully logged out<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_3_add_email.py::test_invalid_add_mail</td>
+          <td class="col-duration">2.37</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [add_email:194] : Entering add_email..
+[LOG] [INFO] [add_email:210] : Checking mailbox connectivity..
+[LOG] [INFO] [test_mailbox_conn:29] : Connecting to mailbox..
+[LOG] [ERROR] [test_mailbox_conn:41] : GAIError: Connection failed
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:194 Entering add_email..
+INFO     app:routes.py:210 Checking mailbox connectivity..
+INFO     app:EmailUtils.py:29 Connecting to mailbox..
+ERROR    app:EmailUtils.py:41 GAIError: Connection failed
+INFO     app:routes.py:177 Entering dashboard emails..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_3_add_email.py::test_invalid_add_mail_password</td>
+          <td class="col-duration">1.61</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [add_email:194] : Entering add_email..
+[LOG] [INFO] [add_email:210] : Checking mailbox connectivity..
+[LOG] [INFO] [test_mailbox_conn:29] : Connecting to mailbox..
+[LOG] [ERROR] [test_mailbox_conn:38] : IMAP4 Error: Connection failed!
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:194 Entering add_email..
+INFO     app:routes.py:210 Checking mailbox connectivity..
+INFO     app:EmailUtils.py:29 Connecting to mailbox..
+ERROR    app:EmailUtils.py:38 IMAP4 Error: Connection failed!
+INFO     app:routes.py:177 Entering dashboard emails..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_3_add_email.py::test_valid_add_mail</td>
+          <td class="col-duration">2.08</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [add_email:194] : Entering add_email..
+[LOG] [INFO] [add_email:210] : Checking mailbox connectivity..
+[LOG] [INFO] [test_mailbox_conn:29] : Connecting to mailbox..
+[LOG] [INFO] [test_mailbox_conn:34] : Connection successful
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:194 Entering add_email..
+INFO     app:routes.py:210 Checking mailbox connectivity..
+INFO     app:EmailUtils.py:29 Connecting to mailbox..
+INFO     app:EmailUtils.py:34 Connection successful
+INFO     app:routes.py:177 Entering dashboard emails..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_3_add_email.py::test_valid_add_existing_mail</td>
+          <td class="col-duration">0.08</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [add_email:194] : Entering add_email..
+[LOG] [ERROR] [add_email:229] : Email already exist
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:194 Entering add_email..
+ERROR    app:routes.py:229 Email already exist
+INFO     app:routes.py:177 Entering dashboard emails..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_3_add_email.py::test_check_email</td>
+          <td class="col-duration">2.73</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [check_phish:371] : Click-to-check entered..
+[LOG] [INFO] [check_phish:388] : Mailbox selected is piscator.fisherman@gmail.com
+[LOG] [INFO] [check_phish:393] : Retrieving IMAP server: imap.gmail.com
+[LOG] [INFO] [check_phish:395] : Attempting connection..
+[LOG] [INFO] [check_phish:398] : Connected to mailbox piscator.fisherman@gmail.com
+[LOG] [INFO] [check_phish:414] : Fetching mails..
+[LOG] [INFO] [check_phish:431] : Mails fetched..
+[LOG] [INFO] [check_phish:489] : Updating mailbox last updated from 31-01-2021, 22:00:30 to 2021-02-01 22:00:30.736351
+[LOG] [INFO] [check_phish:495] : Finished checking mails.. logging out
+[LOG] [INFO] [send_phish_check_notice:78] : Entering send_phish_check_notice
+[LOG] [INFO] [send_phish_check_notice:99] : Phish check notice sent.
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:371 Click-to-check entered..
+INFO     app:routes.py:388 Mailbox selected is piscator.fisherman@gmail.com
+INFO     app:routes.py:393 Retrieving IMAP server: imap.gmail.com
+INFO     app:routes.py:395 Attempting connection..
+INFO     app:routes.py:398 Connected to mailbox piscator.fisherman@gmail.com
+INFO     app:routes.py:414 Fetching mails..
+INFO     app:routes.py:431 Mails fetched..
+INFO     app:routes.py:489 Updating mailbox last updated from 31-01-2021, 22:00:30 to 2021-02-01 22:00:30.736351
+INFO     app:routes.py:495 Finished checking mails.. logging out
+INFO     app:EmailUtils.py:78 Entering send_phish_check_notice
+INFO     app:EmailUtils.py:99 Phish check notice sent.<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_3_add_email.py::test_detection_history</td>
+          <td class="col-duration">0.08</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [detection_history:553] : Entering detection history..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:553 Entering detection history..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_3_add_email.py::test_valid_disable_enable_mail</td>
+          <td class="col-duration">0.09</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [mail_activation:515] : Entering function to enable/disable email..
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+[LOG] [INFO] [mail_activation:515] : Entering function to enable/disable email..
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:515 Entering function to enable/disable email..
+INFO     app:routes.py:177 Entering dashboard emails..
+INFO     app:routes.py:515 Entering function to enable/disable email..
+INFO     app:routes.py:177 Entering dashboard emails..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_3_add_email.py::test_valid_disable_enable_daily_notif</td>
+          <td class="col-duration">0.09</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [mail_notification_preference:533] : Entering function to update email preference..
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+[LOG] [INFO] [mail_notification_preference:533] : Entering function to update email preference..
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:533 Entering function to update email preference..
+INFO     app:routes.py:177 Entering dashboard emails..
+INFO     app:routes.py:533 Entering function to update email preference..
+INFO     app:routes.py:177 Entering dashboard emails..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_4_user_settings.py::test_invalid_change_no_password</td>
+          <td class="col-duration">0.27</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [update_password:293] : Entering update_password
+[LOG] [INFO] [update_password:305] : Password update form submitted
+[LOG] [INFO] [update_password:319] : Wrong current password entered
+[LOG] [INFO] [dash_account:277] : Entering dashboard account..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:293 Entering update_password
+INFO     app:routes.py:305 Password update form submitted
+INFO     app:routes.py:319 Wrong current password entered
+INFO     app:routes.py:277 Entering dashboard account..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_4_user_settings.py::test_invalid_change_wrong_current_password</td>
+          <td class="col-duration">0.27</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [update_password:293] : Entering update_password
+[LOG] [INFO] [update_password:305] : Password update form submitted
+[LOG] [INFO] [update_password:319] : Wrong current password entered
+[LOG] [INFO] [dash_account:277] : Entering dashboard account..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:293 Entering update_password
+INFO     app:routes.py:305 Password update form submitted
+INFO     app:routes.py:319 Wrong current password entered
+INFO     app:routes.py:277 Entering dashboard account..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_4_user_settings.py::test_invalid_change_mismatched_password</td>
+          <td class="col-duration">0.26</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [update_password:293] : Entering update_password
+[LOG] [INFO] [update_password:305] : Password update form submitted
+[LOG] [INFO] [update_password:327] : Mismatched new passwords entered
+[LOG] [INFO] [dash_account:277] : Entering dashboard account..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:293 Entering update_password
+INFO     app:routes.py:305 Password update form submitted
+INFO     app:routes.py:327 Mismatched new passwords entered
+INFO     app:routes.py:277 Entering dashboard account..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_4_user_settings.py::test_valid_change_password</td>
+          <td class="col-duration">0.27</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [update_password:293] : Entering update_password
+[LOG] [INFO] [update_password:305] : Password update form submitted
+[LOG] [INFO] [update_password:311] : All fields entered are valid
+[LOG] [DEBUG] [update_password:315] : Successfully changed user User ID: 100 -- Username: testuser123 password, updated database
+[LOG] [INFO] [dash_account:277] : Entering dashboard account..
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:293 Entering update_password
+INFO     app:routes.py:305 Password update form submitted
+INFO     app:routes.py:311 All fields entered are valid
+DEBUG    app:routes.py:315 Successfully changed user User ID: 100 -- Username: testuser123 password, updated database
+INFO     app:routes.py:277 Entering dashboard account..<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_4_user_settings.py::test_disable_account_without_slider</td>
+          <td class="col-duration">0.20</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [disable_account:334] : Entering disable_account
+[LOG] [INFO] [disable_account:347] : Disable account form submitted
+[LOG] [INFO] [disable_account:361] : Slider not turned on
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:334 Entering disable_account
+INFO     app:routes.py:347 Disable account form submitted
+INFO     app:routes.py:361 Slider not turned on<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_4_user_settings.py::test_disable_account_without_password</td>
+          <td class="col-duration">0.20</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [disable_account:334] : Entering disable_account
+[LOG] [INFO] [disable_account:347] : Disable account form submitted
+[LOG] [INFO] [disable_account:358] : Wrong password entered
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:334 Entering disable_account
+INFO     app:routes.py:347 Disable account form submitted
+INFO     app:routes.py:358 Wrong password entered<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_4_user_settings.py::test_disable_account_wrong_password</td>
+          <td class="col-duration">0.20</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [disable_account:334] : Entering disable_account
+[LOG] [INFO] [disable_account:347] : Disable account form submitted
+[LOG] [INFO] [disable_account:358] : Wrong password entered
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:334 Entering disable_account
+INFO     app:routes.py:347 Disable account form submitted
+INFO     app:routes.py:358 Wrong password entered<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_4_user_settings.py::test_disable_account_with_passwords</td>
+          <td class="col-duration">0.14</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 100 -- Username: testuser123
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [disable_account:334] : Entering disable_account
+[LOG] [INFO] [disable_account:347] : Disable account form submitted
+[LOG] [INFO] [disable_account:351] : all good!
+[LOG] [INFO] [disable_emails_by_user_id:262] : Disabling Email Address: piscator.fisherman@gmail.com -- Owned by User ID: 100
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 100 -- Username: testuser123
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:334 Entering disable_account
+INFO     app:routes.py:347 Disable account form submitted
+INFO     app:routes.py:351 all good!
+INFO     app:DBUtils.py:262 Disabling Email Address: piscator.fisherman@gmail.com -- Owned by User ID: 100<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_5_admin_authentication.py::test_valid_login</td>
+          <td class="col-duration">0.08</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 1 -- Username: admin
+[LOG] [INFO] [admin:144] : Entering admin route
+[LOG] [INFO] [admin:146] : Admin user logging in, redirecting to admin portal
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 1 -- Username: admin
+INFO     app:routes.py:144 Entering admin route
+INFO     app:routes.py:146 Admin user logging in, redirecting to admin portal<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_5_admin_authentication.py::test_view_users</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_5_admin_authentication.py::test_logout</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [INFO] [logout:135] : Logging out user, removing credentials from session
+[LOG] [DEBUG] [logout:138] : Successfully logged out
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     app:routes.py:135 Logging out user, removing credentials from session
+DEBUG    app:routes.py:138 Successfully logged out<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_6_admin_edit_user.py::test_edit_user</td>
+          <td class="col-duration">0.29</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 1 -- Username: admin
+[LOG] [INFO] [admin:144] : Entering admin route
+[LOG] [INFO] [admin:146] : Admin user logging in, redirecting to admin portal
+[LOG] [INFO] [on_model_change:116] : User form submitted
+[LOG] [INFO] [on_model_change:116] : User form submitted
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 1 -- Username: admin
+INFO     app:routes.py:144 Entering admin route
+INFO     app:routes.py:146 Admin user logging in, redirecting to admin portal
+INFO     app:views.py:116 User form submitted
+INFO     app:views.py:116 User form submitted<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_7_reset_password.py::test_request_reset_password</td>
+          <td class="col-duration">0.41</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 102 -- Username: resetmyaccount
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+[LOG] [INFO] [add_email:194] : Entering add_email..
+[LOG] [INFO] [add_email:210] : Checking mailbox connectivity..
+[LOG] [INFO] [test_mailbox_conn:29] : Connecting to mailbox..
+[LOG] [INFO] [test_mailbox_conn:34] : Connection successful
+[LOG] [INFO] [dash_email:177] : Entering dashboard emails..
+[LOG] [INFO] [logout:135] : Logging out user, removing credentials from session
+[LOG] [DEBUG] [logout:138] : Successfully logged out
+[LOG] [INFO] [reset:592] : Generated User Token: 123629
+[LOG] [INFO] [send_password_token:106] : Entering send_password_token
+[LOG] [INFO] [send_password_token:116] : Password reset token email sent
+[LOG] [INFO] [reset_change_password:606] : Entering password update page
+<br/> -------------------------------Captured log call-------------------------------- <br/>DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 102 -- Username: resetmyaccount
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal
+INFO     app:routes.py:194 Entering add_email..
+INFO     app:routes.py:210 Checking mailbox connectivity..
+INFO     app:EmailUtils.py:29 Connecting to mailbox..
+INFO     app:EmailUtils.py:34 Connection successful
+INFO     app:routes.py:177 Entering dashboard emails..
+INFO     app:routes.py:135 Logging out user, removing credentials from session
+DEBUG    app:routes.py:138 Successfully logged out
+INFO     app:routes.py:592 Generated User Token: 123629
+INFO     app:EmailUtils.py:106 Entering send_password_token
+INFO     app:EmailUtils.py:116 Password reset token email sent
+INFO     app:routes.py:606 Entering password update page<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_7_reset_password.py::test_update_forgotten_password</td>
+          <td class="col-duration">0.14</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stderr call------------------------------ <br/>[LOG] [INFO] [reset_change_password:606] : Entering password update page
+[LOG] [INFO] [reset_change_password:611] : Update password form submitted
+[LOG] [INFO] [reset_change_password:612] : User token: 123629 -- Token Received: 123629
+[LOG] [INFO] [reset_change_password:615] : Token verified..
+[LOG] [INFO] [reset_change_password:616] : Setting new user password and deleting reset token.
+[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:107] : Entering login function
+[LOG] [DEBUG] [login:125] : Successfully logged in user User ID: 102 -- Username: resetmyaccount
+[LOG] [INFO] [dashboard:159] : Entering dashboard home..
+[LOG] [INFO] [dashboard:167] : User logging in, redirecting to users portal
+<br/> -------------------------------Captured log call-------------------------------- <br/>INFO     app:routes.py:606 Entering password update page
+INFO     app:routes.py:611 Update password form submitted
+INFO     app:routes.py:612 User token: 123629 -- Token Received: 123629
+INFO     app:routes.py:615 Token verified..
+INFO     app:routes.py:616 Setting new user password and deleting reset token.
+DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:107 Entering login function
+DEBUG    app:routes.py:125 Successfully logged in user User ID: 102 -- Username: resetmyaccount
+INFO     app:routes.py:159 Entering dashboard home..
+INFO     app:routes.py:167 User logging in, redirecting to users portal<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/api/test_last_teardown.py::test_teardown</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody></table></body></html>
