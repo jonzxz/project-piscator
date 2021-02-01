@@ -5,6 +5,7 @@ from app.models.User import User
 from app import db
 from app.utils.DBUtils import get_user_by_name
 from app.utils.FileUtils import get_server_mail_cred
+from app.utils.DBUtils import get_email_address_by_address
 
 def request_reset_password(client, db, username, email_address):
     return client.post(
@@ -36,11 +37,18 @@ def test_request_reset_password(client, db):
     db.session.commit()
 
     # Logs in to user and add an email address and log out
-    login(client, TEST_RESET_USER, TEST_RESET_PASSWORD)
+    login_response = login(client, TEST_RESET_USER, TEST_RESET_PASSWORD)
+    assert login_response.status_code == 200
+    assert b'dashboard' in login_response.data
+
     MAIL_CREDS = get_server_mail_cred()
     TEST_EMAIL_ADDRESS = MAIL_CREDS[2]
     TEST_EMAIL_PASSWORD = MAIL_CREDS[3]
-    add_mail(client, TEST_EMAIL_ADDRESS, TEST_EMAIL_PASSWORD)
+    response = add_mail(client, TEST_EMAIL_ADDRESS, TEST_EMAIL_PASSWORD)
+    assert response.status_code == 200
+    assert get_email_address_by_address(TEST_EMAIL_ADDRESS)
+    assert b'piscator.honeypot@outlook.com' in response.data
+
     logout(client)
 
     reset_response = request_reset_password(client, db, TEST_RESET_USER\
@@ -71,7 +79,9 @@ def test_update_forgotten_password(client, db):
     )
 
     login_response = login(client, TEST_RESET_USER, NEW_PASSWORD)
+
     # Assert TEST_RESET_USER token is None
     assert not get_user_by_name(TEST_RESET_USER).get_reset_token()
     # Assert successful login with new password
+    assert login_response.status_code == 200
     assert b'dashboard' in login_response.data
