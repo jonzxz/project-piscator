@@ -106,7 +106,7 @@ body {
 /*  admin_index, dashboard_home */
 .detection-num{
 	font-size:30px;
-	color :#9890E3;
+	color :#4C83FF;
 }
 
 /* admin_index */
@@ -141,13 +141,13 @@ progress::-webkit-progress-bar {
 	border-radius: 7px;
 }
 progress::-webkit-progress-value {
-	background-color: #8A80FF;
+	background-color: #4C83FF;
   border-radius: 7px;
 }
 
 /* dashboard_home */
 .lni-color{
-	color :#9890E3;
+	color :#4C83FF;
 }
 
 /* dashboard_home */
@@ -166,7 +166,7 @@ progress::-webkit-progress-value {
 
 /* dashboard_home */
 .bg-c-weekly{
-	border-bottom-color: #669CFF;
+	border-bottom-color: #9890E3;
 	border-bottom-width: thick;
 	font-size: 20px;
 }
@@ -183,8 +183,4 @@ progress::-webkit-progress-value {
 	border-bottom-color: #40F2A2;
 	border-bottom-width: thick;
 	font-size: 20px;
-}
-
-.poppins {
-	font-family: "Poppins", sans-serif;
 }
