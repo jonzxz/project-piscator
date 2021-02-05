@@ -33,7 +33,7 @@ def test_admin_disable_user(driver):
     .filter(User.username ==TEST_DISABLE_USER).first()
     user_to_disable_id = user_to_disable.get_id()
 
-    # Clicks on 'Subscribers' in admin navbar
+    # Clicks on 'Users' in admin navbar
     wait_user_btn = WebDriverWait(driver, 3)
     wait_user_btn.until(EC.visibility_of_element_located((By.XPATH\
     , '//*[@id="admin-panel"]/a[2]')))
