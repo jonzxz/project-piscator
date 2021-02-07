@@ -516,6 +516,7 @@ def mail_activation(mid):
     mailaddr = get_email_address_by_email_id(mid)
     if mailaddr.get_active_status() == True:
         mailaddr.set_active_status(False)
+        mailaddr.set_notification_pref(False)
     else:
         mailaddr.set_active_status(True)
     db.session.commit()
