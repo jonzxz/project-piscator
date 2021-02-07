@@ -1,5 +1,5 @@
 ## Application objects
-from app import db, logger, model
+from app import db, logger, model, app
 
 ## Plugins
 from flask_login import current_user
@@ -12,16 +12,19 @@ from app.models.Mail import Mail
 from app.machine_learning.EmailData import EmailData
 
 ## Email Utilities
-from app.utils.EmailUtils import send_phish_check_notice
+from app.utils.EmailUtils import send_phish_check_notice_context
 from app.utils.EmailUtils import get_imap_svr
+from app.utils.EmailUtils import check_valid_time
+from app.utils.EmailUtils import check_valid_sender
 
 ## IMAP, email libraries
 from email.errors import HeaderParseError
 from imap_tools import MailBox, AND, OR
 
 # Date utilities
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from sqlalchemy import Date, cast, func, extract
+from pytz import timezone
 
 ## Typehints
 from typing import List, Dict
@@ -320,18 +323,13 @@ def check_all_mailboxes() -> None:
                 , mailaddr.get_email_address())
                 continue
 
-            last_updated = mailaddr.get_last_updated().date()\
-             if mailaddr.get_last_updated() else datetime.now().date()
-
-            mailaddr.set_last_updated(datetime.now())
-
-            logger.info("Updating mailbox last updated from %s to %s",\
-             last_updated.strftime("%d-%m-%Y"), datetime.now())
+            last_updated = mailaddr.get_last_updated() \
+            if mailaddr.get_last_updated() else datetime.today() - timedelta(days=1)
 
             mailbox.folder.set("INBOX")
             logger.info("Fetching mails..")
 
-            check_criteria = AND(date_gte=last_updated, seen=False)
+            check_criteria = AND(date_gte=last_updated.date(), seen=False)
             all_mails = mailbox.fetch(check_criteria, reverse=True\
             , mark_seen=False, bulk=True)
 
@@ -339,6 +337,7 @@ def check_all_mailboxes() -> None:
 
             detection_count = 0
             mail_check_count = 0
+            phishing_mails_detected = []
 
             for mail in all_mails:
                 try:
@@ -348,8 +347,8 @@ def check_all_mailboxes() -> None:
                     " Setting sender as INVALID_SENDER")
                     sender = 'INVALID_SENDER'
 
-                if not sender == mailaddr.get_email_address() \
-                or not sender == 'piscator.fisherman@gmail.com':
+                if (check_valid_time(last_updated, mail.date))\
+                and check_valid_sender(sender, mailaddr.get_email_address()):
 
                     mail_check_count+=1
 
@@ -369,6 +368,8 @@ def check_all_mailboxes() -> None:
                         , mail.subject, mail_item.get_content())
 
                         if not mail_exist:
+                            phishing_mails_detected.append(Mail(sender, \
+                            mail.date.astimezone(timezone('Asia/Singapore')), mail.subject))
                             detection_count +=1
                             detected_mail = PhishingEmail( \
                             sender_address = sender, \
@@ -378,11 +379,21 @@ def check_all_mailboxes() -> None:
                             receiver_id = mailaddr.get_email_id()
                             )
                             db.session.add(detected_mail)
+
+            logger.info("Updating mailbox last updated from %s to %s",\
+             last_updated.strftime("%d-%m-%Y %H:%M:%S"), datetime.now())
+            mailaddr.set_last_updated(datetime.now())
             mailaddr.set_phishing_mail_detected(detection_count)
             mailaddr.set_total_mails_checked(mail_check_count)
             logger.info("Finished checking mails.. logging out")
             mailbox.logout()
-        db.session.commit()
+            db.session.commit()
+            if phishing_mails_detected:
+                logger.info("Phishing emails detected in automated scan, sending mail!")
+                send_phish_check_notice_context(mailaddr.get_email_address()\
+                , phishing_mails_detected, app)
+            else:
+                logger.info("No phishing emails detected in automated scan, moving to next..")
 
 """
 Function to delete all inactive email addresses

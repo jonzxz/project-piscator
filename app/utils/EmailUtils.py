@@ -80,7 +80,7 @@ def send_phish_check_notice(destination: str \
     .format(destination, datetime.now().strftime("%d-%m-%Y, %H:%M"))\
     , recipients = [destination])
 
-    msg.body = "You have recently requested for a phishing check on {}\n" \
+    msg.body = "A phishing check was executed on {}\n" \
     .format(destination)
 
     if len(phishing_mails) >= 1:
@@ -93,10 +93,39 @@ def send_phish_check_notice(destination: str \
 
     msg.body +="This is an automated email sent from Project Piscator. "\
     "If you are not the intended recipient, please contact the administrative "\
-    "team immediately."
+    "team immediately.\n\nYou have received this mail because you have manually "\
+    "started a phishing email check. For more detailed information, please login "\
+    "to your dashboard on Project Piscator."
 
     mailer.send(msg)
-    logger.info("Phish check notice sent.")
+    logger.info("Manual phish check notice sent.")
+
+def send_phish_check_notice_context(destination: str \
+, phishing_mails: List[PhishingEmail], app):
+    with app.app_context():
+        logger.info("Entering send_phish_check_notice_context")
+        msg = Message("Piscator: Phishing Check Completed for {} on {}" \
+        .format(destination, datetime.now().strftime("%d-%m-%Y, %H:%M"))\
+        , recipients = [destination])
+
+        msg.body = "An automatic phishing check was executed on {}\n" \
+        .format(destination)
+
+        if len(phishing_mails) >= 1:
+            msg.body += "These are the phishing emails detected - \n\n"
+
+            for phish_mail in phishing_mails:
+                msg.body += phish_mail.__repr__() + '\n\n'
+
+        msg.body +="This is an automated email sent from Project Piscator. "\
+        "If you are not the intended recipient, please contact the administrative "\
+        "team immediately.\n\nYou have received this mail because an automated "\
+        "scan have detected potential phishing emails in your mailbox since the "\
+        "last update. For more detailed information, please login "\
+        "to your dashboard on Project Piscator."
+
+        mailer.send(msg)
+        logger.info("Automated phish check notice sent.")
 
 """
 Will not work if TESTING is True
