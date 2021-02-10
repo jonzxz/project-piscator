@@ -63,16 +63,6 @@ body {
 	height: 24px;
 }
 
-/* detection_history */
-.date-width-from{
-	width:50px;
-}
-
-/* detection_history */
-.date-width-to{
-	width:30px;
-}
-
 /* dashboard_emails */
 .modal-dialog-instructionsModal{
 	max-width: 650px;
