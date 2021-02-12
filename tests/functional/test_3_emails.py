@@ -175,7 +175,7 @@ def test_daily_notification(driver):
     driver.find_element_by_name('notif-{}'.format(EMAIL_ADDR)).click()
     assert db.session.query(EmailAddress)\
     .filter(EmailAddress.email_address == EMAIL_ADDR)\
-    .first().get_notification_pref() == False
+    .first().get_notification_pref() == True
 
     sleep(2)
     wait_email_entry = WebDriverWait(driver, 5)
@@ -184,4 +184,4 @@ def test_daily_notification(driver):
     driver.find_element_by_name('notif-{}'.format(EMAIL_ADDR)).click()
     assert db.session.query(EmailAddress)\
     .filter(EmailAddress.email_address == EMAIL_ADDR)\
-    .first().get_notification_pref() == True
+    .first().get_notification_pref() == False
