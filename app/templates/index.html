@@ -163,7 +163,9 @@
                         <p class="text">
                             Learn more about Project Piscator with a video introduction that we have specially prepared for you.
                         </p>
-                        <a href="https://www.youtube.com/watch?v=ZHNn912_yVg" target="_blank" class="main-btn">Watch it now</a>
+                        <button type="button" class="main-btn" data-toggle="modal" data-target="#video-modal">
+                          Watch it now
+                        </button>
                     </div> <!-- about content -->
                 </div>
                 <div class="col-lg-6">
@@ -174,7 +176,7 @@
                                 <img src="{{ url_for('static', filename='images/video.jpg') }}" alt="video">
                             </div>
                             <div class="video-icon">
-                                <a href="https://www.youtube.com/watch?v=ZHNn9l2_yVg" target="_blank" class="video-popup"><i class="lni lni-play"></i></a>
+                                <a><div class="lni lni-play" data-toggle="modal" data-target="#video-modal"></div></a>
                             </div>
                         </div> <!-- video wrapper -->
                     </div> <!-- video content -->
@@ -185,6 +187,22 @@
         <div class="about-shape-1">
             <img src="{{ url_for('static', filename='images/about-shape-1.svg') }}" alt="shape">
         </div>
+
+        <div class="modal fade" id="video-modal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-video-modal" style="width: auto; max-width:760px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe width="720" height="405" src="https://www.youtube.com/embed/wT_SP5MzemA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </section>
     <!--====== VIDEO COUNTER PART ENDS ======-->
 
@@ -360,6 +378,10 @@
             $("#active-users").text(active_users);
             $("#detected-today").text(detected_today);
             $("#all-time").text(all_time_detected);
+
+            $("#video-modal").on('hidden.bs.modal', function (e) {
+                $("#video-modal iframe").attr("src", $("#video-modal iframe").attr("src"));
+            });
         })
     </script>
     <!--====== STATISTICS SCRIPT END =====-->
