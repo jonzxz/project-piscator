@@ -140,10 +140,10 @@ def test_valid_disable_enable_daily_notif(client, db):
     updated_pref = get_email_address_by_address('piscator.fisherman@gmail.com')\
     .get_notification_pref()
     assert response.status_code == 200
-    assert updated_pref == False
+    assert updated_pref == True
 
     response = enable_disable_notif(client, mail_id)
     updated_pref = get_email_address_by_address('piscator.fisherman@gmail.com')\
     .get_notification_pref()
     assert response.status_code == 200
-    assert updated_pref == True
+    assert updated_pref == False
