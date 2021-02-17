@@ -43,7 +43,7 @@
     $.fn.dataTable.ext.search.push(
     function(settings, data, dataIndex) {
       if (typeof data._date == 'undefined') {
-        data._date = new Date(moment(data[2], 'MM-DD-YYYY')).getTime();
+        data._date = new Date(moment(data[2], 'DD-MM-YYYY')).getTime();
       }
 
       if (minDateFilter && !isNaN(minDateFilter)) {
@@ -74,11 +74,11 @@
       buttonImageOnly: true,
       "onSelect": function(date) {
         //console.log(moment(date).format("DD/MM/YYYY"));
-        minDateFilter = new Date(moment(date, 'MM-DD-YYYY')).getTime();
+        minDateFilter = new Date(moment(date, 'DD-MM-YYYY')).getTime();
         oTable.draw();
       }
     }).keyup(function() {
-      minDateFilter = new Date(moment(this.value,'MM-DD-YYYY')).getTime();
+      minDateFilter = new Date(moment(this.value,'DD-MM-YYYY')).getTime();
       oTable.draw();
     });
 
@@ -88,11 +88,11 @@
       buttonImage: "{{ url_for('static', filename='images/calendar.png') }}",
       buttonImageOnly: true,
       "onSelect": function(date) {
-        maxDateFilter = new Date(moment(date,'MM-DD-YYYY')).getTime();
+        maxDateFilter = new Date(moment(date,'DD-MM-YYYY')).getTime();
         oTable.draw();
       }
     }).keyup(function() {
-      maxDateFilter = new Date(moment(this.value,'MM-DD-YYYY')).getTime();
+      maxDateFilter = new Date(moment(this.value,'DD-MM-YYYY')).getTime();
       oTable.draw();
     });
 
