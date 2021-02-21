@@ -121,6 +121,10 @@
                   {{ add_email_form.password.label }}
                   {{ add_email_form.password(class='form-control') }}
                 </div>
+                <div class="p-2">
+                  <a target ="_blank" href="{{ url_for('static', filename='docs/Email Application Password Manager.pdf') }}">
+                    Need help setting up an application password?</a>
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="main-btn" data-dismiss="modal">Close</button>

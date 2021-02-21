@@ -6,5 +6,5 @@ from wtforms.validators import DataRequired, Email
 # WTForm for "Add Email" modal in Subscribers' Dashboard
 class AddEmailForm(FlaskForm):
     email_address = EmailField('Email Address', validators=[DataRequired(), Email()])
-    password = PasswordField('Email Address Password', validators=[DataRequired()])
+    password = PasswordField('Application Password', validators=[DataRequired()])
     add_mail_submit = SubmitField('Add Email')
