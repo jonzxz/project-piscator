@@ -4,14 +4,3 @@ app/__pycache__
 *.key
 *.log
 *.exe
-app/static/css/animate.css
-app/static/css/LineIcons.2.0.css
-app/static/css/bootstrap-4.5.0.min.css
-app/static/js/vendor/jquery-3.5.1-min.js
-app/static/js/popper.min.js
-app/static/js/bootstrap-4.5.0.min.js
-app/static/js/waypoints.min.js
-app/static/js/jquery.counterup.min.js
-app/static/js/jquery.easing.min.js
-app/static/js/wow.min.js
-app/static/js/particles.min.js
