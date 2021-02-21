@@ -421,8 +421,8 @@ def check_phish(mid):
     FOR DEMO USE
     """
     # Test code to intentionally pull retrieve backdated emails for demo purposes
-    last_updated = datetime(2020, 12,17, 0, 0, 0)
-    check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
+    # last_updated = datetime(2020, 12,17, 0, 0, 0)
+    # check_criteria = AND(date_gte=[date(2020, 12, 17)], seen=False)
 
     # Fetch mails from mailbox based on criteria, does not "read" the mail
     # and retrieves in bulk for faster performance at higher computing cost
